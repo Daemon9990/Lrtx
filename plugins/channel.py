@@ -1068,7 +1068,7 @@ async def send_movie_update(bot, base_name):
                 primary_tag = "#SERIES" if "#SERIES" in all_tags else "#MOVIE"
 
                 # Series -> Green (SUCCESS), Movie -> Red (DANGER)
-                btn_style = enums.ButtonStyle.SUCCESS if primary_tag == "#SERIES" else enums.ButtonStyle.DANGER
+                btn_style = enums.ButtonStyle.SUCCESS if primary_tag == "#SERIES" else enums.ButtonStyle.PRIMARY
 
                 match = re.search(r'(.+?)\s+Season\s+(\d+)', base_name, re.IGNORECASE)
                 if match:
@@ -1144,7 +1144,7 @@ async def update_movie_message(bot, base_name):
         text = generate_movie_message(movie_doc, base_name)
         all_tags = {f.get("tag") for f in movie_doc.get("files", []) if f.get("tag")}
         primary_tag = "#SERIES" if "#SERIES" in all_tags else "#MOVIE"
-        btn_style = enums.ButtonStyle.SUCCESS if primary_tag == "#SERIES" else enums.ButtonStyle.DANGER
+        btn_style = enums.ButtonStyle.SUCCESS if primary_tag == "#SERIES" else enums.ButtonStyle.PRIMARY
 
         match = re.search(r'(.+?)\s+Season\s+(\d+)', base_name, re.IGNORECASE)
         if match:
