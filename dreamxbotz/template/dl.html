@@ -50,7 +50,7 @@
             min-height: 100vh;
         }
 
-        /* Continuous Dynamic Ambient Aura */
+        /* Ambient Aura Layer */
         .ambient-layer {
             position: fixed;
             inset: 0;
@@ -111,13 +111,13 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
         .glass-panel {
-            background: rgba(10, 16, 30, 0.45);
+            background: rgba(10, 16, 30, 0.55);
             backdrop-filter: blur(35px) saturate(190%);
             -webkit-backdrop-filter: blur(35px) saturate(190%);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 1.25rem;
             position: relative;
-            box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.7);
             transition: all 0.25s ease;
         }
         .interactive-card:active { transform: scale(0.97); }
@@ -129,6 +129,7 @@
             }
         }
 
+        /* Player Section */
         .player-container {
             aspect-ratio: 16 / 9;
             background: #000000;
@@ -138,10 +139,14 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             z-index: 10;
         }
-        .player-container.fullscreen {
-            border-radius: 0;
-            border: none;
-            aspect-ratio: auto;
+        .player-container:fullscreen,
+        .player-container:-webkit-full-screen {
+            border-radius: 0 !important;
+            border: none !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            max-width: none !important;
+            z-index: 999999 !important;
         }
         video {
             width: 100%; height: 100%;
@@ -165,8 +170,8 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s ease;
-            z-index: 20;
+            transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.35s ease;
+            z-index: 50;
             visibility: visible;
             opacity: 1;
         }
@@ -229,7 +234,7 @@
         }
 
         .vol-capsule {
-            background: rgba(12, 18, 32, 0.8);
+            background: rgba(12, 18, 32, 0.85);
             border: 1px solid rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(16px);
             border-radius: 99px;
@@ -237,7 +242,6 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            transition: all 0.25s ease;
         }
         .vol-capsule input[type=range] {
             -webkit-appearance: none;
@@ -266,7 +270,7 @@
             inset: 0;
             background: rgba(0, 0, 0, 0.75);
             backdrop-filter: blur(12px);
-            z-index: 100;
+            z-index: 1000;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.25s ease;
@@ -280,7 +284,7 @@
             pointer-events: auto;
         }
         .glass-popup-card {
-            background: rgba(10, 16, 32, 0.85);
+            background: rgba(10, 16, 32, 0.9);
             backdrop-filter: blur(40px) saturate(200%);
             -webkit-backdrop-filter: blur(40px) saturate(200%);
             border: 1px solid rgba(255, 255, 255, 0.15);
@@ -294,7 +298,6 @@
         }
         .glass-popup-backdrop.active .glass-popup-card { transform: scale(1); }
 
-        /* Crisp Loader Without Any Screen Blur */
         .loader {
             border: 3.5px solid rgba(255, 255, 255, 0.15);
             border-top: 3.5px solid #00d2ff;
@@ -309,7 +312,7 @@
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-25px);
             background: rgba(10, 18, 35, 0.95); backdrop-filter: blur(15px);
             border: 1px solid rgba(0, 210, 255, 0.4); border-radius: 99px;
-            padding: 8px 22px; color: #fff; z-index: 9999;
+            padding: 8px 22px; color: #fff; z-index: 999999;
             opacity: 0; transition: all 0.3s;
             box-shadow: 0 4px 20px rgba(0, 210, 255, 0.3);
             pointer-events: none;
@@ -326,7 +329,7 @@
         .intent-card:active { transform: scale(0.95); }
         @media (pointer: fine) {
             .intent-card:hover {
-                background: rgba(18, 26, 48, 0.8);
+                background: rgba(18, 26, 48, 0.85);
                 border-color: rgba(0, 210, 255, 0.4);
                 transform: translateY(-3px);
                 box-shadow: 0 10px 25px rgba(0,0,0,0.6);
@@ -334,9 +337,9 @@
         }
     </style>
 </head>
-<body class="antialiased flex flex-col justify-between">
+<body class="antialiased flex flex-col justify-between min-h-screen">
 
-    <!-- Ambient Aura Blobs -->
+    <!-- Ambient Aura -->
     <div class="ambient-layer">
         <div class="aura-blob blob-cyan"></div>
         <div class="aura-blob blob-blue"></div>
@@ -374,12 +377,12 @@
         </a>
     </nav>
 
-    <!-- Main Content -->
-    <main class="container mx-auto px-3 md:px-6 py-4 md:py-6 max-w-4xl">
+    <!-- Main Content Centered Vertically -->
+    <main class="container mx-auto px-3 md:px-6 py-4 md:py-6 max-w-4xl my-auto flex-grow flex flex-col justify-center">
         
         <!-- Title Meta -->
-        <div class="mb-3.5 px-1">
-            <h1 class="text-lg md:text-xl font-bold font-['Outfit'] break-all leading-tight text-white mb-1">{{file_name}}</h1>
+        <div class="mb-3 px-1">
+            <h1 class="text-base md:text-lg font-bold font-['Outfit'] break-all leading-tight text-white mb-1">{{file_name}}</h1>
             <div class="flex items-center gap-2 text-xs text-gray-400">
                 <span class="flex items-center gap-1 text-gray-300"><i class="fas fa-database text-sapphire"></i> {{file_size}}</span>
                 <span class="w-1 h-1 rounded-full bg-gray-600"></span>
@@ -387,27 +390,30 @@
             </div>
         </div>
 
-        <!-- Master Video Player -->
+        <!-- Master Video Player (mkv-player class attached) -->
         <div class="glass-panel p-1 mb-5">
             <div class="player-container" id="player-container">
-                <video id="video-player" playsinline preload="metadata"></video>
+                <video id="video-player" class="mkv-player" playsinline preload="metadata">
+                    <source src="{{file_url}}" type="video/mp4">
+                    <source src="{{file_url}}" type="video/webm">
+                </video>
                 
-                <!-- Crisp Video Loader (Center, Transparent Background) -->
+                <!-- Crisp Video Loader -->
                 <div id="video-loader" class="absolute inset-0 z-40 flex items-center justify-center pointer-events-none hidden">
                     <div class="loader"></div>
                 </div>
 
-                <!-- Clean Glass Error Fallback Card (Higher Z-Index) -->
+                <!-- Clean Glass Error Fallback Card -->
                 <div id="error-screen" class="absolute inset-0 z-50 flex items-center justify-center bg-black/90 p-4 hidden">
                     <div class="glass-panel p-6 max-w-sm w-full text-center border-red-500/30">
                         <div class="w-12 h-12 rounded-full bg-red-500/20 text-red-500 flex items-center justify-center mx-auto mb-3 border border-red-500/40">
                             <i class="fas fa-circle-exclamation text-xl"></i>
                         </div>
                         <h4 class="font-bold text-sm text-white font-['Outfit'] mb-1">Playback Interrupted</h4>
-                        <p class="text-gray-400 text-xs mb-4">Stream connection dropped or codec unsupported by browser. Try reconnecting or launch in external player.</p>
+                        <p class="text-gray-400 text-xs mb-4">Codec requires direct demuxing or external app. Use VLC/PotPlayer for instant playback.</p>
                         <div class="flex gap-2">
                             <button onclick="retryPlayback()" class="flex-1 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-xs font-semibold">Retry</button>
-                            <a href="intent:{{file_url}}#Intent;action=android.intent.action.VIEW;type=video/*;package=org.videolan.vlc;end;" class="flex-1 py-2 bg-sapphire/20 hover:bg-sapphire/30 text-sapphire border border-sapphire/40 rounded-xl text-xs font-bold flex items-center justify-center gap-1">VLC Play</a>
+                            <button onclick="launchApp('vlc')" class="flex-1 py-2 bg-sapphire/20 hover:bg-sapphire/30 text-sapphire border border-sapphire/40 rounded-xl text-xs font-bold flex items-center justify-center gap-1">VLC Play</button>
                         </div>
                     </div>
                 </div>
@@ -420,13 +426,12 @@
                     <div class="ripple-circle" id="ripple-right"><i class="fas fa-forward"></i></div>
                 </div>
 
-                <!-- YouTube Style Soft HUD Overlay -->
+                <!-- Soft HUD Overlay -->
                 <div class="hud" id="hud">
                     <!-- Top HUD -->
                     <div class="p-3 flex justify-between items-center bg-gradient-to-b from-black/90 to-transparent">
                         <span class="text-xs font-medium text-gray-300 truncate max-w-[60%] drop-shadow">{{file_name}}</span>
                         <div class="flex items-center gap-2 ml-auto">
-                            <!-- Audio Delay Sync Button -->
                             <button class="w-8 h-8 rounded-full hover:bg-white/15 flex items-center justify-center text-xs transition active:scale-90 text-gray-300 hover:text-white" onclick="openPopup('audio-delay-popup')" title="Audio Sync Delay">
                                 <i class="fas fa-sliders-h"></i>
                             </button>
@@ -440,7 +445,7 @@
                         </div>
                     </div>
 
-                    <!-- Center Controls (Properly Hidden During Loading/Error) -->
+                    <!-- Center Controls -->
                     <div id="center-controls" class="flex items-center justify-center gap-7 md:gap-14 pointer-events-auto">
                         <button class="w-11 h-11 md:w-12 md:h-12 rounded-full bg-black/50 backdrop-blur border border-white/15 hover:bg-white/20 flex items-center justify-center text-base md:text-lg active:scale-90 transition" id="btn-rewind">
                             <i class="fas fa-undo-alt"></i>
@@ -504,9 +509,9 @@
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mb-6">
             <button id="btn-download" class="glass-panel p-3 flex items-center justify-center gap-2.5 bg-gradient-to-r hover:from-sapphire/20 transition interactive-card">
                 <div class="w-8 h-8 rounded-full bg-sapphire/20 flex items-center justify-center text-sapphire shadow-[0_0_12px_rgba(0,210,255,0.4)]">
-                    <i class="fas fa-download text-xs"></i>
+                    <i class="fas fa-download text-xs" id="dl-icon"></i>
                 </div>
-                <span class="font-bold text-xs text-gray-200">Fast Download</span>
+                <span class="font-bold text-xs text-gray-200" id="dl-text">Fast Download</span>
             </button>
             <button id="btn-copy" class="glass-panel p-3 flex items-center justify-center gap-2.5 hover:bg-white/5 transition interactive-card">
                 <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-gray-300">
@@ -523,7 +528,7 @@
         </div>
 
         <!-- External Players Grid -->
-        <div class="mb-6">
+        <div class="mb-4">
             <div class="flex items-center gap-3 mb-3.5 px-1">
                 <div class="h-px flex-grow bg-white/10"></div>
                 <h2 class="text-[11px] font-bold uppercase tracking-widest text-gray-400">Launch External Player</h2>
@@ -531,52 +536,52 @@
             </div>
             
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                <a href="intent:{{file_url}}#Intent;action=android.intent.action.VIEW;type=video/*;package=org.videolan.vlc;end;" class="intent-card">
+                <button onclick="launchApp('vlc')" class="intent-card">
                     <svg class="w-8 h-8 mb-1.5 drop-shadow-[0_0_10px_rgba(255,136,0,0.5)]" viewBox="0 0 48 48" fill="none">
                         <path d="M21.2 3.6c1.2-2.1 4.3-2.1 5.5 0l1.9 3.4c.5.8 1.4 1.3 2.3 1.3h.2c2.4.1 4.3 2.2 4.1 4.7l-.3 3.9c-.1 1 .4 1.9 1.2 2.4l3.3 2.1c2.1 1.3 2.8 4 1.6 6.1l-2 3.4c-.5.8-.5 1.8 0 2.6l2 3.4c1.2 2.1.5 4.8-1.6 6.1l-3.3 2.1c-.8.5-1.3 1.5-1.2 2.4l.3 3.9c.2 2.4-1.7 4.5-4.1 4.7h-.2c-1 0-1.8.5-2.3 1.3l-1.9 3.4c-1.2 2.1-4.3 2.1-5.5 0l-1.9-3.4c-.5-.8-1.4-1.3-2.3-1.3h-.2c-2.4-.1-4.3-2.2-4.1-4.7l.3-3.9c.1-1-.4-1.9-1.2-2.4l-3.3-2.1c-2.1-1.3-2.8-4-1.6-6.1l2-3.4c.5-.8.5-1.8 0-2.6l-2-3.4c-1.2-2.1-.5-4.8 1.6-6.1l3.3-2.1c.8-.5 1.3-1.5 1.2-2.4l-.3-3.9c-.2-2.4 1.7-4.5 4.1-4.7h.2c1 0 1.8-.5 2.3-1.3l1.9-3.4z" fill="#FF8800" opacity="0.15"/>
                         <path d="M24 4L14 36H34L24 4Z" fill="#FF8800"/>
                         <path d="M19 20H29L30.5 25H17.5L19 20Z" fill="#FFFFFF"/>
                         <path d="M16 29H32L33.5 34H14.5L16 29Z" fill="#FFFFFF"/>
-                        <path d="M8 38C8 36.9 8.9 36 10 36H38C39.1 36 40 36.9 40 38C40 39.1 39.1 40 38 40H10C8.9 40 8 39.1 8 38Z" fill="#FF8800"/>
+                        <path d="M8 38C8 36.9 8.9 36 10 36H38C39.1 36 40 39.1 39.1 40 38 40H10C8.9 40 8 39.1 8 38Z" fill="#FF8800"/>
                     </svg>
                     <span class="font-bold text-xs text-gray-200">VLC Player</span>
-                </a>
-                <a href="intent:{{file_url}}#Intent;action=android.intent.action.VIEW;type=video/*;package=com.mxtech.videoplayer.ad;end;" class="intent-card">
+                </button>
+                <button onclick="launchApp('mx')" class="intent-card">
                     <i class="fas fa-play-circle text-[#0088ff] text-2xl mb-1.5 drop-shadow-[0_0_10px_rgba(0,136,255,0.5)]"></i>
                     <span class="font-bold text-xs text-gray-200">MX Player</span>
-                </a>
-                <a href="intent:{{file_url}}#Intent;action=android.intent.action.VIEW;type=video/*;package=com.mxtech.videoplayer.pro;end;" class="intent-card">
+                </button>
+                <button onclick="launchApp('mxpro')" class="intent-card">
                     <i class="fas fa-play-circle text-[#0066cc] text-2xl mb-1.5 drop-shadow-[0_0_10px_rgba(0,102,204,0.5)]"></i>
                     <span class="font-bold text-xs text-gray-200">MX Pro</span>
-                </a>
-                <a href="intent:{{file_url}}#Intent;action=android.intent.action.VIEW;type=video/*;package=is.xyz.mpv;end;" class="intent-card">
+                </button>
+                <button onclick="launchApp('mpv')" class="intent-card">
                     <i class="fas fa-film text-[#aa00ff] text-2xl mb-1.5 drop-shadow-[0_0_10px_rgba(170,0,255,0.5)]"></i>
                     <span class="font-bold text-xs text-gray-200">MPV Player</span>
-                </a>
-                <a href="intent:{{file_url}}#Intent;action=android.intent.action.VIEW;type=video/*;package=com.brouken.player;end;" class="intent-card">
+                </button>
+                <button onclick="launchApp('just')" class="intent-card">
                     <i class="fas fa-play text-[#00ccaa] text-2xl mb-1.5 drop-shadow-[0_0_10px_rgba(0,204,170,0.5)]"></i>
                     <span class="font-bold text-xs text-gray-200">Just Player</span>
-                </a>
-                <a href="intent:{{file_url}}#Intent;action=android.intent.action.VIEW;type=video/*;package=com.kmplayer;end;" class="intent-card">
+                </button>
+                <button onclick="launchApp('km')" class="intent-card">
                     <i class="fas fa-video text-gray-300 text-2xl mb-1.5 drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]"></i>
                     <span class="font-bold text-xs text-gray-200">KMPlayer</span>
-                </a>
-                <a href="intent:{{file_url}}#Intent;action=android.intent.action.VIEW;type=video/*;package=org.courville.nova;end;" class="intent-card">
+                </button>
+                <button onclick="launchApp('nova')" class="intent-card">
                     <i class="fas fa-photo-video text-[#ff5500] text-2xl mb-1.5 drop-shadow-[0_0_10px_rgba(255,85,0,0.5)]"></i>
                     <span class="font-bold text-xs text-gray-200">Nova Player</span>
-                </a>
-                <a href="potplayer://{{file_url}}" class="intent-card hidden sm:flex">
+                </button>
+                <button onclick="launchApp('potplayer')" class="intent-card">
                     <i class="fas fa-tv text-[#ffd700] text-2xl mb-1.5 drop-shadow-[0_0_10px_rgba(255,215,0,0.5)]"></i>
                     <span class="font-bold text-xs text-gray-200">PotPlayer</span>
-                </a>
+                </button>
             </div>
         </div>
     </main>
 
     <!-- Footer -->
-    <footer class="glass-nav py-5 mt-auto">
+    <footer class="glass-nav py-4 mt-auto">
         <div class="container mx-auto px-4 flex flex-col items-center">
-            <div class="flex gap-4 mb-3">
+            <div class="flex gap-4 mb-2.5">
                 <a href="https://t.me/BoultFlix" target="_blank" class="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-sapphire hover:scale-105 transition shadow">
                     <i class="fab fa-telegram-plane text-sm"></i>
                 </a>
@@ -592,9 +597,7 @@
         </div>
     </footer>
 
-    <!-- Liquid Glass Center Popups -->
-    
-    <!-- Speed Popup -->
+    <!-- Center Popups -->
     <div id="speed-popup" class="glass-popup-backdrop" onclick="closePopupOnBackdrop(event, this)">
         <div class="glass-popup-card p-5">
             <div class="flex justify-between items-center mb-4">
@@ -605,7 +608,6 @@
         </div>
     </div>
 
-    <!-- Aspect Ratio Popup -->
     <div id="aspect-popup" class="glass-popup-backdrop" onclick="closePopupOnBackdrop(event, this)">
         <div class="glass-popup-card p-5">
             <div class="flex justify-between items-center mb-4">
@@ -621,7 +623,6 @@
         </div>
     </div>
 
-    <!-- Audio Stream Popup -->
     <div id="audio-popup" class="glass-popup-backdrop" onclick="closePopupOnBackdrop(event, this)">
         <div class="glass-popup-card p-5">
             <div class="flex justify-between items-center mb-3">
@@ -634,14 +635,12 @@
         </div>
     </div>
 
-    <!-- Subtitle & Font Size % Popup -->
     <div id="sub-popup" class="glass-popup-backdrop" onclick="closePopupOnBackdrop(event, this)">
         <div class="glass-popup-card p-5">
             <div class="flex justify-between items-center mb-3">
                 <h3 class="font-bold text-sm font-['Outfit'] text-white">Subtitles & Font Size</h3>
                 <button onclick="closeAllPopups()" class="text-gray-400 hover:text-white"><i class="fas fa-times text-xs"></i></button>
             </div>
-            
             <div class="mb-3">
                 <button class="w-full py-2.5 px-4 rounded-xl bg-sapphire/20 border border-sapphire/50 text-sapphire text-xs font-semibold text-center mb-3" onclick="closeAllPopups()">Subtitles Off</button>
                 <label class="text-[11px] font-bold text-gray-400 uppercase tracking-wider block mb-2">Caption Text Size</label>
@@ -657,20 +656,16 @@
         </div>
     </div>
 
-    <!-- VLC-Style Audio Delay Sync Popup -->
     <div id="audio-delay-popup" class="glass-popup-backdrop" onclick="closePopupOnBackdrop(event, this)">
         <div class="glass-popup-card p-5">
             <div class="flex justify-between items-center mb-3">
                 <h3 class="font-bold text-sm font-['Outfit'] text-white">Audio Sync (Delay)</h3>
                 <button onclick="closeAllPopups()" class="text-gray-400 hover:text-white"><i class="fas fa-times text-xs"></i></button>
             </div>
-            
             <div class="text-center py-2">
                 <div class="text-xl font-bold font-mono text-sapphire mb-1" id="delay-value-display">0.0 ms</div>
-                <p class="text-[11px] text-gray-400 mb-4">Adjust if audio is out of sync with video</p>
-                
+                <p class="text-[11px] text-gray-400 mb-4">Earbud latency adjustment</p>
                 <input type="range" min="-2000" max="2000" step="50" value="0" id="audio-delay-slider" class="w-full mb-4">
-                
                 <div class="flex justify-between gap-2">
                     <button onclick="nudgeDelay(-50)" class="flex-1 py-1.5 bg-white/5 hover:bg-white/10 rounded-lg text-xs font-semibold">-50 ms</button>
                     <button onclick="resetDelay()" class="flex-1 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-semibold text-gray-300">Reset</button>
@@ -702,22 +697,24 @@
         const timelineContainer = document.getElementById('timeline-container');
         const timelineTooltip = document.getElementById('timeline-tooltip');
         const errorScreen = document.getElementById('error-screen');
+        const videoLoader = document.getElementById('video-loader');
 
         function initPlayer() {
             errorScreen.classList.add('hidden');
-            showCenterControls(false); // Hide buttons when loading initial stream
-            document.getElementById('video-loader').classList.remove('hidden');
+            videoLoader.classList.remove('hidden');
+            showCenterControls(false);
 
             if (FILE_URL.endsWith('.m3u8')) {
                 if (Hls.isSupported()) {
-                    const hls = new Hls();
+                    const hls = new Hls({ maxBufferLength: 30, enableWorker: true });
                     hls.loadSource(FILE_URL);
                     hls.attachMedia(video);
                 } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                     video.src = FILE_URL;
                 }
             } else {
-                video.src = FILE_URL;
+                // jsmkv polyfill operates on the media source / source tag directly
+                video.load();
             }
         }
 
@@ -734,10 +731,11 @@
             video.play().catch(e => console.log(e));
         }
 
-        video.addEventListener('error', () => {
-            document.getElementById('video-loader').classList.add('hidden');
+        video.addEventListener('error', (e) => {
+            console.warn("Video engine error:", e);
+            videoLoader.classList.add('hidden');
             errorScreen.classList.remove('hidden');
-            showCenterControls(false); // Hide 3 buttons when error screen is on
+            showCenterControls(false);
         });
 
         function formatTime(seconds) {
@@ -754,7 +752,7 @@
             toast.textContent = msg;
             toast.classList.add('show');
             clearTimeout(toastTimeout);
-            toastTimeout = setTimeout(() => toast.classList.remove('show'), 2200);
+            toastTimeout = setTimeout(() => toast.classList.remove('show'), 2600);
         }
 
         function resetHudTimeout() {
@@ -782,24 +780,29 @@
             clearTimeout(hudTimeout);
         });
 
-        // Hide buttons while buffering/loading, show when ready/playing
         video.addEventListener('waiting', () => {
-            document.getElementById('video-loader').classList.remove('hidden');
+            videoLoader.classList.remove('hidden');
             showCenterControls(false);
         });
         video.addEventListener('playing', () => {
-            document.getElementById('video-loader').classList.add('hidden');
+            videoLoader.classList.add('hidden');
             errorScreen.classList.add('hidden');
             showCenterControls(true);
         });
         video.addEventListener('canplay', () => {
-            document.getElementById('video-loader').classList.add('hidden');
+            videoLoader.classList.add('hidden');
             showCenterControls(true);
         });
 
         btnPlay.addEventListener('click', togglePlay);
         playerContainer.addEventListener('mousemove', resetHudTimeout);
         playerContainer.addEventListener('touchstart', resetHudTimeout, {passive: true});
+        
+        // Fullscreen listener to ensure HUD responds on desktop
+        document.addEventListener('fullscreenchange', () => {
+            resetHudTimeout();
+        });
+
         playerContainer.addEventListener('click', (e) => {
             if (e.target.closest('.hud') || e.target.closest('#error-screen')) return;
             if (hud.classList.contains('hidden-hud')) resetHudTimeout();
@@ -831,6 +834,8 @@
 
         video.addEventListener('loadedmetadata', () => {
             timeTotal.textContent = formatTime(video.duration);
+            videoLoader.classList.add('hidden');
+            showCenterControls(true);
         });
 
         video.addEventListener('timeupdate', () => {
@@ -902,11 +907,9 @@
         const btnFullscreen = document.getElementById('btn-fullscreen');
         btnFullscreen.addEventListener('click', () => {
             if (!document.fullscreenElement) {
-                playerContainer.requestFullscreen();
-                playerContainer.classList.add('fullscreen');
+                playerContainer.requestFullscreen().catch(() => {});
             } else {
-                document.exitFullscreen();
-                playerContainer.classList.remove('fullscreen');
+                document.exitFullscreen().catch(() => {});
             }
         });
         document.getElementById('btn-pip').addEventListener('click', () => {
@@ -941,7 +944,7 @@
         });
 
         function setAspect(ratio) {
-            video.className = '';
+            video.className = 'mkv-player';
             if (ratio === 'fill') video.classList.add('ar-fill');
             else if (ratio === 'original') video.classList.add('ar-original');
             else playerContainer.style.aspectRatio = ratio;
@@ -949,7 +952,6 @@
             showToast(`Aspect: ${ratio}`);
         }
 
-        // Subtitle Font Size % Toggle
         function setSubSize(pct, btnElem) {
             document.documentElement.style.setProperty('--sub-size', pct);
             document.querySelectorAll('.sub-size-btn').forEach(b => {
@@ -961,7 +963,7 @@
             showToast(`Subtitle Size: ${pct}`);
         }
 
-        // VLC-Style Audio Delay Sync Logic
+        // VLC-Style Audio Delay Sync
         let audioCtx = null;
         let delayNode = null;
         let currentDelayMs = 0;
@@ -978,7 +980,7 @@
                     delayNode.connect(audioCtx.destination);
                 }
             } catch (e) {
-                console.log("AudioContext already initialized or unsupported:", e);
+                console.log("AudioContext state:", e);
             }
         }
 
@@ -1009,19 +1011,66 @@
             showToast("Audio Delay Reset");
         }
 
-        document.getElementById('btn-download').addEventListener('click', () => {
+        // Fast Direct Download with immediate visual feedback
+        const btnDownload = document.getElementById('btn-download');
+        btnDownload.addEventListener('click', () => {
+            const dlText = document.getElementById('dl-text');
+            const dlIcon = document.getElementById('dl-icon');
+            dlText.textContent = "Starting...";
+            dlIcon.className = "fas fa-spinner fa-spin text-xs";
+            
             const a = document.createElement('a');
             a.href = FILE_URL;
             a.download = FILE_NAME;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            showToast('Download started...');
+            showToast('Download request sent to server...');
+            
+            setTimeout(() => {
+                dlText.textContent = "Fast Download";
+                dlIcon.className = "fas fa-download text-xs";
+            }, 3000);
         });
 
+        // Copy Stream Link
         document.getElementById('btn-copy').addEventListener('click', () => {
-            navigator.clipboard.writeText(FILE_URL).then(() => showToast('Link copied!'));
+            navigator.clipboard.writeText(FILE_URL).then(() => showToast('Stream link copied!'));
         });
+
+        // Smart External Player Launcher (PC vs Android detection)
+        function launchApp(type) {
+            const isAndroid = /Android/i.test(navigator.userAgent);
+            
+            if (isAndroid) {
+                const packages = {
+                    vlc: 'org.videolan.vlc',
+                    mx: 'com.mxtech.videoplayer.ad',
+                    mxpro: 'com.mxtech.videoplayer.pro',
+                    mpv: 'is.xyz.mpv',
+                    just: 'com.brouken.player',
+                    km: 'com.kmplayer',
+                    nova: 'org.courville.nova'
+                };
+                if (packages[type]) {
+                    window.location.href = `intent:${FILE_URL}#Intent;action=android.intent.action.VIEW;type=video/*;package=${packages[type]};end;`;
+                } else if (type === 'potplayer') {
+                    window.location.href = `potplayer://${FILE_URL}`;
+                }
+            } else {
+                // Desktop / PC handling
+                if (type === 'potplayer') {
+                    window.location.href = `potplayer://${FILE_URL}`;
+                    showToast("Opening in PotPlayer PC...");
+                } else {
+                    navigator.clipboard.writeText(FILE_URL);
+                    showToast(`${type.toUpperCase()}: Link copied! Paste into player (Ctrl+N)`);
+                    if (type === 'vlc') {
+                        window.location.href = `vlc://${FILE_URL}`;
+                    }
+                }
+            }
+        }
 
         document.addEventListener('mousemove', e => {
             document.documentElement.style.setProperty('--x', e.clientX + 'px');
@@ -1050,6 +1099,7 @@
             togglePlay();
         };
 
+        // Bootstrap
         initPlayer();
         video.addEventListener('loadedmetadata', () => {
             if (video.currentTime === 0) checkResume();
