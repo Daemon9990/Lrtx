@@ -1085,7 +1085,7 @@ async def send_movie_update(bot, base_name):
                 ]])
 
                 # Movie and Series both get 2560x1440 Landscape resolution
-                size = (2560, 1440) if movie_doc.get("is_backdrop") else (853, 1280)
+                size = (2560, 1440)
 
                 poster_url = movie_doc.get("poster_url")
                 is_photo = False
