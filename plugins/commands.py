@@ -9,6 +9,8 @@ import sys
 import pytz
 from .pmfilter import auto_filter 
 from Script import script
+from dreamxbotz.Bot import dreamxbotz
+from dreamxbotz.util.file_properties import get_hash
 from datetime import datetime, timedelta
 from database.refer import referdb
 from database.config_db import mdb
@@ -594,7 +596,16 @@ async def start(client, message):
         pass
 
 async def stream_buttons(user_id: int, file_id: str):
-    return [[InlineKeyboardButton('📌 Jᴏɪɴ ᴜᴘᴅᴀᴛᴇꜱ ᴄʜᴀɴɴᴇʟ 📌', url=UPDATE_CHNL_LNK)]]
+    try:
+        log_msg = await dreamxbotz.send_cached_media(chat_id=BIN_CHANNEL, file_id=file_id)
+        stream_link = f"{URL}watch/{log_msg.id}?hash={get_hash(log_msg)}"
+        return [
+            [InlineKeyboardButton('⚡ Fᴀsᴛ Dᴏᴡɴʟᴏᴀᴅ / Sᴛʀᴇᴀᴍ ⚡', url=stream_link)],
+            [InlineKeyboardButton('📌 Jᴏɪɴ ᴜᴘᴅᴀᴛᴇꜱ ᴄʜᴀɴɴᴇʟ 📌', url=UPDATE_CHNL_LNK)]
+        ]
+    except Exception as e:
+        logger.error(f"Error in stream_buttons: {e}")
+        return [[InlineKeyboardButton('📌 Jᴏɪɴ ᴜᴘᴅᴀᴛᴇꜱ ᴄʜᴀɴɴᴇʟ 📌', url=UPDATE_CHNL_LNK)]]
     
 @Client.on_message(filters.command('logs') & filters.user(ADMINS))
 async def log_file(bot, message):
