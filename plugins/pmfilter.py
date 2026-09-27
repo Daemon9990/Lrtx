@@ -824,10 +824,6 @@ async def cb_handler(client: Client, query: CallbackQuery):
             return await query.answer(script.NT_ALRT_TXT, show_alert=True)
         await query.answer("Tʜᴀɴᴋs ꜰᴏʀ ᴄʟᴏsᴇ 🙈")
         await query.message.delete()
-        try:
-            await query.message.reply_to_message.delete()
-        except Exception:
-            pass
 
     elif query.data == "pages":
         await query.answer("Tʜɪs ɪs ᴘᴀɢᴇs ʙᴜᴛᴛᴏɴ 😅")
