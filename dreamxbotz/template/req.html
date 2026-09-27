@@ -51,7 +51,7 @@
             position: relative;
         }
 
-        /* Ambient Cursor Radial Glow */
+        /* Ambient Cursor Glow */
         body::before {
             content: '';
             position: fixed;
@@ -63,7 +63,7 @@
             z-index: 0;
         }
 
-        /* Ambient Mesh Layer */
+        /* Background Dynamic Mesh */
         .ambient-layer {
             position: fixed;
             inset: 0;
@@ -132,7 +132,7 @@
             }
         }
 
-        /* Strict Middle Centering */
+        /* Center Video Frame */
         .player-container {
             aspect-ratio: 16 / 9;
             background: #000000;
@@ -144,8 +144,15 @@
             align-items: center;
             justify-content: center;
             z-index: 10;
+            cursor: default;
         }
 
+        /* PC 5-sec Inactivity Hidden Cursor */
+        .hide-cursor, .hide-cursor * {
+            cursor: none !important;
+        }
+
+        /* Native Fullscreen Layering */
         .player-container:fullscreen,
         .player-container:-webkit-full-screen {
             border-radius: 0 !important;
@@ -160,6 +167,21 @@
             align-items: center !important;
             justify-content: center !important;
             z-index: 2147483647 !important;
+        }
+
+        /* Smart CSS 90deg Orientation Lock Fallback for Mobile */
+        .player-container.css-landscape {
+            position: fixed !important;
+            top: 50% !important;
+            left: 50% !important;
+            width: 100vh !important;
+            height: 100vw !important;
+            transform: translate(-50%, -50%) rotate(90deg) !important;
+            z-index: 2147483647 !important;
+            border-radius: 0 !important;
+            max-width: none !important;
+            max-height: none !important;
+            background: #000000 !important;
         }
 
         video {
@@ -284,7 +306,7 @@
             box-shadow: 0 0 8px #00d2ff;
         }
 
-        /* Top-Layer Modals (Always Above Video in Fullscreen) */
+        /* Top-Layer Fullscreen Popups */
         .glass-popup-backdrop {
             position: absolute;
             inset: 0;
@@ -374,7 +396,7 @@
         <div class="aura-blob blob-violet"></div>
     </div>
 
-    <!-- Floating Glass Navbar (Without top light toggle) -->
+    <!-- Floating Glass Navbar -->
     <nav class="glass-nav sticky top-0 px-4 md:px-8 py-3 flex items-center justify-between">
         <a href="https://t.me/BoultFlix" target="_blank" class="flex items-center gap-2.5 group">
             <div class="w-8 h-8 rounded-full bg-gradient-to-br from-sapphire to-cobalt flex items-center justify-center shadow-[0_0_15px_rgba(0,210,255,0.6)]">
@@ -387,7 +409,7 @@
         </a>
     </nav>
 
-    <!-- Main Content (Middle Centered) -->
+    <!-- Main Content (Centered) -->
     <main class="container mx-auto px-3 md:px-6 py-4 md:py-6 max-w-4xl my-auto flex-grow flex flex-col justify-center relative z-10">
         
         <div class="mb-3 px-1">
@@ -399,7 +421,7 @@
             </div>
         </div>
 
-        <!-- Master Video Player (All Modals Live Inside Container) -->
+        <!-- Master Video Player Container -->
         <div class="glass-panel p-1 mb-5">
             <div class="player-container" id="player-container">
                 <video id="video-player" class="mkv-player" playsinline preload="auto" crossorigin="anonymous">
@@ -407,10 +429,10 @@
                     <source src="{{file_url}}" type="video/webm">
                 </video>
 
-                <!-- Toast Notification inside player -->
+                <!-- Toast Inside Player -->
                 <div id="toast" class="toast text-xs md:text-sm font-medium">Message</div>
 
-                <!-- Video Buffer Loader -->
+                <!-- Video Loader -->
                 <div id="video-loader" class="absolute inset-0 z-35 flex items-center justify-center pointer-events-none hidden">
                     <div class="loader"></div>
                 </div>
@@ -421,8 +443,8 @@
                         <div class="w-12 h-12 rounded-full bg-red-500/20 text-red-500 flex items-center justify-center mx-auto mb-3 border border-red-500/40">
                             <i class="fas fa-circle-exclamation text-xl"></i>
                         </div>
-                        <h4 class="font-bold text-sm text-white font-['Outfit'] mb-1">Playback Interrupted</h4>
-                        <p class="text-gray-400 text-xs mb-4">Stream buffer delayed. Click below to retry or launch directly in VLC/MX.</p>
+                        <h4 class="font-bold text-sm text-white font-['Outfit'] mb-1">Heavy Codec Playback Delay</h4>
+                        <p class="text-gray-400 text-xs mb-4">If this file is in HEVC/x265 format, launch below in VLC or MX Player for smooth hardware acceleration.</p>
                         <div class="flex gap-2">
                             <button onclick="retryPlayback()" class="flex-1 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-xs font-semibold">Retry</button>
                             <button onclick="launchApp('vlc')" class="flex-1 py-2 bg-sapphire/20 hover:bg-sapphire/30 text-sapphire border border-sapphire/40 rounded-xl text-xs font-bold flex items-center justify-center gap-1">VLC Play</button>
@@ -430,7 +452,7 @@
                     </div>
                 </div>
 
-                <!-- Double Tap Seek Zones -->
+                <!-- Double Tap Zones -->
                 <div class="double-tap-zone dt-left" id="dt-left">
                     <div class="ripple-circle" id="ripple-left"><i class="fas fa-backward"></i></div>
                 </div>
@@ -438,11 +460,15 @@
                     <div class="ripple-circle" id="ripple-right"><i class="fas fa-forward"></i></div>
                 </div>
 
-                <!-- HUD Over Video Layer -->
+                <!-- HUD Controls Layer -->
                 <div class="hud" id="hud">
                     <div class="p-3 flex justify-between items-center bg-gradient-to-b from-black/90 to-transparent">
-                        <span class="text-xs font-medium text-gray-300 truncate max-w-[60%] drop-shadow">{{file_name}}</span>
+                        <span class="text-xs font-medium text-gray-300 truncate max-w-[50%] drop-shadow">{{file_name}}</span>
                         <div class="flex items-center gap-2 ml-auto">
+                            <!-- Mobile/Tablet Rotation Lock Button -->
+                            <button class="w-8 h-8 rounded-full hover:bg-white/15 flex items-center justify-center text-xs transition active:scale-90 text-gray-300 hover:text-white" id="btn-rotate" onclick="manualToggleRotate()" title="Rotate / Auto Landscape">
+                                <i class="fas fa-sync-alt" id="rotate-icon"></i>
+                            </button>
                             <button class="w-8 h-8 rounded-full hover:bg-white/15 flex items-center justify-center text-xs transition active:scale-90 text-gray-300 hover:text-white" onclick="openPopup('audio-delay-popup')" title="Audio Sync Delay">
                                 <i class="fas fa-sliders-h"></i>
                             </button>
@@ -511,7 +537,7 @@
                     </div>
                 </div>
 
-                <!-- ALL MODAL POPUPS (INSIDE CONTAINER FOR FULLSCREEN VISIBILITY) -->
+                <!-- ALL MODALS EMBEDDED INSIDE PLAYER CONTAINER -->
 
                 <!-- Resume Stream Modal -->
                 <div id="resume-modal" class="glass-popup-backdrop">
@@ -742,6 +768,8 @@
         const FILE_NAME = `{{file_name}}`;
         const SAVED_POS_KEY = `boultflix_pos_{{file_name}}`;
         
+        const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1);
+
         const video = document.getElementById('video-player');
         const playerContainer = document.getElementById('player-container');
         const hud = document.getElementById('hud');
@@ -822,7 +850,7 @@
             if (!video.paused) {
                 hudTimeout = setTimeout(() => {
                     hud.classList.add('hidden-hud');
-                }, 3200);
+                }, 3500);
             }
         }
 
@@ -855,16 +883,59 @@
             showCenterControls(true);
         });
 
-        btnPlay.addEventListener('click', togglePlay);
-        
-        playerContainer.addEventListener('mousemove', resetHudTimeout);
-        playerContainer.addEventListener('touchstart', resetHudTimeout, {passive: true});
-
-        playerContainer.addEventListener('click', (e) => {
-            if (e.target.closest('.hud') || e.target.closest('#error-screen') || e.target.closest('.glass-popup-backdrop')) return;
-            if (hud.classList.contains('hidden-hud')) resetHudTimeout();
-            else togglePlay();
+        btnPlay.addEventListener('click', (e) => {
+            e.stopPropagation();
+            togglePlay();
         });
+
+        // PC 5-Second Inactivity & Click-Anywhere Logic
+        let pcInactivityTimer;
+        function resetPcInactivity() {
+            playerContainer.classList.remove('hide-cursor');
+            resetHudTimeout();
+            clearTimeout(pcInactivityTimer);
+            if (!isMobile && !video.paused) {
+                pcInactivityTimer = setTimeout(() => {
+                    playerContainer.classList.add('hide-cursor');
+                    hud.classList.add('hidden-hud');
+                }, 5000);
+            }
+        }
+
+        if (!isMobile) {
+            playerContainer.addEventListener('mousemove', resetPcInactivity);
+            
+            // PC: Clicking anywhere on the player area toggles play/pause
+            playerContainer.addEventListener('click', (e) => {
+                if (e.target.closest('button') || e.target.closest('input') || e.target.closest('#timeline-container') || e.target.closest('.glass-popup-backdrop') || e.target.closest('#error-screen') || e.target.closest('.double-tap-zone')) {
+                    return;
+                }
+                togglePlay();
+            });
+        }
+
+        // Android / Mobile 2-Step Tap Engine
+        let lastTapTime = 0;
+        if (isMobile) {
+            playerContainer.addEventListener('touchend', (e) => {
+                if (e.target.closest('button') || e.target.closest('input') || e.target.closest('#timeline-container') || e.target.closest('.glass-popup-backdrop') || e.target.closest('#error-screen') || e.target.closest('.double-tap-zone')) {
+                    return;
+                }
+
+                const now = new Date().getTime();
+                if (now - lastTapTime < 320) {
+                    return; // Handled by double-tap seeker
+                }
+
+                // 1st Tap: Lock khulbe (controls show hobe)
+                if (hud.classList.contains('hidden-hud')) {
+                    resetHudTimeout();
+                } else {
+                    // 2nd Tap: Controls already open -> Screen-e tiple play/pause hobe
+                    togglePlay();
+                }
+            });
+        }
 
         function seek(offset) {
             video.currentTime += offset;
@@ -873,10 +944,9 @@
         document.getElementById('btn-rewind').addEventListener('click', (e) => { e.stopPropagation(); seek(-10); });
         document.getElementById('btn-forward').addEventListener('click', (e) => { e.stopPropagation(); seek(10); });
 
-        let lastTap = 0;
         function handleDoubleTap(e, offset, rippleId) {
             const currentTime = new Date().getTime();
-            if (currentTime - lastTap < 300) {
+            if (currentTime - lastTapTime < 320) {
                 seek(offset);
                 const ripple = document.getElementById(rippleId);
                 ripple.classList.remove('ripple-animate');
@@ -884,10 +954,10 @@
                 ripple.classList.add('ripple-animate');
                 e.preventDefault();
             }
-            lastTap = currentTime;
+            lastTapTime = currentTime;
         }
-        document.getElementById('dt-left').addEventListener('touchstart', (e) => handleDoubleTap(e, -10, 'ripple-left'));
-        document.getElementById('dt-right').addEventListener('touchstart', (e) => handleDoubleTap(e, 10, 'ripple-right'));
+        document.getElementById('dt-left').addEventListener('touchend', (e) => handleDoubleTap(e, -10, 'ripple-left'));
+        document.getElementById('dt-right').addEventListener('touchend', (e) => handleDoubleTap(e, 10, 'ripple-right'));
 
         video.addEventListener('loadedmetadata', () => {
             timeTotal.textContent = formatTime(video.duration);
@@ -942,8 +1012,8 @@
         timelineContainer.addEventListener('mouseenter', () => timelineTooltip.classList.remove('hidden'));
         timelineContainer.addEventListener('mouseleave', () => timelineTooltip.classList.add('hidden'));
 
-        timelineContainer.addEventListener('touchstart', (e) => { isDragging = true; updateTimeline(e.touches[0]); });
-        timelineContainer.addEventListener('touchmove', (e) => { if (isDragging) updateTimeline(e.touches[0]); });
+        timelineContainer.addEventListener('touchstart', (e) => { isDragging = true; updateTimeline(e.touches[0]); }, {passive: true});
+        timelineContainer.addEventListener('touchmove', (e) => { if (isDragging) updateTimeline(e.touches[0]); }, {passive: true});
         timelineContainer.addEventListener('touchend', () => { isDragging = false; });
 
         // Volume Capsule
@@ -955,13 +1025,14 @@
             video.muted = (e.target.value == 0);
             volIcon.className = video.muted ? 'fas fa-volume-mute text-red-400' : 'fas fa-volume-up';
         });
-        btnMute.addEventListener('click', () => {
+        btnMute.addEventListener('click', (e) => {
+            e.stopPropagation();
             video.muted = !video.muted;
             volSlider.value = video.muted ? 0 : (video.volume || 1);
             volIcon.className = video.muted ? 'fas fa-volume-mute text-red-400' : 'fas fa-volume-up';
         });
 
-        // Keyboard Hotkeys Engine
+        // Keyboard Hotkeys
         window.addEventListener('keydown', (e) => {
             if (document.querySelector('.glass-popup-backdrop.active')) return;
             switch(e.code) {
@@ -995,9 +1066,58 @@
             resetHudTimeout();
         });
 
-        // Player-Only Fullscreen Toggle
+        // Smart Rotation & Gyro Auto-Landscape (Mobile/Tablet Only)
+        let isLandscapeMode = false;
+
+        function setLandscape(state) {
+            if (!isMobile) return;
+            isLandscapeMode = state;
+            
+            if (state) {
+                if (screen.orientation && screen.orientation.lock) {
+                    screen.orientation.lock('landscape').catch(() => {
+                        playerContainer.classList.add('css-landscape');
+                    });
+                } else {
+                    playerContainer.classList.add('css-landscape');
+                }
+                showToast("Landscape Mode");
+            } else {
+                if (screen.orientation && screen.orientation.unlock) {
+                    screen.orientation.unlock();
+                }
+                playerContainer.classList.remove('css-landscape');
+                showToast("Portrait Mode");
+            }
+        }
+
+        function manualToggleRotate() {
+            setLandscape(!isLandscapeMode);
+        }
+
+        // Gyro Tilt Listener (When System Auto-Rotate is OFF)
+        if (isMobile && window.DeviceOrientationEvent) {
+            window.addEventListener('deviceorientation', (e) => {
+                if (e.gamma === null || e.beta === null) return;
+                
+                // Phone tilted sideways in hands
+                const isSideways = Math.abs(e.gamma) > 55 && Math.abs(e.beta) < 55;
+                const isUpright = Math.abs(e.gamma) < 25 && e.beta > 30;
+
+                if (isSideways && !isLandscapeMode && !video.paused) {
+                    setLandscape(true);
+                } else if (isUpright && isLandscapeMode) {
+                    setLandscape(false);
+                }
+            }, { passive: true });
+        }
+
+        // Fullscreen Toggle
         const btnFullscreen = document.getElementById('btn-fullscreen');
-        btnFullscreen.addEventListener('click', toggleFullscreen);
+        btnFullscreen.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleFullscreen();
+        });
 
         function toggleFullscreen() {
             if (!document.fullscreenElement && !document.webkitFullscreenElement) {
@@ -1016,7 +1136,8 @@
             resetHudTimeout();
         }
 
-        document.getElementById('btn-pip').addEventListener('click', () => {
+        document.getElementById('btn-pip').addEventListener('click', (e) => {
+            e.stopPropagation();
             if (document.pictureInPictureElement) document.exitPictureInPicture();
             else if (document.pictureInPictureEnabled) video.requestPictureInPicture();
         });
@@ -1056,7 +1177,7 @@
             showToast(`Aspect: ${ratio}`);
         }
 
-        // Automatic Track Parser for Embedded Subtitles & Audio
+        // Subtitles & Audio Track Parser
         function parseEmbeddedTracks() {
             const subList = document.getElementById('sub-track-list');
             subList.innerHTML = `<button class="w-full py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-left" onclick="disableSubtitles()">Subtitles Off</button>`;
@@ -1198,7 +1319,7 @@
 
         function directBrowserDownload() {
             closeAllPopups();
-            showToast("Download Starting Via Browser... Please Wait");
+            showToast("Download starting via browser... please wait");
             window.location.assign(FILE_URL);
         }
 
@@ -1206,11 +1327,9 @@
             navigator.clipboard.writeText(FILE_URL).then(() => showToast('Stream link copied!'));
         });
 
-        // Smart PC vs Android Player Launcher
+        // Launch Apps on Mobile / Desktop
         function launchApp(type) {
-            const isAndroid = /Android/i.test(navigator.userAgent);
-            
-            if (isAndroid) {
+            if (isMobile) {
                 const packages = {
                     vlc: 'org.videolan.vlc',
                     mx: 'com.mxtech.videoplayer.ad',
@@ -1247,8 +1366,8 @@
             }
         }
 
-        // Mouse Position Tracker for Ambient Glow
-        window.addEventListener('mousemove', e => {
+        // Live Cursor Ambient Glow
+        document.addEventListener('mousemove', e => {
             document.documentElement.style.setProperty('--x', e.clientX + 'px');
             document.documentElement.style.setProperty('--y', e.clientY + 'px');
         });
