@@ -275,7 +275,7 @@ Mᴇꜱꜱᴀɢᴇ : <b>{}</b>"""
     MOVIE_UPDATE_NOTIFY_TXT = """
 📩 <b><a href="{imdb_url}">ɴᴇᴡ {tag} ᴀᴅᴅᴇᴅ</a></b>
 
-✨ ᴛɪᴛʟᴇ : {filename}
+✨ ᴛɪᴛʟᴇ : <code>{filename}</code>
 ⚬────────✧────────⚬
 <blockquote>🎭 ɢᴇɴʀᴇs : <b>{genres}</b>
 🍿 ᴏᴛᴛ : <b>{ott}</b>
