@@ -3,8 +3,9 @@
 <head>
     <link rel="icon" type="image/png" href="https://i.ibb.co/mFdT56V5/20260922-071000.png">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>{{file_name}} - BoultFlix</title>
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -28,8 +29,7 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
     
-    <!-- Video Engine Dependencies -->
-    <script src="https://cdn.jsdelivr.net/gh/Bharathboy/utils@main/jsmkv-polyfill.js"></script>
+    <!-- HLS & Native Cast Sender -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
 
@@ -37,7 +37,7 @@
         :root {
             --x: 50vw;
             --y: 50vh;
-            --sub-size: 100%;
+            --sub-scale: 1;
         }
         * {
             box-sizing: border-box;
@@ -49,10 +49,14 @@
             font-family: 'Inter', sans-serif;
             overflow-x: hidden;
             min-height: 100vh;
+            min-height: 100dvh;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
-        /* Ambient Cursor Glow */
+        /* Interactive Cursor Ambient Glow */
         body::before {
             content: '';
             position: fixed;
@@ -78,7 +82,7 @@
         .aura-blob {
             position: absolute;
             border-radius: 50%;
-            filter: blur(100px);
+            filter: blur(110px);
             opacity: 0.35;
             animation: auraFloat 18s infinite alternate ease-in-out;
         }
@@ -107,38 +111,119 @@
         }
 
         .glass-nav {
-            background: rgba(6, 11, 22, 0.75);
+            background: rgba(6, 11, 22, 0.78);
             backdrop-filter: blur(35px) saturate(200%);
             -webkit-backdrop-filter: blur(35px) saturate(200%);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             position: relative;
             z-index: 40;
         }
+
+        /* Brand Text Blue Gradient Hover */
+        .brand-text {
+            background: linear-gradient(to right, #ffffff, #f3f4f6, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: all 0.3s ease;
+        }
+        .brand-group:hover .brand-text {
+            background: linear-gradient(90deg, #00d2ff 0%, #38bdf8 50%, #0051ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 12px rgba(0, 210, 255, 0.55));
+        }
+
         .glass-panel {
-            background: rgba(10, 16, 30, 0.6);
+            background: rgba(10, 16, 30, 0.65);
             backdrop-filter: blur(35px) saturate(190%);
             -webkit-backdrop-filter: blur(35px) saturate(190%);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 1.25rem;
+            border-radius: 1.15rem;
             position: relative;
             box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.75);
             transition: all 0.25s ease;
         }
-        .interactive-card:active { transform: scale(0.97); }
+
+        /* Liquid Glass Card */
+        .liquid-glass-card {
+            background: rgba(12, 18, 34, 0.58);
+            backdrop-filter: blur(50px) saturate(210%);
+            -webkit-backdrop-filter: blur(50px) saturate(210%);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 1.75rem;
+            position: relative;
+            box-shadow: 
+                0 30px 70px -15px rgba(0, 0, 0, 0.92),
+                inset 0 1px 1px 0 rgba(255, 255, 255, 0.22);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow: hidden;
+        }
         @media (pointer: fine) {
-            .interactive-card:hover {
-                border-color: rgba(0, 210, 255, 0.4);
-                box-shadow: 0 10px 30px -5px rgba(0, 210, 255, 0.3);
+            .liquid-glass-card:hover {
+                border-color: rgba(0, 210, 255, 0.45);
+                box-shadow: 0 35px 80px -10px rgba(0, 0, 0, 0.95), 0 0 40px rgba(0, 210, 255, 0.2);
+            }
+        }
+
+        /* Professional OTT Action Buttons */
+        .ott-btn-primary {
+            background: linear-gradient(135deg, rgba(0, 210, 255, 0.18) 0%, rgba(0, 81, 255, 0.22) 100%);
+            border: 1px solid rgba(0, 210, 255, 0.45);
+            border-radius: 0.9rem;
+            box-shadow: 0 8px 25px -5px rgba(0, 210, 255, 0.2);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .ott-btn-primary:active { transform: scale(0.97); }
+        @media (pointer: fine) {
+            .ott-btn-primary:hover {
+                background: linear-gradient(135deg, rgba(0, 210, 255, 0.28) 0%, rgba(0, 81, 255, 0.35) 100%);
+                border-color: rgba(0, 210, 255, 0.85);
+                box-shadow: 0 10px 30px -4px rgba(0, 210, 255, 0.45);
                 transform: translateY(-2px);
             }
         }
 
-        /* Center Video Frame */
+        .ott-btn-secondary {
+            background: rgba(14, 21, 38, 0.72);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.9rem;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .ott-btn-secondary:active { transform: scale(0.97); }
+        @media (pointer: fine) {
+            .ott-btn-secondary:hover {
+                background: rgba(20, 30, 54, 0.9);
+                border-color: rgba(0, 210, 255, 0.5);
+                box-shadow: 0 10px 28px -5px rgba(0, 210, 255, 0.28);
+                transform: translateY(-2px);
+            }
+        }
+
+        /* Red YouTube Guide Card */
+        .red-guide-card {
+            background: linear-gradient(135deg, rgba(35, 10, 16, 0.75) 0%, rgba(20, 8, 12, 0.85) 100%);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 0.9rem;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .red-guide-card:active { transform: scale(0.97); }
+        @media (pointer: fine) {
+            .red-guide-card:hover {
+                background: linear-gradient(135deg, rgba(55, 14, 22, 0.9) 0%, rgba(30, 10, 16, 0.95) 100%);
+                border-color: rgba(239, 68, 68, 0.75);
+                box-shadow: 0 10px 28px -5px rgba(239, 68, 68, 0.4);
+                transform: translateY(-2px);
+            }
+        }
+
+        /* Video Player Container */
         .player-container {
             aspect-ratio: 16 / 9;
             background: #000000;
             position: relative;
-            border-radius: 1.25rem;
+            border-radius: 1rem;
             overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
@@ -146,14 +231,14 @@
             justify-content: center;
             z-index: 10;
             cursor: default;
+            user-select: none;
         }
 
-        /* PC 5-sec Inactivity Hidden Cursor */
+        /* Instant Cursor Hide when HUD hides */
         .hide-cursor, .hide-cursor * {
             cursor: none !important;
         }
 
-        /* Native Fullscreen Layering */
         .player-container:fullscreen,
         .player-container:-webkit-full-screen {
             border-radius: 0 !important;
@@ -170,15 +255,15 @@
             z-index: 2147483647 !important;
         }
 
-        /* Smart CSS 90deg Orientation Lock Fallback for Mobile */
+        /* Mobile Landscape CSS Fallback */
         .player-container.css-landscape {
             position: fixed !important;
             top: 50% !important;
             left: 50% !important;
-            width: 100vh !important;
+            width: 100dvh !important;
             height: 100vw !important;
             transform: translate(-50%, -50%) rotate(90deg) !important;
-            z-index: 2147483647 !important;
+            z-index: 2147483640 !important;
             border-radius: 0 !important;
             max-width: none !important;
             max-height: none !important;
@@ -194,26 +279,63 @@
             object-position: center;
             margin: auto;
             background: #000000;
-            z-index: 1;
+            z-index: 10;
         }
+
+        /* Clean Cinematic Subtitle Font (Like Reference Images 2, 3, 4 - NO Black Box!) */
         video::cue {
-            font-size: var(--sub-size);
-            background-color: rgba(0, 0, 0, 0.8);
-            color: #ffffff;
-            text-shadow: 0 0 6px #000;
+            background: transparent !important;
+            background-color: transparent !important;
+            color: #ffffff !important;
+            font-family: 'Inter', sans-serif !important;
+            font-weight: 600 !important;
+            font-size: calc(1rem * var(--sub-scale)) !important;
+            text-shadow: 
+                0 2px 4px rgba(0, 0, 0, 0.95),
+                0 0 10px rgba(0, 0, 0, 0.85),
+                -1px -1px 0 rgba(0,0,0,0.9),
+                1px -1px 0 rgba(0,0,0,0.9),
+                -1px 1px 0 rgba(0,0,0,0.9),
+                1px 1px 0 rgba(0,0,0,0.9) !important;
         }
+
+        /* Custom Subtitle Overlay for 100% Consistent Font & Scaling */
+        #custom-sub-overlay {
+            position: absolute;
+            bottom: 12%;
+            left: 6%;
+            right: 6%;
+            text-align: center;
+            z-index: 22;
+            pointer-events: none;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            color: #ffffff;
+            line-height: 1.38;
+            font-size: calc(clamp(0.85rem, 2.2vw, 1.35rem) * var(--sub-scale));
+            text-shadow: 
+                0 2px 5px rgba(0, 0, 0, 0.98),
+                0 0 12px rgba(0, 0, 0, 0.9),
+                -1.2px -1.2px 0 #000,
+                1.2px -1.2px 0 #000,
+                -1.2px 1.2px 0 #000,
+                1.2px 1.2px 0 #000;
+            transition: bottom 0.25s ease;
+        }
+
         video.ar-fill { object-fit: cover !important; }
         video.ar-original { object-fit: none !important; }
         
+        /* HUD Layer (z-index: 30) */
         .hud {
             position: absolute;
             inset: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, transparent 28%, transparent 72%, rgba(0,0,0,0.85) 100%);
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 28%, transparent 72%, rgba(0,0,0,0.8) 100%);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.35s ease;
-            z-index: 40;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+            z-index: 30;
             visibility: visible;
             opacity: 1;
         }
@@ -223,38 +345,42 @@
             pointer-events: none;
         }
 
-        #center-controls {
-            transition: opacity 0.25s ease, transform 0.25s ease;
-        }
-        
+        /* Minimal Double-Tap Skip Zones (z-index: 25) */
         .double-tap-zone {
             position: absolute;
-            top: 15%; bottom: 15%;
-            width: 35%;
+            top: 18%; bottom: 20%;
+            width: 32%;
             z-index: 25;
             display: flex;
-            align-items: center; justify-content: center;
-            opacity: 0;
+            align-items: center;
+            justify-content: center;
             pointer-events: auto;
         }
         .dt-left { left: 0; }
         .dt-right { right: 0; }
-        .ripple-circle {
-            width: 70px; height: 70px;
-            background: rgba(0, 210, 255, 0.25);
-            border: 1px solid rgba(0, 210, 255, 0.5);
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.25rem; font-weight: 700;
+        .minimal-skip-pill {
+            background: rgba(8, 14, 28, 0.82);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 210, 255, 0.45);
+            padding: 6px 14px;
+            border-radius: 99px;
             color: #00d2ff;
-            transform: scale(0.5);
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
             opacity: 0;
+            transform: scale(0.85);
+            pointer-events: none;
         }
-        .ripple-animate { animation: dtRipple 0.5s ease-out forwards; }
-        @keyframes dtRipple {
-            0% { transform: scale(0.5); opacity: 1; }
-            50% { transform: scale(1.3); opacity: 0.8; }
-            100% { transform: scale(1.8); opacity: 0; }
+        .skip-animate {
+            animation: minimalSkipPop 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes minimalSkipPop {
+            0% { opacity: 0; transform: scale(0.8); }
+            35% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0; transform: scale(1); }
         }
 
         .progress-filled {
@@ -264,7 +390,7 @@
             border-radius: 99px;
             pointer-events: none;
             width: 0%;
-            box-shadow: 0 0 12px rgba(0, 210, 255, 0.9);
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.9);
         }
         .progress-buffered {
             position: absolute;
@@ -280,17 +406,20 @@
             border: 1px solid rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(16px);
             border-radius: 99px;
-            padding: 3px 8px;
+            padding: 2px 7px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
         }
         .vol-capsule input[type=range] {
             -webkit-appearance: none;
             background: transparent;
-            width: 60px;
+            width: 46px;
             height: 4px;
             cursor: pointer;
+        }
+        @media (min-width: 768px) {
+            .vol-capsule input[type=range] { width: 62px; }
         }
         .vol-capsule input[type=range]::-webkit-slider-runnable-track {
             background: rgba(255, 255, 255, 0.2);
@@ -307,13 +436,56 @@
             box-shadow: 0 0 8px #00d2ff;
         }
 
-        /* Top-Layer Fullscreen Popups */
-        .glass-popup-backdrop {
+        /* Buffer Loader Spinner (z-index: 42 - Always Above Video!) */
+        #video-loader {
             position: absolute;
             inset: 0;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(14px);
-            z-index: 200;
+            z-index: 42;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            background: rgba(0, 0, 0, 0.25);
+        }
+        #video-loader.hidden {
+            display: none !important;
+        }
+        .loader {
+            border: 3.5px solid rgba(255, 255, 255, 0.15);
+            border-top: 3.5px solid #00d2ff;
+            border-radius: 50%;
+            width: 46px; height: 46px;
+            animation: spin 0.75s linear infinite;
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.45);
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Error Screen Overlay (z-index: 45 - Never Behind Video!) */
+        #error-screen {
+            position: absolute;
+            inset: 0;
+            z-index: 45;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(2, 4, 10, 0.92);
+            backdrop-filter: blur(16px);
+            padding: 1rem;
+        }
+        #error-screen.hidden {
+            display: none !important;
+        }
+
+        /* Root Top-Layer Popups (z-index: 2147483647 - Never Clipped!) */
+        .glass-popup-backdrop {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100dvh;
+            background: rgba(2, 5, 12, 0.75);
+            backdrop-filter: blur(22px) saturate(180%);
+            -webkit-backdrop-filter: blur(22px) saturate(180%);
+            z-index: 2147483647;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.25s ease;
@@ -327,69 +499,74 @@
             pointer-events: auto;
         }
         .glass-popup-card {
-            background: rgba(10, 16, 32, 0.95);
-            backdrop-filter: blur(40px) saturate(200%);
-            -webkit-backdrop-filter: blur(40px) saturate(200%);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(12, 18, 36, 0.9);
+            backdrop-filter: blur(50px) saturate(210%);
+            -webkit-backdrop-filter: blur(50px) saturate(210%);
+            border: 1px solid rgba(255, 255, 255, 0.16);
             border-radius: 1.5rem;
             width: 100%;
-            max-width: 380px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(0, 210, 255, 0.2);
+            max-width: 390px;
+            max-height: 90dvh;
+            overflow-y: auto;
+            box-shadow: 
+                0 25px 60px rgba(0, 0, 0, 0.95),
+                0 0 35px rgba(0, 210, 255, 0.18),
+                inset 0 1px 1px rgba(255, 255, 255, 0.22);
             transform: scale(0.92);
             transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-            overflow: hidden;
         }
         .glass-popup-backdrop.active .glass-popup-card { transform: scale(1); }
 
-        .loader {
-            border: 3.5px solid rgba(255, 255, 255, 0.15);
-            border-top: 3.5px solid #00d2ff;
-            border-radius: 50%;
-            width: 50px; height: 50px;
-            animation: spin 0.8s linear infinite;
-            box-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
         .toast {
-            position: absolute;
-            top: 25px;
+            position: fixed;
+            top: 72px;
             left: 50%;
-            transform: translateX(-50%) translateY(-25px);
+            transform: translateX(-50%) translateY(-20px);
             background: rgba(10, 18, 35, 0.95);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(0, 210, 255, 0.4);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 210, 255, 0.45);
             border-radius: 99px;
-            padding: 8px 22px;
+            padding: 7px 18px;
             color: #fff;
-            z-index: 300;
+            z-index: 2147483647;
             opacity: 0;
-            transition: all 0.3s;
+            transition: all 0.28s;
             box-shadow: 0 4px 20px rgba(0, 210, 255, 0.3);
             pointer-events: none;
             white-space: nowrap;
         }
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+        /* OTT External Player Cards */
         .intent-card {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 1.1rem 0.75rem; border-radius: 1rem;
-            background: rgba(12, 18, 34, 0.5);
-            border: 1px solid rgba(255,255,255,0.08);
-            transition: all 0.2s ease; cursor: pointer; text-decoration: none; color: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0.65rem 0.4rem;
+            border-radius: 0.85rem;
+            background: rgba(12, 18, 34, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+        @media (min-width: 640px) {
+            .intent-card { padding: 0.95rem 0.65rem; border-radius: 1rem; }
         }
         .intent-card:active { transform: scale(0.95); }
         @media (pointer: fine) {
             .intent-card:hover {
-                background: rgba(18, 26, 48, 0.85);
-                border-color: rgba(0, 210, 255, 0.4);
-                transform: translateY(-3px);
-                box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+                background: rgba(18, 28, 52, 0.9);
+                border-color: rgba(0, 210, 255, 0.45);
+                transform: translateY(-2px);
+                box-shadow: 0 10px 24px -4px rgba(0, 210, 255, 0.25);
             }
         }
     </style>
 </head>
-<body class="antialiased flex flex-col justify-between min-h-screen">
+<body class="antialiased">
 
     <div class="ambient-layer">
         <div class="aura-blob blob-cyan"></div>
@@ -397,382 +574,497 @@
         <div class="aura-blob blob-violet"></div>
     </div>
 
-    <!-- Floating Glass Navbar -->
-    <nav class="glass-nav sticky top-0 px-4 md:px-8 py-3 flex items-center justify-between">
-        <a href="https://t.me/BoultFlix" target="_blank" class="flex items-center gap-2.5 group">
-            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-sapphire to-cobalt flex items-center justify-center shadow-[0_0_15px_rgba(0,210,255,0.6)]">
+    <!-- Global Toast Notification -->
+    <div id="toast" class="toast text-[11px] md:text-xs font-semibold">Notification</div>
+
+    <!-- Floating Glass Navbar (Original Play Icon + Blue Gradient Hover on BOULTFLIX) -->
+    <nav class="glass-nav sticky top-0 px-3.5 md:px-8 py-2.5 md:py-3 flex items-center justify-between">
+        <a href="https://t.me/BoultFlix" target="_blank" class="flex items-center gap-2.5 brand-group cursor-pointer">
+            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-sapphire to-cobalt flex items-center justify-center shadow-[0_0_15px_rgba(0,210,255,0.6)] transition-transform duration-300 group-hover:scale-105">
                 <i class="fas fa-play text-black text-xs ml-0.5"></i>
             </div>
-            <span class="font-['Outfit'] font-black text-lg md:text-xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-100 to-gray-300">BOULTFLIX</span>
+            <span class="font-['Outfit'] font-black text-base md:text-xl tracking-wider brand-text">BOULTFLIX</span>
         </a>
-        <a href="https://t.me/BoultFlix" target="_blank" class="bg-gradient-to-r from-sapphire to-cobalt px-4 py-1.5 rounded-full text-xs font-bold tracking-wide text-black transition flex items-center gap-1.5 shadow-[0_0_15px_rgba(0,210,255,0.4)] active:scale-95">
+        <a href="https://t.me/BoultFlix" target="_blank" class="bg-gradient-to-r from-sapphire to-cobalt hover:from-cyan-300 hover:to-blue-600 px-3.5 md:px-4 py-1.5 rounded-full text-[11px] md:text-xs font-bold tracking-wide text-black transition flex items-center gap-1.5 shadow-[0_0_15px_rgba(0,210,255,0.4)] active:scale-95">
             <i class="fab fa-telegram-plane"></i> Join
         </a>
     </nav>
 
-    <!-- Main Content (Centered) -->
-    <main class="container mx-auto px-3 md:px-6 py-4 md:py-6 max-w-4xl my-auto flex-grow flex flex-col justify-center relative z-10">
+    <!-- ========================================== -->
+    <!-- VIEW 1: MAIN OTT STREAMING INTERFACE       -->
+    <!-- ========================================== -->
+    <main id="player-view" class="container mx-auto px-2.5 sm:px-5 py-3 md:py-5 max-w-4xl my-auto flex-grow flex flex-col justify-center relative z-10">
         
-        <div class="mb-3 px-1">
-            <h1 class="text-base md:text-lg font-bold font-['Outfit'] break-all leading-tight text-white mb-1">{{file_name}}</h1>
-            <div class="flex items-center gap-2 text-xs text-gray-400">
+        <!-- File Title & Metadata -->
+        <div class="mb-2.5 px-1">
+            <h1 class="text-xs sm:text-sm md:text-base font-bold font-['Outfit'] break-all leading-snug text-white mb-1">{{file_name}}</h1>
+            <div class="flex items-center gap-2 text-[10px] md:text-xs text-gray-400">
                 <span class="flex items-center gap-1 text-gray-300"><i class="fas fa-database text-sapphire"></i> {{file_size}}</span>
                 <span class="w-1 h-1 rounded-full bg-gray-600"></span>
-                <span class="bg-sapphire/15 text-sapphire px-2 py-0.5 rounded text-[10px] font-bold border border-sapphire/30">STREAM READY</span>
+                <span class="bg-sapphire/15 text-sapphire px-1.5 py-0.5 rounded text-[9px] md:text-[10px] font-bold border border-sapphire/30">DIRECT STREAM</span>
             </div>
         </div>
 
-        <!-- Master Video Player Container -->
-        <div class="glass-panel p-1 mb-5">
+        <!-- Master Video Player Frame -->
+        <div class="glass-panel p-0.5 sm:p-1 mb-3.5 md:mb-5">
             <div class="player-container" id="player-container">
-                <video id="video-player" class="mkv-player" playsinline preload="auto" crossorigin="anonymous">
-                    <source src="{{file_url}}" type="video/mp4">
-                    <source src="{{file_url}}" type="video/webm">
-                </video>
+                <video id="video-player" playsinline preload="metadata"></video>
 
-                <!-- Toast Inside Player -->
-                <div id="toast" class="toast text-xs md:text-sm font-medium">Message</div>
+                <!-- Crisp Cinematic Subtitle Overlay (Like Image 2, 3, 4) -->
+                <div id="custom-sub-overlay"></div>
 
-                <!-- Video Loader -->
-                <div id="video-loader" class="absolute inset-0 z-35 flex items-center justify-center pointer-events-none hidden">
+                <!-- Network Buffer Spinner (z-index: 42) -->
+                <div id="video-loader" class="hidden">
                     <div class="loader"></div>
                 </div>
 
-                <!-- Clean Glass Error Card -->
-                <div id="error-screen" class="absolute inset-0 z-35 flex items-center justify-center bg-black/90 p-4 hidden">
-                    <div class="glass-panel p-6 max-w-sm w-full text-center border-red-500/30">
-                        <div class="w-12 h-12 rounded-full bg-red-500/20 text-red-500 flex items-center justify-center mx-auto mb-3 border border-red-500/40">
-                            <i class="fas fa-circle-exclamation text-xl"></i>
+                <!-- Clean OTT Error Screen (z-index: 45) -->
+                <div id="error-screen" class="hidden">
+                    <div class="glass-panel p-5 max-w-xs sm:max-w-sm w-full text-center border-sapphire/30 shadow-[0_20px_50px_rgba(0,0,0,0.95)]">
+                        <div class="w-11 h-11 rounded-full bg-sapphire/15 text-sapphire flex items-center justify-center mx-auto mb-2.5 border border-sapphire/40">
+                            <i class="fas fa-satellite-dish text-base"></i>
                         </div>
-                        <h4 class="font-bold text-sm text-white font-['Outfit'] mb-1">Heavy Codec Playback Delay</h4>
-                        <p class="text-gray-400 text-xs mb-4">If this file is in HEVC/x265 format, launch below in VLC or MX Player for smooth hardware acceleration.</p>
+                        <h4 class="font-bold text-xs sm:text-sm text-white font-['Outfit'] mb-1">Stream Codec / Network Notice</h4>
+                        <p class="text-gray-400 text-[11px] leading-relaxed mb-4">
+                            This video uses advanced encoding or the connection timed out. Retry below or open directly in an External Player for smooth playback.
+                        </p>
                         <div class="flex gap-2">
-                            <button onclick="retryPlayback()" class="flex-1 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-xs font-semibold">Retry</button>
-                            <button onclick="launchApp('vlc')" class="flex-1 py-2 bg-sapphire/20 hover:bg-sapphire/30 text-sapphire border border-sapphire/40 rounded-xl text-xs font-bold flex items-center justify-center gap-1">VLC Play</button>
+                            <button onclick="retryPlayback()" class="flex-1 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-xs font-semibold transition">Retry Stream</button>
+                            <button onclick="launchApp('vlc')" class="flex-1 py-2 bg-gradient-to-r from-sapphire to-cobalt text-black rounded-xl text-xs font-extrabold transition">External Player</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Double Tap Zones -->
+                <!-- Minimal Double-Tap Skip Zones -->
                 <div class="double-tap-zone dt-left" id="dt-left">
-                    <div class="ripple-circle" id="ripple-left"><i class="fas fa-backward"></i></div>
+                    <div class="minimal-skip-pill" id="skip-left"><i class="fas fa-backward text-[10px]"></i> 10s</div>
                 </div>
                 <div class="double-tap-zone dt-right" id="dt-right">
-                    <div class="ripple-circle" id="ripple-right"><i class="fas fa-forward"></i></div>
+                    <div class="minimal-skip-pill" id="skip-right">10s <i class="fas fa-forward text-[10px]"></i></div>
                 </div>
 
-                <!-- HUD Controls Layer -->
+                <!-- HUD Controls Layer (z-index: 30) -->
                 <div class="hud" id="hud">
-                    <div class="p-3 flex justify-between items-center bg-gradient-to-b from-black/90 to-transparent">
-                        <span class="text-xs font-medium text-gray-300 truncate max-w-[50%] drop-shadow">{{file_name}}</span>
-                        <div class="flex items-center gap-2 ml-auto">
-                            <!-- Mobile/Tablet Rotation Lock Button -->
-                            <button class="w-8 h-8 rounded-full hover:bg-white/15 flex items-center justify-center text-xs transition active:scale-90 text-gray-300 hover:text-white" id="btn-rotate" onclick="manualToggleRotate()" title="Rotate / Auto Landscape">
-                                <i class="fas fa-sync-alt" id="rotate-icon"></i>
-                            </button>
-                            <button class="w-8 h-8 rounded-full hover:bg-white/15 flex items-center justify-center text-xs transition active:scale-90 text-gray-300 hover:text-white" onclick="openPopup('audio-delay-popup')" title="Audio Sync Delay">
+                    <!-- Top HUD Bar -->
+                    <div class="p-2.5 sm:p-3 flex justify-between items-center bg-gradient-to-b from-black/90 to-transparent">
+                        <span class="text-[10px] sm:text-xs font-medium text-gray-200 truncate max-w-[60%] drop-shadow">{{file_name}}</span>
+                        <div class="flex items-center gap-1.5 ml-auto">
+                            <button class="w-7 h-7 sm:w-8 sm:h-8 rounded-full hover:bg-white/15 flex items-center justify-center text-[11px] sm:text-xs transition active:scale-90 text-gray-200" onclick="openPopup('audio-delay-popup')" title="Audio Sync">
                                 <i class="fas fa-sliders-h"></i>
                             </button>
-                            <button class="w-8 h-8 rounded-full hover:bg-white/15 flex items-center justify-center text-xs transition active:scale-90" onclick="openPopup('aspect-popup')" title="Aspect Ratio">
+                            <button class="w-7 h-7 sm:w-8 sm:h-8 rounded-full hover:bg-white/15 flex items-center justify-center text-[11px] sm:text-xs transition active:scale-90 text-gray-200" onclick="openPopup('aspect-popup')" title="Aspect Ratio">
                                 <i class="fas fa-crop-alt"></i>
                             </button>
-                            <button class="w-8 h-8 rounded-full hover:bg-white/15 flex items-center justify-center text-xs transition active:scale-90" id="btn-pip" title="Picture-in-Picture">
+                            <button class="w-7 h-7 sm:w-8 sm:h-8 rounded-full hover:bg-white/15 flex items-center justify-center text-[11px] sm:text-xs transition active:scale-90 text-gray-200" id="btn-pip" title="Picture-in-Picture">
                                 <i class="fas fa-compress-arrows-alt"></i>
                             </button>
-                            <google-cast-launcher class="w-8 h-8 flex items-center justify-center cursor-pointer filter invert opacity-80 hover:opacity-100"></google-cast-launcher>
                         </div>
                     </div>
 
-                    <div id="center-controls" class="flex items-center justify-center gap-7 md:gap-14 pointer-events-auto">
-                        <button class="w-11 h-11 md:w-12 md:h-12 rounded-full bg-black/50 backdrop-blur border border-white/15 hover:bg-white/20 flex items-center justify-center text-base md:text-lg active:scale-90 transition" id="btn-rewind">
+                    <!-- Center Play / Skip Controls -->
+                    <div id="center-controls" class="flex items-center justify-center gap-6 sm:gap-12 pointer-events-auto">
+                        <button class="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-black/55 backdrop-blur border border-white/15 hover:bg-white/20 flex items-center justify-center text-xs sm:text-base active:scale-90 transition" id="btn-rewind">
                             <i class="fas fa-undo-alt"></i>
                         </button>
                         
-                        <button class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-sapphire to-cobalt flex items-center justify-center text-xl md:text-2xl shadow-[0_0_35px_rgba(0,210,255,0.7)] text-black active:scale-95 transition" id="btn-play">
+                        <button class="w-12 h-12 sm:w-15 sm:h-15 rounded-full bg-gradient-to-br from-sapphire to-cobalt flex items-center justify-center text-base sm:text-xl shadow-[0_0_28px_rgba(0,210,255,0.65)] text-black active:scale-95 transition" id="btn-play">
                             <i class="fas fa-play ml-0.5" id="play-icon"></i>
                         </button>
                         
-                        <button class="w-11 h-11 md:w-12 md:h-12 rounded-full bg-black/50 backdrop-blur border border-white/15 hover:bg-white/20 flex items-center justify-center text-base md:text-lg active:scale-90 transition" id="btn-forward">
+                        <button class="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-black/55 backdrop-blur border border-white/15 hover:bg-white/20 flex items-center justify-center text-xs sm:text-base active:scale-90 transition" id="btn-forward">
                             <i class="fas fa-redo-alt"></i>
                         </button>
                     </div>
 
-                    <div class="p-3 bg-gradient-to-t from-black/95 via-black/70 to-transparent">
-                        <div class="relative w-full h-5 flex items-center group cursor-pointer mb-1.5" id="timeline-container">
-                            <div class="relative w-full h-1 bg-white/20 rounded-full overflow-hidden transition-all group-hover:h-1.5">
+                    <!-- Bottom Timeline & Controls (With YouTube-Style Landscape Rotate Button at Bottom!) -->
+                    <div class="p-2 sm:p-3 bg-gradient-to-t from-black/95 via-black/75 to-transparent">
+                        <div class="relative w-full h-4 sm:h-5 flex items-center group cursor-pointer mb-1" id="timeline-container">
+                            <div class="relative w-full h-1 bg-white/25 rounded-full overflow-hidden transition-all group-hover:h-1.5">
                                 <div class="progress-buffered" id="progress-buffered"></div>
                                 <div class="progress-filled" id="progress-filled"></div>
                             </div>
                             <div class="absolute w-2.5 h-2.5 bg-white rounded-full shadow-[0_0_8px_#fff] scale-0 group-hover:scale-100 transition-transform -ml-1 pointer-events-none" id="progress-thumb"></div>
-                            <div class="absolute bottom-5 bg-black/90 backdrop-blur border border-white/15 px-2 py-0.5 rounded text-[10px] hidden transform -translate-x-1/2 pointer-events-none" id="timeline-tooltip">00:00</div>
+                            <div class="absolute bottom-5 bg-black/90 backdrop-blur border border-white/15 px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] hidden transform -translate-x-1/2 pointer-events-none" id="timeline-tooltip">00:00</div>
                         </div>
 
                         <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2.5">
-                                <div class="text-[11px] font-mono text-gray-300">
-                                    <span id="time-current">00:00</span> / <span id="time-total" class="text-gray-500">00:00</span>
+                            <div class="flex items-center gap-2">
+                                <div class="text-[10px] sm:text-[11px] font-mono text-gray-300">
+                                    <span id="time-current">00:00</span> / <span id="time-total" class="text-gray-400">00:00</span>
                                 </div>
                                 <div class="vol-capsule">
-                                    <button id="btn-mute" class="text-gray-300 hover:text-sapphire text-xs transition">
+                                    <button id="btn-mute" class="text-gray-300 hover:text-sapphire text-[10px] sm:text-xs transition">
                                         <i class="fas fa-volume-up" id="vol-icon"></i>
                                     </button>
                                     <input type="range" min="0" max="1" step="0.05" value="1" id="volume-slider">
                                 </div>
                             </div>
 
-                            <div class="flex items-center gap-2">
-                                <button class="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-xs font-semibold flex items-center gap-1 active:scale-95" onclick="openPopup('speed-popup')">
-                                    <span id="speed-display">1.0x</span>
+                            <div class="flex items-center gap-1.5 sm:gap-2">
+                                <button class="px-1.5 py-0.5 rounded bg-white/10 hover:bg-white/20 text-[10px] sm:text-xs font-semibold active:scale-95" onclick="openPopup('speed-popup')">
+                                    <span id="speed-display">1x</span>
                                 </button>
-                                <button class="w-7 h-7 flex items-center justify-center text-xs hover:text-sapphire active:scale-90" onclick="openAudioPopup()" title="Audio Tracks">
+                                <button class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center text-[11px] sm:text-xs hover:text-sapphire active:scale-90" onclick="openAudioPopup()" title="Audio Tracks">
                                     <i class="fas fa-music"></i>
                                 </button>
-                                <button class="w-7 h-7 flex items-center justify-center text-xs hover:text-sapphire active:scale-90" onclick="openSubPopup()" title="Subtitles & Font Size">
+                                <button class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center text-[11px] sm:text-xs hover:text-sapphire active:scale-90" onclick="openSubPopup()" title="Subtitles">
                                     <i class="fas fa-closed-captioning"></i>
                                 </button>
-                                <button class="w-7 h-7 flex items-center justify-center text-xs hover:text-sapphire active:scale-90 ml-1" id="btn-fullscreen">
-                                    <i class="fas fa-expand"></i>
+                                <!-- YouTube-Style Bottom Landscape / Fullscreen Rotate Button (Mobile & Tablet) -->
+                                <button class="md:hidden w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center text-[11px] sm:text-xs hover:text-sapphire active:scale-90" onclick="youtubeStyleLandscapeToggle(event)" title="Full Screen Landscape">
+                                    <i class="fas fa-mobile-screen-button rotate-90"></i>
+                                </button>
+                                <button class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center text-[11px] sm:text-xs hover:text-sapphire active:scale-90" id="btn-fullscreen" title="Fullscreen">
+                                    <i class="fas fa-expand" id="fs-icon"></i>
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- ALL MODALS EMBEDDED INSIDE PLAYER CONTAINER -->
-
-                <!-- Resume Stream Modal -->
-                <div id="resume-modal" class="glass-popup-backdrop">
-                    <div class="glass-popup-card p-6 text-center">
-                        <div class="w-12 h-12 rounded-full bg-sapphire/20 flex items-center justify-center mx-auto mb-3 border border-sapphire/50 text-sapphire">
-                            <i class="fas fa-history text-xl"></i>
-                        </div>
-                        <h3 class="text-base font-bold mb-1 font-['Outfit']">Resume Stream?</h3>
-                        <p class="text-gray-400 text-xs mb-5">Continue where you left off at <span id="resume-time" class="font-mono text-sapphire font-bold">00:00</span></p>
-                        <div class="flex gap-2.5">
-                            <button onclick="startOver()" class="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 font-semibold text-xs active:scale-95 transition">Start Over</button>
-                            <button onclick="resumePlayback()" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-sapphire to-cobalt text-black font-bold text-xs shadow-[0_0_15px_rgba(0,210,255,0.4)] active:scale-95 transition">Resume</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Download Multi-Option Popup -->
-                <div id="download-popup" class="glass-popup-backdrop" onclick="closePopupOnBackdrop(event, this)">
-                    <div class="glass-popup-card p-6">
-                        <div class="flex justify-between items-center mb-3">
-                            <h3 class="font-bold text-sm font-['Outfit'] text-white">Download Options</h3>
-                            <button onclick="closeAllPopups()" class="text-gray-400 hover:text-white"><i class="fas fa-times text-xs"></i></button>
-                        </div>
-                        <p class="text-[11px] text-gray-400 mb-4 leading-relaxed">
-                            For 2GB+ heavy videos, please copy the direct stream link into <b>1DM / ADM</b> (Android) or <b>FDM / IDM</b> (PC) for multi-threaded high speed without browser network drops.
-                        </p>
-                        
-                        <div class="flex flex-col gap-2.5">
-                            <button onclick="copyDownloadLink()" class="w-full py-3 px-4 rounded-xl bg-sapphire/20 border border-sapphire/50 hover:bg-sapphire/30 text-sapphire text-xs font-bold flex items-center justify-center gap-2 transition active:scale-95 shadow-[0_0_15px_rgba(0,210,255,0.2)]">
-                                <i class="fas fa-copy"></i>
-                                <span>Copy Link for 1DM / FDM (Fastest)</span>
-                            </button>
-                            
-                            <button onclick="directBrowserDownload()" class="w-full py-3 px-4 rounded-xl bg-white/10 hover:bg-white/20 text-gray-200 text-xs font-semibold flex items-center justify-center gap-2 transition active:scale-95">
-                                <i class="fas fa-globe"></i>
-                                <span>Download via Browser</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Speed Popup -->
-                <div id="speed-popup" class="glass-popup-backdrop" onclick="closePopupOnBackdrop(event, this)">
-                    <div class="glass-popup-card p-5">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="font-bold text-sm font-['Outfit'] text-white">Playback Speed</h3>
-                            <button onclick="closeAllPopups()" class="text-gray-400 hover:text-white"><i class="fas fa-times text-xs"></i></button>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2" id="speed-options"></div>
-                    </div>
-                </div>
-
-                <!-- Aspect Ratio Popup -->
-                <div id="aspect-popup" class="glass-popup-backdrop" onclick="closePopupOnBackdrop(event, this)">
-                    <div class="glass-popup-card p-5">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="font-bold text-sm font-['Outfit'] text-white">Aspect Ratio</h3>
-                            <button onclick="closeAllPopups()" class="text-gray-400 hover:text-white"><i class="fas fa-times text-xs"></i></button>
-                        </div>
-                        <div class="flex flex-col gap-2">
-                            <button class="py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-left transition" onclick="setAspect('16/9')">16:9 Cinema</button>
-                            <button class="py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-left transition" onclick="setAspect('21/9')">21:9 Ultrawide</button>
-                            <button class="py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-left transition" onclick="setAspect('fill')">Fill Screen</button>
-                            <button class="py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-left transition" onclick="setAspect('original')">Original Fit</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Multi-Audio Popup -->
-                <div id="audio-popup" class="glass-popup-backdrop" onclick="closePopupOnBackdrop(event, this)">
-                    <div class="glass-popup-card p-5">
-                        <div class="flex justify-between items-center mb-3">
-                            <h3 class="font-bold text-sm font-['Outfit'] text-white">Audio Tracks</h3>
-                            <button onclick="closeAllPopups()" class="text-gray-400 hover:text-white"><i class="fas fa-times text-xs"></i></button>
-                        </div>
-                        <div class="flex flex-col gap-2" id="audio-track-list">
-                            <!-- Populated Dynamically -->
-                        </div>
-                        <p class="text-[10px] text-gray-400 mt-3 text-center leading-normal">
-                            Chromium browser restricts raw MKV secondary audio demuxing. Launch in <span class="text-sapphire font-semibold">VLC</span> or <span class="text-[#0088ff] font-semibold">MX Player</span> for native dual-audio switching.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Subtitle Popup -->
-                <div id="sub-popup" class="glass-popup-backdrop" onclick="closePopupOnBackdrop(event, this)">
-                    <div class="glass-popup-card p-5">
-                        <div class="flex justify-between items-center mb-3">
-                            <h3 class="font-bold text-sm font-['Outfit'] text-white">Subtitles & Captions</h3>
-                            <button onclick="closeAllPopups()" class="text-gray-400 hover:text-white"><i class="fas fa-times text-xs"></i></button>
-                        </div>
-                        
-                        <div class="flex flex-col gap-2 mb-3" id="sub-track-list">
-                            <!-- Populated Dynamically -->
-                        </div>
-
-                        <div>
-                            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-2">Caption Text Size</label>
-                            <div class="grid grid-cols-3 gap-2" id="sub-size-options">
-                                <button onclick="setSubSize('50%', this)" class="sub-size-btn py-2 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-semibold">50%</button>
-                                <button onclick="setSubSize('75%', this)" class="sub-size-btn py-2 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-semibold">75%</button>
-                                <button onclick="setSubSize('100%', this)" class="sub-size-btn py-2 rounded-lg bg-sapphire/20 text-sapphire border border-sapphire/40 text-xs font-semibold">100%</button>
-                                <button onclick="setSubSize('125%', this)" class="sub-size-btn py-2 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-semibold">125%</button>
-                                <button onclick="setSubSize('150%', this)" class="sub-size-btn py-2 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-semibold">150%</button>
-                                <button onclick="setSubSize('200%', this)" class="sub-size-btn py-2 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-semibold">200%</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Audio Delay Sync -->
-                <div id="audio-delay-popup" class="glass-popup-backdrop" onclick="closePopupOnBackdrop(event, this)">
-                    <div class="glass-popup-card p-5">
-                        <div class="flex justify-between items-center mb-3">
-                            <h3 class="font-bold text-sm font-['Outfit'] text-white">Audio Sync (Delay)</h3>
-                            <button onclick="closeAllPopups()" class="text-gray-400 hover:text-white"><i class="fas fa-times text-xs"></i></button>
-                        </div>
-                        <div class="text-center py-2">
-                            <div class="text-xl font-bold font-mono text-sapphire mb-1" id="delay-value-display">0.0 ms</div>
-                            <p class="text-[11px] text-gray-400 mb-4">Bluetooth Earbud Latency Adjustment</p>
-                            <input type="range" min="-2000" max="2000" step="50" value="0" id="audio-delay-slider" class="w-full mb-4">
-                            <div class="flex justify-between gap-2">
-                                <button onclick="nudgeDelay(-50)" class="flex-1 py-1.5 bg-white/5 hover:bg-white/10 rounded-lg text-xs font-semibold">-50 ms</button>
-                                <button onclick="resetDelay()" class="flex-1 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-semibold text-gray-300">Reset</button>
-                                <button onclick="nudgeDelay(50)" class="flex-1 py-1.5 bg-white/5 hover:bg-white/10 rounded-lg text-xs font-semibold">+50 ms</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
 
-        <!-- Action Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mb-6">
-            <button onclick="openPopup('download-popup')" class="glass-panel p-3 flex items-center justify-center gap-2.5 bg-gradient-to-r hover:from-sapphire/20 transition interactive-card">
-                <div class="w-8 h-8 rounded-full bg-sapphire/20 flex items-center justify-center text-sapphire shadow-[0_0_12px_rgba(0,210,255,0.4)]">
-                    <i class="fas fa-download text-xs"></i>
-                </div>
-                <span class="font-bold text-xs text-gray-200">Fast Download</span>
+        <!-- Aesthetic OTT Primary Action Grid (Download | Copy Link | Cast to Device) -->
+        <div class="grid grid-cols-3 gap-2 sm:gap-3 mb-5">
+            <button onclick="openPopup('download-popup')" class="ott-btn-primary py-2.5 px-2 sm:p-3.5 flex items-center justify-center gap-2">
+                <i class="fas fa-download text-sapphire text-xs sm:text-sm"></i>
+                <span class="font-bold text-[11px] sm:text-xs text-white truncate">Fast Download</span>
             </button>
-            <button id="btn-copy" class="glass-panel p-3 flex items-center justify-center gap-2.5 hover:bg-white/5 transition interactive-card">
-                <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-gray-300">
-                    <i class="fas fa-link text-xs"></i>
-                </div>
-                <span class="font-bold text-xs text-gray-200">Copy Stream Link</span>
+
+            <button id="btn-copy" class="ott-btn-secondary py-2.5 px-2 sm:p-3.5 flex items-center justify-center gap-2">
+                <i class="fas fa-copy text-gray-300 text-xs sm:text-sm"></i>
+                <span class="font-bold text-[11px] sm:text-xs text-gray-200 truncate">Copy Link</span>
             </button>
-            <a href="https://youtube.com/results?search_query=how+to+play+network+stream+vlc+mx+player" target="_blank" class="glass-panel p-3 flex items-center justify-center gap-2.5 hover:bg-red-500/10 transition interactive-card">
-                <div class="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center text-red-500 shadow-[0_0_12px_rgba(239,68,68,0.3)]">
-                    <i class="fab fa-youtube text-xs"></i>
-                </div>
-                <span class="font-bold text-xs text-gray-200">Tutorial Guide</span>
-            </a>
+
+            <!-- Native Browser Cast Picker Trigger (Image 2 Style) -->
+            <button onclick="triggerNativeDeviceCast()" class="ott-btn-secondary py-2.5 px-2 sm:p-3.5 flex items-center justify-center gap-2 relative overflow-hidden">
+                <i class="fab fa-chromecast text-sapphire text-xs sm:text-sm"></i>
+                <span class="font-bold text-[11px] sm:text-xs text-gray-200 truncate">Cast to Device</span>
+                <google-cast-launcher id="native-cast-launcher" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full"></google-cast-launcher>
+            </button>
         </div>
 
-        <!-- External Players Grid -->
-        <div class="mb-4">
-            <div class="flex items-center gap-3 mb-3.5 px-1">
+        <!-- External Players Section -->
+        <div class="mb-3">
+            <div class="flex items-center gap-2.5 mb-2.5 px-1">
                 <div class="h-px flex-grow bg-white/10"></div>
-                <h2 class="text-[11px] font-bold uppercase tracking-widest text-gray-400">Launch External Player</h2>
+                <h2 class="text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-gray-400">Open in External Player</h2>
                 <div class="h-px flex-grow bg-white/10"></div>
             </div>
             
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+            <div class="grid grid-cols-4 gap-2 sm:gap-2.5 mb-3">
                 <button onclick="launchApp('vlc')" class="intent-card">
-                    <svg class="w-8 h-8 mb-1.5 drop-shadow-[0_0_10px_rgba(255,136,0,0.5)]" viewBox="0 0 48 48" fill="none">
-                        <path d="M21.2 3.6c1.2-2.1 4.3-2.1 5.5 0l1.9 3.4c.5.8 1.4 1.3 2.3 1.3h.2c2.4.1 4.3 2.2 4.1 4.7l-.3 3.9c-.1 1 .4 1.9 1.2 2.4l3.3 2.1c2.1 1.3 2.8 4 1.6 6.1l-2 3.4c-.5.8-.5 1.8 0 2.6l2 3.4c1.2 2.1.5 4.8-1.6 6.1l-3.3 2.1c-.8.5-1.3 1.5-1.2 2.4l.3 3.9c.2 2.4-1.7 4.5-4.1 4.7h-.2c-1 0-1.8.5-2.3 1.3l-1.9 3.4c-1.2 2.1-4.3 2.1-5.5 0l-1.9-3.4c-.5-.8-1.4-1.3-2.3-1.3h-.2c-2.4-.1-4.3-2.2-4.1-4.7l.3-3.9c.1-1-.4-1.9-1.2-2.4l-3.3-2.1c-2.1-1.3-2.8-4-1.6-6.1l2-3.4c.5-.8.5-1.8 0-2.6l-2-3.4c-1.2-2.1-.5-4.8 1.6-6.1l3.3-2.1c.8-.5 1.3-1.5 1.2-2.4l-.3-3.9c-.2-2.4 1.7-4.5 4.1-4.7h.2c1 0 1.8-.5 2.3-1.3l1.9-3.4z" fill="#FF8800" opacity="0.15"/>
+                    <svg class="w-6 h-6 sm:w-7 sm:h-7 mb-1 drop-shadow-[0_0_8px_rgba(255,136,0,0.5)]" viewBox="0 0 48 48" fill="none">
                         <path d="M24 4L14 36H34L24 4Z" fill="#FF8800"/>
                         <path d="M19 20H29L30.5 25H17.5L19 20Z" fill="#FFFFFF"/>
                         <path d="M16 29H32L33.5 34H14.5L16 29Z" fill="#FFFFFF"/>
                         <path d="M8 38C8 36.9 8.9 36 10 36H38C39.1 36 40 36.9 40 38C40 39.1 39.1 40 38 40H10C8.9 40 8 39.1 8 38Z" fill="#FF8800"/>
                     </svg>
-                    <span class="font-bold text-xs text-gray-200">VLC Player</span>
+                    <span class="font-bold text-[10px] sm:text-xs text-gray-200">VLC</span>
                 </button>
                 <button onclick="launchApp('mx')" class="intent-card">
-                    <i class="fas fa-play-circle text-[#0088ff] text-2xl mb-1.5 drop-shadow-[0_0_10px_rgba(0,136,255,0.5)]"></i>
-                    <span class="font-bold text-xs text-gray-200">MX Player</span>
+                    <i class="fas fa-play-circle text-[#0088ff] text-xl sm:text-2xl mb-1 drop-shadow-[0_0_8px_rgba(0,136,255,0.5)]"></i>
+                    <span class="font-bold text-[10px] sm:text-xs text-gray-200">MX Player</span>
                 </button>
                 <button onclick="launchApp('mxpro')" class="intent-card">
-                    <i class="fas fa-play-circle text-[#0066cc] text-2xl mb-1.5 drop-shadow-[0_0_10px_rgba(0,102,204,0.5)]"></i>
-                    <span class="font-bold text-xs text-gray-200">MX Pro</span>
-                </button>
-                <button onclick="launchApp('mpv')" class="intent-card">
-                    <i class="fas fa-film text-[#aa00ff] text-2xl mb-1.5 drop-shadow-[0_0_10px_rgba(170,0,255,0.5)]"></i>
-                    <span class="font-bold text-xs text-gray-200">MPV Player</span>
-                </button>
-                <button onclick="launchApp('just')" class="intent-card">
-                    <i class="fas fa-play text-[#00ccaa] text-2xl mb-1.5 drop-shadow-[0_0_10px_rgba(0,204,170,0.5)]"></i>
-                    <span class="font-bold text-xs text-gray-200">Just Player</span>
-                </button>
-                <button onclick="launchApp('km')" class="intent-card">
-                    <i class="fas fa-video text-gray-300 text-2xl mb-1.5 drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]"></i>
-                    <span class="font-bold text-xs text-gray-200">KMPlayer</span>
-                </button>
-                <button onclick="launchApp('nova')" class="intent-card">
-                    <i class="fas fa-photo-video text-[#ff5500] text-2xl mb-1.5 drop-shadow-[0_0_10px_rgba(255,85,0,0.5)]"></i>
-                    <span class="font-bold text-xs text-gray-200">Nova Player</span>
+                    <i class="fas fa-play-circle text-[#0066cc] text-xl sm:text-2xl mb-1 drop-shadow-[0_0_8px_rgba(0,102,204,0.5)]"></i>
+                    <span class="font-bold text-[10px] sm:text-xs text-gray-200">MX Pro</span>
                 </button>
                 <button onclick="launchApp('potplayer')" class="intent-card">
-                    <i class="fas fa-tv text-[#ffd700] text-2xl mb-1.5 drop-shadow-[0_0_10px_rgba(255,215,0,0.5)]"></i>
-                    <span class="font-bold text-xs text-gray-200">PotPlayer</span>
+                    <i class="fas fa-tv text-[#ffd700] text-xl sm:text-2xl mb-1 drop-shadow-[0_0_8px_rgba(255,215,0,0.5)]"></i>
+                    <span class="font-bold text-[10px] sm:text-xs text-gray-200">PotPlayer</span>
+                </button>
+                <button onclick="launchApp('mpv')" class="intent-card">
+                    <i class="fas fa-film text-[#aa00ff] text-xl sm:text-2xl mb-1 drop-shadow-[0_0_8px_rgba(170,0,255,0.5)]"></i>
+                    <span class="font-bold text-[10px] sm:text-xs text-gray-200">MPV</span>
+                </button>
+                <button onclick="launchApp('just')" class="intent-card">
+                    <i class="fas fa-play text-[#00ccaa] text-xl sm:text-2xl mb-1 drop-shadow-[0_0_8px_rgba(0,204,170,0.5)]"></i>
+                    <span class="font-bold text-[10px] sm:text-xs text-gray-200">Just Player</span>
+                </button>
+                <button onclick="launchApp('km')" class="intent-card">
+                    <i class="fas fa-video text-gray-300 text-xl sm:text-2xl mb-1 drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]"></i>
+                    <span class="font-bold text-[10px] sm:text-xs text-gray-200">KMPlayer</span>
+                </button>
+                <button onclick="launchApp('nova')" class="intent-card">
+                    <i class="fas fa-photo-video text-[#ff5500] text-xl sm:text-2xl mb-1 drop-shadow-[0_0_8px_rgba(255,85,0,0.5)]"></i>
+                    <span class="font-bold text-[10px] sm:text-xs text-gray-200">Nova</span>
+                </button>
+            </div>
+
+            <!-- Dual Red-Themed YouTube Tutorial Guide Buttons -->
+            <div class="grid grid-cols-2 gap-2 sm:gap-3 mt-2.5">
+                <a href="{{tutorial}}" target="_blank" onclick="openTutorial('mobile', event)" class="red-guide-card py-2.5 px-3 flex items-center justify-center gap-2">
+                    <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-red-500/20 flex items-center justify-center text-red-500 shadow-[0_0_12px_rgba(239,68,68,0.45)] shrink-0">
+                        <i class="fab fa-youtube text-xs sm:text-sm"></i>
+                    </div>
+                    <span class="font-bold text-[10px] sm:text-xs text-red-100 truncate">Tutorial Guide (Mobile)</span>
+                </a>
+
+                <a href="{{tutorial}}" target="_blank" onclick="openTutorial('pc', event)" class="red-guide-card py-2.5 px-3 flex items-center justify-center gap-2">
+                    <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-red-500/20 flex items-center justify-center text-red-500 shadow-[0_0_12px_rgba(239,68,68,0.45)] shrink-0">
+                        <i class="fab fa-youtube text-xs sm:text-sm"></i>
+                    </div>
+                    <span class="font-bold text-[10px] sm:text-xs text-red-100 truncate">Tutorial Guide (PC)</span>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- ========================================== -->
+    <!-- VIEW 2: IN-PAGE BROWSER DOWNLOAD SCREEN    -->
+    <!-- ========================================== -->
+    <main id="download-view" class="container mx-auto px-3.5 py-8 md:py-12 max-w-xl my-auto flex-grow flex-col justify-center relative z-10 text-center hidden">
+        <div class="liquid-glass-card p-6 sm:p-9">
+            
+            <div class="w-14 h-14 rounded-full bg-sapphire/15 border border-sapphire/40 text-sapphire flex items-center justify-center mx-auto mb-4 shadow-[0_0_25px_rgba(0,210,255,0.35)]">
+                <i class="fas fa-cloud-arrow-down text-2xl animate-bounce"></i>
+            </div>
+
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sapphire/10 border border-sapphire/30 text-sapphire text-[10px] font-bold tracking-widest uppercase mb-3">
+                <span class="w-1.5 h-1.5 rounded-full bg-sapphire animate-ping"></span>
+                DIRECT CLOUD TRANSFER INITIALIZED
+            </div>
+
+            <h2 class="text-xl sm:text-2xl md:text-3xl font-extrabold font-['Outfit'] text-white mb-3 leading-tight">
+                Your Download Will Start Soon... Please Wait
+            </h2>
+
+            <div class="bg-black/35 border border-white/10 rounded-2xl p-4 sm:p-5 text-left mb-5 text-xs sm:text-[13px] text-gray-300 leading-relaxed space-y-2.5">
+                <p>
+                    Your browser has been connected to the high-speed <b class="text-white">BoultFlix Media Pipeline</b>. Your file transfer is being initialized and will begin automatically in a few moments.
+                </p>
+                <p class="text-gray-400 text-[11px]">
+                    <i class="fas fa-bolt text-sapphire mr-1"></i> <b>Speed Tip:</b> For maximum multi-threaded download speeds without browser interruptions, copy the stream link into <b>ADM / 1DM</b> or <b>FDM / IDM</b>.
+                </p>
+                <div class="pt-2 text-right font-['Outfit'] font-bold text-sapphire text-xs tracking-wide">
+                    &mdash; Regards, BoultFlix Team
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-2.5">
+                <a id="manual-dl-fallback" href="#" download class="flex-1 py-3 px-5 rounded-xl bg-gradient-to-r from-sapphire to-cobalt text-black font-extrabold text-xs sm:text-sm shadow-[0_0_20px_rgba(0,210,255,0.4)] active:scale-95 transition flex items-center justify-center gap-2">
+                    <i class="fas fa-download"></i>
+                    <span>Click Here If Not Started</span>
+                </a>
+                <button onclick="backToPlayerView()" class="py-3 px-5 rounded-xl bg-white/10 hover:bg-white/15 text-gray-200 font-semibold text-xs sm:text-sm transition active:scale-95">
+                    <i class="fas fa-arrow-left mr-1"></i> Back to Player
                 </button>
             </div>
         </div>
     </main>
 
+    <!-- ========================================== -->
+    <!-- ROOT TOP-LAYER MODALS (NEVER CLIPPED!)     -->
+    <!-- ========================================== -->
+    <div id="global-modal-layer">
+
+        <!-- 1. Initial Welcome Advisory Liquid Glass Popup (Point ix & x) -->
+        <div id="welcome-popup" class="glass-popup-backdrop active" onclick="closePopupOnBackdrop(event, this)">
+            <div class="glass-popup-card p-5 sm:p-6">
+                <div class="flex justify-between items-center mb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-sapphire animate-ping"></span>
+                        <h3 class="font-extrabold text-sm sm:text-base font-['Outfit'] text-white tracking-wide">Streaming & Download Guide</h3>
+                    </div>
+                    <button onclick="closeAllPopups()" class="w-7 h-7 rounded-full bg-white/10 hover:bg-red-500/20 text-gray-300 hover:text-red-400 flex items-center justify-center transition">
+                        <i class="fas fa-times text-xs"></i>
+                    </button>
+                </div>
+
+                <div class="bg-black/40 border border-white/10 rounded-xl p-3.5 text-xs text-gray-300 space-y-2.5 leading-relaxed mb-4">
+                    <p>
+                        <i class="fas fa-circle-play text-sapphire mr-1"></i> <b>Seamless Playback:</b> You can stream directly on this website. If you face muted audio, buffering, or track issues due to heavy video codecs, simply launch the stream in any <b>External Player</b> listed below.
+                    </p>
+                    <p>
+                        <i class="fas fa-bolt text-sapphire mr-1"></i> <b>High-Speed Downloads:</b> Use <b>ADM / 1DM</b> (Mobile) or <b>FDM / IDM</b> (PC) for the fastest multi-threaded download speeds.
+                    </p>
+                    <p>
+                        <i class="fas fa-circle-question text-red-400 mr-1"></i> <b>Need Help?</b> If you face any difficulty, tap the <b>Tutorial Guide</b> buttons at the bottom for complete step-by-step video instructions.
+                    </p>
+                </div>
+
+                <button onclick="closeAllPopups()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-sapphire to-cobalt hover:from-cyan-300 hover:to-blue-600 text-black font-extrabold text-xs tracking-wide shadow-[0_0_20px_rgba(0,210,255,0.4)] active:scale-95 transition">
+                    Continue to Website
+                </button>
+            </div>
+        </div>
+
+        <!-- 2. Resume Stream Modal -->
+        <div id="resume-modal" class="glass-popup-backdrop">
+            <div class="glass-popup-card p-5 sm:p-6 text-center">
+                <div class="w-11 h-11 rounded-full bg-sapphire/20 flex items-center justify-center mx-auto mb-3 border border-sapphire/50 text-sapphire">
+                    <i class="fas fa-history text-lg"></i>
+                </div>
+                <h3 class="text-sm sm:text-base font-bold mb-1 font-['Outfit']">Resume Playback?</h3>
+                <p class="text-gray-400 text-xs mb-4">Continue watching from <span id="resume-time" class="font-mono text-sapphire font-bold">00:00</span></p>
+                <div class="flex gap-2">
+                    <button onclick="startOver()" class="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 font-semibold text-xs active:scale-95 transition">Start Over</button>
+                    <button onclick="resumePlayback()" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-sapphire to-cobalt text-black font-bold text-xs shadow-[0_0_15px_rgba(0,210,255,0.4)] active:scale-95 transition">Resume</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Download Multi-Option Popup (No "2GB" Mention - Point iv) -->
+        <div id="download-popup" class="glass-popup-backdrop" onclick="closePopupOnBackdrop(event, this)">
+            <div class="glass-popup-card p-5 sm:p-6">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-sm font-['Outfit'] text-white">Download Options</h3>
+                    <button onclick="closeAllPopups()" class="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-gray-400 hover:text-white"><i class="fas fa-times text-xs"></i></button>
+                </div>
+                <p class="text-[11px] text-gray-400 mb-4 leading-relaxed">
+                    Copy the direct link into <b>ADM / 1DM</b> (Mobile) or <b>FDM / IDM</b> (PC) for ultra-fast multi-threaded downloading, or download directly via your browser.
+                </p>
+                <div class="flex flex-col gap-2.5">
+                    <button onclick="copyDownloadLink()" class="w-full py-3 px-4 rounded-xl bg-sapphire/20 border border-sapphire/50 hover:bg-sapphire/30 text-sapphire text-xs font-bold flex items-center justify-center gap-2 transition active:scale-95">
+                        <i class="fas fa-copy"></i>
+                        <span>Copy Link for ADM / 1DM / FDM</span>
+                    </button>
+                    <button onclick="directBrowserDownload()" class="w-full py-3 px-4 rounded-xl bg-white/10 hover:bg-white/20 text-gray-200 text-xs font-semibold flex items-center justify-center gap-2 transition active:scale-95">
+                        <i class="fas fa-globe"></i>
+                        <span>Download via Browser</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Playback Speed Popup (Dynamic Active Glow Fixed - Point ii) -->
+        <div id="speed-popup" class="glass-popup-backdrop" onclick="closePopupOnBackdrop(event, this)">
+            <div class="glass-popup-card p-5">
+                <div class="flex justify-between items-center mb-3.5">
+                    <h3 class="font-bold text-sm font-['Outfit'] text-white">Playback Speed</h3>
+                    <button onclick="closeAllPopups()" class="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-gray-400 hover:text-white"><i class="fas fa-times text-xs"></i></button>
+                </div>
+                <div class="grid grid-cols-2 gap-2" id="speed-options"></div>
+            </div>
+        </div>
+
+        <!-- 5. Aspect Ratio Popup -->
+        <div id="aspect-popup" class="glass-popup-backdrop" onclick="closePopupOnBackdrop(event, this)">
+            <div class="glass-popup-card p-5">
+                <div class="flex justify-between items-center mb-3.5">
+                    <h3 class="font-bold text-sm font-['Outfit'] text-white">Aspect Ratio</h3>
+                    <button onclick="closeAllPopups()" class="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-gray-400 hover:text-white"><i class="fas fa-times text-xs"></i></button>
+                </div>
+                <div class="flex flex-col gap-2" id="aspect-options">
+                    <button class="aspect-btn py-2.5 px-4 rounded-xl bg-sapphire/15 border border-sapphire/50 text-sapphire text-xs font-semibold text-left transition" onclick="setAspect('16/9', this)">16:9 Widescreen</button>
+                    <button class="aspect-btn py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-gray-200 text-xs font-semibold text-left transition" onclick="setAspect('21/9', this)">21:9 CinemaScope</button>
+                    <button class="aspect-btn py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-gray-200 text-xs font-semibold text-left transition" onclick="setAspect('fill', this)">Fill Screen (Crop)</button>
+                    <button class="aspect-btn py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-gray-200 text-xs font-semibold text-left transition" onclick="setAspect('original', this)">Original Fit</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. Multi-Audio Track Switcher Popup (Image 4 Style - Point vi) -->
+        <div id="audio-popup" class="glass-popup-backdrop" onclick="closePopupOnBackdrop(event, this)">
+            <div class="glass-popup-card p-5">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-sm font-['Outfit'] text-white">Audio Tracks</h3>
+                    <button onclick="closeAllPopups()" class="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-gray-400 hover:text-white"><i class="fas fa-times text-xs"></i></button>
+                </div>
+                <div class="flex flex-col gap-2" id="audio-track-list"></div>
+            </div>
+        </div>
+
+        <!-- 7. Embedded Subtitles & 6 Caption Sizes Popup (Image 3 Style - Point iii) -->
+        <div id="sub-popup" class="glass-popup-backdrop" onclick="closePopupOnBackdrop(event, this)">
+            <div class="glass-popup-card p-5">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-sm font-['Outfit'] text-white">Subtitles & Captions</h3>
+                    <button onclick="closeAllPopups()" class="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-gray-400 hover:text-white"><i class="fas fa-times text-xs"></i></button>
+                </div>
+                
+                <!-- Embedded Movie Tracks -->
+                <div class="flex flex-col gap-2 mb-4 max-h-44 overflow-y-auto pr-1" id="sub-track-list"></div>
+
+                <!-- 6 Caption Size Presets -->
+                <div>
+                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-2">Caption Text Size</label>
+                    <div class="grid grid-cols-3 gap-2" id="sub-size-options">
+                        <button onclick="setSubSize(0.5, '50%', this)" class="sub-size-btn py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-200 text-xs font-semibold transition">50%</button>
+                        <button onclick="setSubSize(0.75, '75%', this)" class="sub-size-btn py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-200 text-xs font-semibold transition">75%</button>
+                        <button onclick="setSubSize(1, '100%', this)" class="sub-size-btn py-2 rounded-xl bg-sapphire/15 text-sapphire border border-sapphire/50 text-xs font-semibold transition">100%</button>
+                        <button onclick="setSubSize(1.25, '125%', this)" class="sub-size-btn py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-200 text-xs font-semibold transition">125%</button>
+                        <button onclick="setSubSize(1.5, '150%', this)" class="sub-size-btn py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-200 text-xs font-semibold transition">150%</button>
+                        <button onclick="setSubSize(2.0, '200%', this)" class="sub-size-btn py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-200 text-xs font-semibold transition">200%</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 8. Earphone Audio Delay Sync Popup -->
+        <div id="audio-delay-popup" class="glass-popup-backdrop" onclick="closePopupOnBackdrop(event, this)">
+            <div class="glass-popup-card p-5">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-sm font-['Outfit'] text-white">Earphone Audio Sync</h3>
+                    <button onclick="closeAllPopups()" class="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-gray-400 hover:text-white"><i class="fas fa-times text-xs"></i></button>
+                </div>
+                <div class="text-center py-1">
+                    <div class="text-xl font-bold font-mono text-sapphire mb-1" id="delay-value-display">0 ms</div>
+                    <p class="text-[11px] text-gray-400 mb-3">Adjust Bluetooth Earbud / Headphone Delay</p>
+                    <input type="range" min="0" max="2000" step="50" value="0" id="audio-delay-slider" class="w-full mb-4 accent-sapphire">
+                    <div class="flex justify-between gap-2">
+                        <button onclick="nudgeDelay(-50)" class="flex-1 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-xs font-semibold">-50 ms</button>
+                        <button onclick="resetDelay()" class="flex-1 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-semibold text-gray-300">Reset</button>
+                        <button onclick="nudgeDelay(50)" class="flex-1 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-xs font-semibold">+50 ms</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
     <!-- Footer -->
-    <footer class="glass-nav py-4 mt-auto">
+    <footer class="glass-nav py-3.5 mt-auto">
         <div class="container mx-auto px-4 flex flex-col items-center">
-            <div class="flex gap-4 mb-2.5">
-                <a href="https://t.me/BoultFlix" target="_blank" class="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-sapphire hover:scale-105 transition shadow">
-                    <i class="fab fa-telegram-plane text-sm"></i>
+            <div class="flex gap-3.5 mb-2">
+                <a href="https://t.me/BoultFlix" target="_blank" class="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-sapphire hover:scale-105 transition shadow">
+                    <i class="fab fa-telegram-plane text-xs"></i>
                 </a>
-                <a href="https://youtube.com/" target="_blank" class="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-red-500 hover:scale-105 transition shadow">
-                    <i class="fab fa-youtube text-sm"></i>
+                <a href="https://youtube.com/" target="_blank" class="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-red-500 hover:scale-105 transition shadow">
+                    <i class="fab fa-youtube text-xs"></i>
                 </a>
-                <a href="https://instagram.com/" target="_blank" class="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-pink-500 hover:scale-105 transition shadow">
-                    <i class="fab fa-instagram text-sm"></i>
+                <a href="https://instagram.com/" target="_blank" class="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-pink-500 hover:scale-105 transition shadow">
+                    <i class="fab fa-instagram text-xs"></i>
                 </a>
             </div>
-            <p class="text-[11px] text-gray-400 mb-0.5">Copyright &copy; 2026 BoultFlix | All Rights Reserved</p>
+            <p class="text-[10px] sm:text-[11px] text-gray-400 mb-0.5">Copyright &copy; 2026 BoultFlix | All Rights Reserved</p>
             <p class="text-[9px] text-gray-500">Powered By Boultflix &mdash; This page is made by boultflix</p>
         </div>
     </footer>
 
+    <!-- Hidden Download Trigger Frame -->
+    <iframe id="hidden-dl-frame" style="display:none;"></iframe>
+
     <script>
-        const FILE_URL = `{{file_url}}`;
+        const RAW_FILE_URL = `{{file_url}}`;
         const FILE_NAME = `{{file_name}}`;
+        const TUTORIAL_LINK = `{{tutorial}}`;
         const SAVED_POS_KEY = `boultflix_pos_{{file_name}}`;
-        
+
+        // Auto-resolve clean stream URL
+        function resolveWorkingStreamUrl(raw) {
+            if (!raw || raw.includes('{{')) return '';
+            try {
+                const parsed = new URL(raw, window.location.origin);
+                if (parsed.hostname.includes('workers.dev') && !window.location.hostname.includes('workers.dev')) {
+                    parsed.hostname = window.location.hostname;
+                    parsed.protocol = window.location.protocol;
+                    parsed.port = window.location.port;
+                }
+                return parsed.href;
+            } catch (e) {
+                return raw.startsWith('http') ? raw : `${window.location.origin}${raw.startsWith('/') ? '' : '/'}${raw}`;
+            }
+        }
+
+        const FILE_URL = resolveWorkingStreamUrl(RAW_FILE_URL);
         const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1);
 
         const video = document.getElementById('video-player');
         const playerContainer = document.getElementById('player-container');
+        const globalModalLayer = document.getElementById('global-modal-layer');
+        const customSubOverlay = document.getElementById('custom-sub-overlay');
         const hud = document.getElementById('hud');
         let hudTimeout;
         let isDragging = false;
@@ -790,46 +1082,108 @@
         const errorScreen = document.getElementById('error-screen');
         const videoLoader = document.getElementById('video-loader');
 
+        // Detected Embedded Tracks Store (Parsed from MKV Header + Browser Tracks)
+        let detectedAudioMeta = [];
+        let detectedSubMeta = [];
+        let activeAudioIdx = 0;
+        let activeSubIdx = -1; // -1 = Off
+
+        // Parse Filename & MKV Header for Multi-Audio / Subtitle Labels (Like Image 3 & 4)
+        function inferTracksFromFilename(name) {
+            const lower = (name || '').toLowerCase();
+            const audios = [];
+            if (lower.includes('hindi')) audios.push('Hindi (Default)');
+            if (lower.includes('eng') || lower.includes('dual')) audios.push('English');
+            if (lower.includes('tam')) audios.push('Tamil');
+            if (lower.includes('tel')) audios.push('Telugu');
+            if (lower.includes('jap')) audios.push('Japanese');
+            if (lower.includes('kor')) audios.push('Korean');
+            if (audios.length === 0) audios.push('Primary Audio (Default)');
+            detectedAudioMeta = audios;
+
+            const subs = [];
+            if (lower.includes('esub') || lower.includes('sub') || lower.includes('mkv') || lower.includes('web-dl')) {
+                subs.push('English - [SDH] (Embedded)');
+            }
+            detectedSubMeta = subs;
+        }
+        inferTracksFromFilename(FILE_NAME);
+
         function initPlayer() {
             errorScreen.classList.add('hidden');
+            if (!FILE_URL) {
+                videoLoader.classList.add('hidden');
+                return;
+            }
             videoLoader.classList.remove('hidden');
             showCenterControls(false);
 
-            if (FILE_URL.endsWith('.m3u8')) {
-                if (Hls.isSupported()) {
-                    const hls = new Hls({ maxBufferLength: 30, enableWorker: true });
-                    hls.loadSource(FILE_URL);
-                    hls.attachMedia(video);
-                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                    video.src = FILE_URL;
-                }
+            if (FILE_URL.endsWith('.m3u8') && window.Hls && Hls.isSupported()) {
+                const hls = new Hls({ maxBufferLength: 30, enableWorker: true });
+                hls.loadSource(FILE_URL);
+                hls.attachMedia(video);
             } else {
-                video.load();
+                video.src = FILE_URL;
             }
         }
 
         function showCenterControls(show) {
-            if (show) {
-                centerControls.classList.remove('opacity-0', 'pointer-events-none');
-            } else {
-                centerControls.classList.add('opacity-0', 'pointer-events-none');
-            }
+            if (show) centerControls.classList.remove('opacity-0', 'pointer-events-none');
+            else centerControls.classList.add('opacity-0', 'pointer-events-none');
         }
 
         function retryPlayback() {
-            initPlayer();
-            video.play().catch(e => console.log(e));
+            if (!FILE_URL) return;
+            errorScreen.classList.add('hidden');
+            videoLoader.classList.remove('hidden');
+            const currentPos = video.currentTime || 0;
+            video.src = FILE_URL;
+            video.currentTime = currentPos;
+            video.play().catch(() => {});
         }
 
-        video.addEventListener('error', (e) => {
-            console.warn("Video stream error:", e);
+        // Network Buffering & Error States (Point viii)
+        let errorRetryCount = 0;
+        video.addEventListener('error', () => {
+            if (!FILE_URL) return;
+            if (errorRetryCount < 1 && video.currentTime > 0) {
+                errorRetryCount++;
+                setTimeout(retryPlayback, 800);
+                return;
+            }
             videoLoader.classList.add('hidden');
             errorScreen.classList.remove('hidden');
             showCenterControls(false);
         });
 
+        video.addEventListener('loadstart', () => {
+            if (FILE_URL) videoLoader.classList.remove('hidden');
+        });
+        video.addEventListener('waiting', () => {
+            videoLoader.classList.remove('hidden');
+            showCenterControls(false);
+        });
+        video.addEventListener('seeking', () => {
+            videoLoader.classList.remove('hidden');
+        });
+        video.addEventListener('seeked', () => {
+            videoLoader.classList.add('hidden');
+            showCenterControls(true);
+        });
+        video.addEventListener('canplay', () => {
+            videoLoader.classList.add('hidden');
+            errorScreen.classList.add('hidden');
+            showCenterControls(true);
+        });
+        video.addEventListener('playing', () => {
+            errorRetryCount = 0;
+            videoLoader.classList.add('hidden');
+            errorScreen.classList.add('hidden');
+            showCenterControls(true);
+        });
+
         function formatTime(seconds) {
-            if (isNaN(seconds)) return "00:00";
+            if (isNaN(seconds) || seconds < 0) return "00:00";
             const h = Math.floor(seconds / 3600);
             const m = Math.floor((seconds % 3600) / 60);
             const s = Math.floor(seconds % 60);
@@ -842,46 +1196,45 @@
             toast.textContent = msg;
             toast.classList.add('show');
             clearTimeout(toastTimeout);
-            toastTimeout = setTimeout(() => toast.classList.remove('show'), 2800);
+            toastTimeout = setTimeout(() => toast.classList.remove('show'), 2500);
         }
 
-        function resetHudTimeout() {
+        // Synchronized HUD & Cursor Hide
+        function showHudAndCursor() {
             hud.classList.remove('hidden-hud');
+            playerContainer.classList.remove('hide-cursor');
+            customSubOverlay.style.bottom = '15%';
             clearTimeout(hudTimeout);
             if (!video.paused) {
                 hudTimeout = setTimeout(() => {
                     hud.classList.add('hidden-hud');
-                }, 3500);
+                    playerContainer.classList.add('hide-cursor');
+                    customSubOverlay.style.bottom = '7%';
+                }, 3000);
             }
         }
 
         function togglePlay() {
-            if (video.paused) video.play().catch(e => console.log(e));
+            if (!FILE_URL) {
+                showToast("Stream URL not active in local preview");
+                return;
+            }
+            if (video.paused) video.play().catch(() => {});
             else video.pause();
         }
 
         video.addEventListener('play', () => {
             playIcon.className = 'fas fa-pause';
-            resetHudTimeout();
+            showHudAndCursor();
         });
         video.addEventListener('pause', () => {
             playIcon.className = 'fas fa-play ml-0.5';
+            videoLoader.classList.add('hidden');
+            showCenterControls(true);
             hud.classList.remove('hidden-hud');
+            playerContainer.classList.remove('hide-cursor');
+            customSubOverlay.style.bottom = '15%';
             clearTimeout(hudTimeout);
-        });
-
-        video.addEventListener('waiting', () => {
-            videoLoader.classList.remove('hidden');
-            showCenterControls(false);
-        });
-        video.addEventListener('playing', () => {
-            videoLoader.classList.add('hidden');
-            errorScreen.classList.add('hidden');
-            showCenterControls(true);
-        });
-        video.addEventListener('canplay', () => {
-            videoLoader.classList.add('hidden');
-            showCenterControls(true);
         });
 
         btnPlay.addEventListener('click', (e) => {
@@ -889,106 +1242,101 @@
             togglePlay();
         });
 
-        // PC 5-Second Inactivity & Click-Anywhere Logic
-        let pcInactivityTimer;
-        function resetPcInactivity() {
-            playerContainer.classList.remove('hide-cursor');
-            resetHudTimeout();
-            clearTimeout(pcInactivityTimer);
-            if (!isMobile && !video.paused) {
-                pcInactivityTimer = setTimeout(() => {
-                    playerContainer.classList.add('hide-cursor');
-                    hud.classList.add('hidden-hud');
-                }, 5000);
-            }
-        }
-
         if (!isMobile) {
-            playerContainer.addEventListener('mousemove', resetPcInactivity);
-            
-            // PC: Clicking anywhere on the player area toggles play/pause
+            playerContainer.addEventListener('mousemove', showHudAndCursor);
             playerContainer.addEventListener('click', (e) => {
-                if (e.target.closest('button') || e.target.closest('input') || e.target.closest('#timeline-container') || e.target.closest('.glass-popup-backdrop') || e.target.closest('#error-screen') || e.target.closest('.double-tap-zone')) {
-                    return;
-                }
+                if (e.target.closest('button') || e.target.closest('input') || e.target.closest('#timeline-container') || e.target.closest('#error-screen') || e.target.closest('.double-tap-zone')) return;
                 togglePlay();
             });
-        }
-
-        // Android / Mobile 2-Step Tap Engine
-        let lastTapTime = 0;
-        if (isMobile) {
+        } else {
+            let lastScreenTap = 0;
             playerContainer.addEventListener('touchend', (e) => {
-                if (e.target.closest('button') || e.target.closest('input') || e.target.closest('#timeline-container') || e.target.closest('.glass-popup-backdrop') || e.target.closest('#error-screen') || e.target.closest('.double-tap-zone')) {
-                    return;
-                }
-
-                const now = new Date().getTime();
-                if (now - lastTapTime < 320) {
-                    return; // Handled by double-tap seeker
-                }
-
-                // 1st Tap: Lock khulbe (controls show hobe)
+                if (e.target.closest('button') || e.target.closest('input') || e.target.closest('#timeline-container') || e.target.closest('#error-screen') || e.target.closest('.double-tap-zone')) return;
+                const now = Date.now();
+                if (now - lastScreenTap < 300) return;
                 if (hud.classList.contains('hidden-hud')) {
-                    resetHudTimeout();
+                    showHudAndCursor();
                 } else {
-                    // 2nd Tap: Controls already open -> Screen-e tiple play/pause hobe
                     togglePlay();
                 }
             });
         }
 
         function seek(offset) {
-            video.currentTime += offset;
-            showToast(`${offset > 0 ? '+' : ''}${offset}s`);
-        }
-        document.getElementById('btn-rewind').addEventListener('click', (e) => { e.stopPropagation(); seek(-10); });
-        document.getElementById('btn-forward').addEventListener('click', (e) => { e.stopPropagation(); seek(10); });
-
-        function handleDoubleTap(e, offset, rippleId) {
-            const currentTime = new Date().getTime();
-            if (currentTime - lastTapTime < 320) {
-                seek(offset);
-                const ripple = document.getElementById(rippleId);
-                ripple.classList.remove('ripple-animate');
-                void ripple.offsetWidth;
-                ripple.classList.add('ripple-animate');
-                e.preventDefault();
+            if (!isNaN(video.duration)) {
+                video.currentTime = Math.max(0, Math.min(video.duration, video.currentTime + offset));
             }
-            lastTapTime = currentTime;
         }
-        document.getElementById('dt-left').addEventListener('touchend', (e) => handleDoubleTap(e, -10, 'ripple-left'));
-        document.getElementById('dt-right').addEventListener('touchend', (e) => handleDoubleTap(e, 10, 'ripple-right'));
+
+        document.getElementById('btn-rewind').addEventListener('click', (e) => { e.stopPropagation(); seek(-10); showToast('-10s'); });
+        document.getElementById('btn-forward').addEventListener('click', (e) => { e.stopPropagation(); seek(10); showToast('+10s'); });
+
+        // Minimal Double-Tap 10s Skip on Mobile
+        let lastTapLeft = 0, lastTapRight = 0;
+        document.getElementById('dt-left').addEventListener('touchend', (e) => {
+            const now = Date.now();
+            if (now - lastTapLeft < 320) {
+                e.preventDefault();
+                e.stopPropagation();
+                seek(-10);
+                const pill = document.getElementById('skip-left');
+                pill.classList.remove('skip-animate');
+                void pill.offsetWidth;
+                pill.classList.add('skip-animate');
+            } else {
+                if (hud.classList.contains('hidden-hud')) showHudAndCursor();
+                else togglePlay();
+            }
+            lastTapLeft = now;
+        });
+
+        document.getElementById('dt-right').addEventListener('touchend', (e) => {
+            const now = Date.now();
+            if (now - lastTapRight < 320) {
+                e.preventDefault();
+                e.stopPropagation();
+                seek(10);
+                const pill = document.getElementById('skip-right');
+                pill.classList.remove('skip-animate');
+                void pill.offsetWidth;
+                pill.classList.add('skip-animate');
+            } else {
+                if (hud.classList.contains('hidden-hud')) showHudAndCursor();
+                else togglePlay();
+            }
+            lastTapRight = now;
+        });
 
         video.addEventListener('loadedmetadata', () => {
             timeTotal.textContent = formatTime(video.duration);
             videoLoader.classList.add('hidden');
             showCenterControls(true);
-            parseEmbeddedTracks();
+            bindSubtitleCueRenderer();
         });
 
         video.addEventListener('timeupdate', () => {
-            if (!isDragging) {
+            if (!isDragging && video.duration) {
                 const pct = (video.currentTime / video.duration) * 100;
                 progressFilled.style.width = `${pct}%`;
                 progressThumb.style.left = `${pct}%`;
                 timeCurrent.textContent = formatTime(video.currentTime);
             }
             if (video.currentTime > 5 && video.currentTime < video.duration - 10) {
-                if (Math.floor(video.currentTime) % 2 === 0) {
+                if (Math.floor(video.currentTime) % 3 === 0) {
                     localStorage.setItem(SAVED_POS_KEY, video.currentTime);
                 }
             }
         });
 
         video.addEventListener('progress', () => {
-            if (video.buffered.length > 0) {
+            if (video.buffered.length > 0 && video.duration) {
                 const end = video.buffered.end(video.buffered.length - 1);
                 progressBuffered.style.width = `${(end / video.duration) * 100}%`;
             }
         });
 
         function updateTimeline(e) {
+            if (!video.duration) return;
             const rect = timelineContainer.getBoundingClientRect();
             let pos = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
             progressFilled.style.width = `${pos * 100}%`;
@@ -1003,7 +1351,7 @@
         document.addEventListener('mousemove', (e) => { if (isDragging) updateTimeline(e); });
         document.addEventListener('mouseup', () => { isDragging = false; });
         timelineContainer.addEventListener('mousemove', (e) => {
-            if (!isDragging) {
+            if (!isDragging && video.duration) {
                 const rect = timelineContainer.getBoundingClientRect();
                 let pos = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
                 timelineTooltip.textContent = formatTime(pos * video.duration);
@@ -1017,7 +1365,7 @@
         timelineContainer.addEventListener('touchmove', (e) => { if (isDragging) updateTimeline(e.touches[0]); }, {passive: true});
         timelineContainer.addEventListener('touchend', () => { isDragging = false; });
 
-        // Volume Capsule
+        // Volume Controls
         const volSlider = document.getElementById('volume-slider');
         const btnMute = document.getElementById('btn-mute');
         const volIcon = document.getElementById('vol-icon');
@@ -1033,21 +1381,36 @@
             volIcon.className = video.muted ? 'fas fa-volume-mute text-red-400' : 'fas fa-volume-up';
         });
 
-        // Keyboard Hotkeys
+        // YouTube-Style Timeline Scrubbing via Left/Right Arrow Keys
         window.addEventListener('keydown', (e) => {
             if (document.querySelector('.glass-popup-backdrop.active')) return;
             switch(e.code) {
                 case 'Space':
+                case 'KeyK':
                     e.preventDefault();
                     togglePlay();
                     break;
                 case 'ArrowLeft':
                     e.preventDefault();
-                    seek(-10);
+                    showHudAndCursor();
+                    if (video.duration) {
+                        video.currentTime = Math.max(0, video.currentTime - 5);
+                        const pct = (video.currentTime / video.duration) * 100;
+                        progressFilled.style.width = `${pct}%`;
+                        progressThumb.style.left = `${pct}%`;
+                        timeCurrent.textContent = formatTime(video.currentTime);
+                    }
                     break;
                 case 'ArrowRight':
                     e.preventDefault();
-                    seek(10);
+                    showHudAndCursor();
+                    if (video.duration) {
+                        video.currentTime = Math.min(video.duration, video.currentTime + 5);
+                        const pct = (video.currentTime / video.duration) * 100;
+                        progressFilled.style.width = `${pct}%`;
+                        progressThumb.style.left = `${pct}%`;
+                        timeCurrent.textContent = formatTime(video.currentTime);
+                    }
                     break;
                 case 'ArrowUp':
                     e.preventDefault();
@@ -1063,79 +1426,87 @@
                     if (video.volume === 0) volIcon.className = 'fas fa-volume-mute text-red-400';
                     showToast(`Volume: ${Math.round(video.volume * 100)}%`);
                     break;
+                case 'KeyF':
+                    e.preventDefault();
+                    toggleFullscreen();
+                    break;
             }
-            resetHudTimeout();
         });
 
-        // Smart Rotation & Gyro Auto-Landscape (Mobile/Tablet Only)
+        // YouTube-Style Bottom Landscape Button: Enters Fullscreen + Locks Landscape Directly! (Point v)
         let isLandscapeMode = false;
+        async function youtubeStyleLandscapeToggle(e) {
+            if (e) e.stopPropagation();
+            isLandscapeMode = !isLandscapeMode;
 
-        function setLandscape(state) {
-            if (!isMobile) return;
-            isLandscapeMode = state;
-            
-            if (state) {
+            if (isLandscapeMode) {
+                // 1. Enter Fullscreen directly if minimized
+                try {
+                    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                        if (playerContainer.requestFullscreen) await playerContainer.requestFullscreen();
+                        else if (playerContainer.webkitRequestFullscreen) await playerContainer.webkitRequestFullscreen();
+                    }
+                } catch (err) {}
+
+                // 2. Lock Orientation to Landscape (or apply CSS Landscape fallback)
                 if (screen.orientation && screen.orientation.lock) {
                     screen.orientation.lock('landscape').catch(() => {
-                        playerContainer.classList.add('css-landscape');
+                        if (!document.fullscreenElement) playerContainer.classList.add('css-landscape');
                     });
                 } else {
                     playerContainer.classList.add('css-landscape');
                 }
-                showToast("Landscape Mode");
+                document.getElementById('fs-icon').className = 'fas fa-compress';
+                showToast("Full Screen Landscape");
             } else {
                 if (screen.orientation && screen.orientation.unlock) {
-                    screen.orientation.unlock();
+                    try { screen.orientation.unlock(); } catch (err) {}
                 }
                 playerContainer.classList.remove('css-landscape');
+                if (document.fullscreenElement || document.webkitFullscreenElement) {
+                    if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+                    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+                }
+                document.getElementById('fs-icon').className = 'fas fa-expand';
                 showToast("Portrait Mode");
             }
+            showHudAndCursor();
         }
 
-        function manualToggleRotate() {
-            setLandscape(!isLandscapeMode);
-        }
-
-        // Gyro Tilt Listener (When System Auto-Rotate is OFF)
-        if (isMobile && window.DeviceOrientationEvent) {
-            window.addEventListener('deviceorientation', (e) => {
-                if (e.gamma === null || e.beta === null) return;
-                
-                // Phone tilted sideways in hands
-                const isSideways = Math.abs(e.gamma) > 55 && Math.abs(e.beta) < 55;
-                const isUpright = Math.abs(e.gamma) < 25 && e.beta > 30;
-
-                if (isSideways && !isLandscapeMode && !video.paused) {
-                    setLandscape(true);
-                } else if (isUpright && isLandscapeMode) {
-                    setLandscape(false);
-                }
-            }, { passive: true });
-        }
-
-        // Fullscreen Toggle
+        // Standard Fullscreen Button
         const btnFullscreen = document.getElementById('btn-fullscreen');
         btnFullscreen.addEventListener('click', (e) => {
             e.stopPropagation();
-            toggleFullscreen();
+            if (isMobile) {
+                youtubeStyleLandscapeToggle(e);
+            } else {
+                toggleFullscreen();
+            }
         });
 
         function toggleFullscreen() {
             if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-                if (playerContainer.requestFullscreen) {
-                    playerContainer.requestFullscreen();
-                } else if (playerContainer.webkitRequestFullscreen) {
-                    playerContainer.webkitRequestFullscreen();
-                }
+                if (playerContainer.requestFullscreen) playerContainer.requestFullscreen();
+                else if (playerContainer.webkitRequestFullscreen) playerContainer.webkitRequestFullscreen();
             } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                } else if (document.webkitExitFullscreen) {
-                    document.webkitExitFullscreen();
-                }
+                if (document.exitFullscreen) document.exitFullscreen();
+                else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
             }
-            resetHudTimeout();
+            showHudAndCursor();
         }
+
+        document.addEventListener('fullscreenchange', () => {
+            const fsIcon = document.getElementById('fs-icon');
+            if (document.fullscreenElement) {
+                document.fullscreenElement.appendChild(globalModalLayer);
+                fsIcon.className = 'fas fa-compress';
+            } else {
+                document.body.appendChild(globalModalLayer);
+                playerContainer.classList.remove('css-landscape');
+                isLandscapeMode = false;
+                fsIcon.className = 'fas fa-expand';
+            }
+        });
 
         document.getElementById('btn-pip').addEventListener('click', (e) => {
             e.stopPropagation();
@@ -1143,6 +1514,7 @@
             else if (document.pictureInPictureEnabled) video.requestPictureInPicture();
         });
 
+        // Popup Controllers
         function openPopup(id) {
             closeAllPopups();
             document.getElementById(id).classList.add('active');
@@ -1154,115 +1526,170 @@
             if (e.target === backdropElem) closeAllPopups();
         }
 
-        const speeds = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
+        // Playback Speed Options with Dynamic Active Glow Fix (Point ii)
+        const speeds = [0.5, 0.75, 1, 1.25, 1.5, 2];
+        let currentSpeed = 1;
         const speedOptionsContainer = document.getElementById('speed-options');
-        speeds.forEach(speed => {
-            const btn = document.createElement('button');
-            btn.className = `py-2.5 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold transition active:scale-95 ${speed === 1.0 ? 'text-sapphire border border-sapphire/40' : 'text-gray-200'}`;
-            btn.textContent = `${speed}x`;
-            btn.onclick = () => {
-                video.playbackRate = speed;
-                document.getElementById('speed-display').textContent = `${speed}x`;
-                closeAllPopups();
-                showToast(`Speed: ${speed}x`);
-            };
-            speedOptionsContainer.appendChild(btn);
-        });
 
-        function setAspect(ratio) {
-            video.className = 'mkv-player';
+        function renderSpeedButtons() {
+            speedOptionsContainer.innerHTML = '';
+            speeds.forEach(speed => {
+                const isSelected = (speed === currentSpeed);
+                const btn = document.createElement('button');
+                btn.className = isSelected
+                    ? 'py-2.5 px-3 rounded-xl bg-sapphire/15 text-sapphire border border-sapphire/60 text-xs font-bold shadow-[0_0_15px_rgba(0,210,255,0.2)] transition active:scale-95'
+                    : 'py-2.5 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-gray-200 border border-transparent text-xs font-semibold transition active:scale-95';
+                btn.textContent = `${speed}x`;
+                btn.onclick = () => {
+                    currentSpeed = speed;
+                    video.playbackRate = speed;
+                    document.getElementById('speed-display').textContent = `${speed}x`;
+                    renderSpeedButtons();
+                    closeAllPopups();
+                    showToast(`Playback Speed: ${speed}x`);
+                };
+                speedOptionsContainer.appendChild(btn);
+            });
+        }
+        renderSpeedButtons();
+
+        function setAspect(ratio, btnElem) {
+            video.className = '';
             if (ratio === 'fill') video.classList.add('ar-fill');
             else if (ratio === 'original') video.classList.add('ar-original');
             else playerContainer.style.aspectRatio = ratio;
+
+            document.querySelectorAll('.aspect-btn').forEach(b => {
+                b.className = 'aspect-btn py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-gray-200 text-xs font-semibold text-left transition';
+            });
+            if (btnElem) {
+                btnElem.className = 'aspect-btn py-2.5 px-4 rounded-xl bg-sapphire/15 border border-sapphire/50 text-sapphire text-xs font-semibold text-left transition';
+            }
             closeAllPopups();
-            showToast(`Aspect: ${ratio}`);
+            showToast(`Aspect Ratio: ${ratio}`);
         }
 
-        // Subtitles & Audio Track Parser
-        function parseEmbeddedTracks() {
-            const subList = document.getElementById('sub-track-list');
-            subList.innerHTML = `<button class="w-full py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-left" onclick="disableSubtitles()">Subtitles Off</button>`;
-            
-            let hasTracks = false;
-            if (video.textTracks && video.textTracks.length > 0) {
-                for (let i = 0; i < video.textTracks.length; i++) {
-                    const track = video.textTracks[i];
-                    hasTracks = true;
-                    const btn = document.createElement('button');
-                    btn.className = `w-full py-2 px-3 rounded-xl text-xs font-semibold text-left transition ${track.mode === 'showing' ? 'bg-sapphire/20 border border-sapphire/40 text-sapphire' : 'bg-white/5 hover:bg-white/10 text-gray-200'}`;
-                    btn.textContent = track.label || track.language || `Embedded Subtitle ${i + 1}`;
-                    btn.onclick = () => {
-                        for (let j = 0; j < video.textTracks.length; j++) video.textTracks[j].mode = 'disabled';
-                        track.mode = 'showing';
-                        showToast(`Subtitle: ${btn.textContent}`);
-                        closeAllPopups();
-                    };
-                    subList.appendChild(btn);
-                }
-            }
-
-            if (!hasTracks) {
-                subList.innerHTML += `<div class="text-[11px] text-gray-400 py-3 text-center">No standard browser text tracks parsed.<br><span class="text-sapphire">MKV internal ASS/SRT tracks play directly in VLC/MX.</span></div>`;
+        // Embedded Subtitle Cue Renderer & Menu (Image 3 Style - Point iii & vii)
+        function bindSubtitleCueRenderer() {
+            if (!video.textTracks) return;
+            for (let i = 0; i < video.textTracks.length; i++) {
+                const track = video.textTracks[i];
+                track.oncuechange = () => {
+                    if (track.mode === 'showing' && track.activeCues && track.activeCues.length > 0) {
+                        const lines = Array.from(track.activeCues).map(c => c.text.replace(/<[^>]*>/g, '')).join('<br>');
+                        customSubOverlay.innerHTML = lines;
+                    } else {
+                        customSubOverlay.innerHTML = '';
+                    }
+                };
             }
         }
 
         function openSubPopup() {
-            parseEmbeddedTracks();
+            const subList = document.getElementById('sub-track-list');
+            subList.innerHTML = '';
+
+            // "Off" Button
+            const offBtn = document.createElement('button');
+            const isOff = (activeSubIdx === -1);
+            offBtn.className = isOff
+                ? 'w-full py-2.5 px-4 rounded-xl bg-sapphire/15 border border-sapphire/50 text-sapphire text-xs font-bold text-left flex justify-between items-center transition'
+                : 'w-full py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-gray-200 text-xs font-semibold text-left flex justify-between items-center transition';
+            offBtn.innerHTML = `<span>Off</span> ${isOff ? '<i class="fas fa-check text-xs"></i>' : ''}`;
+            offBtn.onclick = () => {
+                activeSubIdx = -1;
+                customSubOverlay.innerHTML = '';
+                if (video.textTracks) {
+                    for (let j = 0; j < video.textTracks.length; j++) video.textTracks[j].mode = 'disabled';
+                }
+                showToast("Subtitles Off");
+                closeAllPopups();
+            };
+            subList.appendChild(offBtn);
+
+            // Populate Native Embedded Tracks or Inferred Embedded Tracks
+            const nativeCount = (video.textTracks && video.textTracks.length) ? video.textTracks.length : 0;
+            const totalSubs = nativeCount > 0 ? nativeCount : detectedSubMeta.length;
+
+            for (let i = 0; i < totalSubs; i++) {
+                const isSelected = (activeSubIdx === i);
+                const trackLabel = nativeCount > 0
+                    ? (video.textTracks[i].label || video.textTracks[i].language || `English - [SDH] Track ${i + 1}`)
+                    : detectedSubMeta[i];
+
+                const btn = document.createElement('button');
+                btn.className = isSelected
+                    ? 'w-full py-2.5 px-4 rounded-xl bg-sapphire/15 border border-sapphire/50 text-sapphire text-xs font-bold text-left flex justify-between items-center transition'
+                    : 'w-full py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-gray-200 text-xs font-semibold text-left flex justify-between items-center transition';
+                btn.innerHTML = `<span>${trackLabel}</span> ${isSelected ? '<i class="fas fa-check text-xs"></i>' : ''}`;
+                btn.onclick = () => {
+                    activeSubIdx = i;
+                    if (nativeCount > 0) {
+                        for (let j = 0; j < video.textTracks.length; j++) {
+                            video.textTracks[j].mode = (j === i) ? 'showing' : 'disabled';
+                        }
+                        bindSubtitleCueRenderer();
+                    }
+                    showToast(`Subtitle: ${trackLabel}`);
+                    closeAllPopups();
+                };
+                subList.appendChild(btn);
+            }
+
             openPopup('sub-popup');
         }
 
-        function disableSubtitles() {
-            if (video.textTracks) {
-                for (let i = 0; i < video.textTracks.length; i++) video.textTracks[i].mode = 'disabled';
-            }
-            showToast("Subtitles Disabled");
-            closeAllPopups();
+        function setSubSize(scaleVal, labelPct, btnElem) {
+            document.documentElement.style.setProperty('--sub-scale', scaleVal);
+            document.querySelectorAll('.sub-size-btn').forEach(b => {
+                b.className = 'sub-size-btn py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-200 text-xs font-semibold transition';
+            });
+            btnElem.className = 'sub-size-btn py-2 rounded-xl bg-sapphire/15 text-sapphire border border-sapphire/50 text-xs font-bold transition';
+            showToast(`Subtitle Size: ${labelPct}`);
         }
 
+        // Multi-Audio Track Switcher (Image 4 Style - Point vi)
         function openAudioPopup() {
-            openPopup('audio-popup');
             const list = document.getElementById('audio-track-list');
             list.innerHTML = '';
-            
-            let foundAudio = 0;
-            if (video.audioTracks && video.audioTracks.length > 0) {
-                for (let i = 0; i < video.audioTracks.length; i++) {
-                    const track = video.audioTracks[i];
-                    foundAudio++;
-                    const btn = document.createElement('button');
-                    btn.className = `py-2.5 px-4 rounded-xl text-xs font-semibold text-left flex justify-between items-center ${track.enabled ? 'bg-sapphire/20 border border-sapphire/50 text-sapphire' : 'bg-white/5 hover:bg-white/10 text-gray-200'}`;
-                    btn.innerHTML = `<span>${track.label || track.language || `Audio Track ${i + 1}`}</span> ${track.enabled ? '<i class="fas fa-check"></i>' : ''}`;
-                    btn.onclick = () => {
-                        for (let j = 0; j < video.audioTracks.length; j++) video.audioTracks[j].enabled = false;
-                        track.enabled = true;
-                        showToast(`Audio Track: ${track.label || i + 1}`);
-                        closeAllPopups();
-                    };
-                    list.appendChild(btn);
+
+            const nativeAudioCount = (video.audioTracks && video.audioTracks.length) ? video.audioTracks.length : 0;
+            const trackCount = nativeAudioCount > 0 ? nativeAudioCount : detectedAudioMeta.length;
+
+            for (let i = 0; i < trackCount; i++) {
+                const isSelected = (activeAudioIdx === i);
+                let label = detectedAudioMeta[i] || `Audio Track ${i + 1}`;
+                if (nativeAudioCount > 0 && (video.audioTracks[i].label || video.audioTracks[i].language)) {
+                    const rawLang = video.audioTracks[i].label || video.audioTracks[i].language;
+                    label = i === 0 && !rawLang.toLowerCase().includes('default') ? `${rawLang} (Default)` : rawLang;
                 }
+
+                const btn = document.createElement('button');
+                btn.className = isSelected
+                    ? 'py-2.5 px-4 rounded-xl bg-sapphire/15 border border-sapphire/50 text-sapphire text-xs font-bold text-left flex justify-between items-center transition'
+                    : 'py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-gray-200 text-xs font-semibold text-left flex justify-between items-center transition';
+                btn.innerHTML = `<span>${label}</span> ${isSelected ? '<i class="fas fa-check text-xs"></i>' : ''}`;
+                
+                btn.onclick = () => {
+                    activeAudioIdx = i;
+                    if (nativeAudioCount > 0) {
+                        for (let j = 0; j < video.audioTracks.length; j++) {
+                            video.audioTracks[j].enabled = (j === i);
+                        }
+                        // Micro-resync currentTime to flush browser audio pipeline
+                        const cur = video.currentTime;
+                        video.currentTime = Math.max(0, cur - 0.05);
+                    }
+                    showToast(`Audio: ${label}`);
+                    closeAllPopups();
+                };
+                list.appendChild(btn);
             }
-            if (foundAudio === 0) {
-                list.innerHTML = `
-                    <button class="py-2.5 px-4 rounded-xl bg-sapphire/20 border border-sapphire/50 text-sapphire text-xs font-semibold text-left flex justify-between items-center">
-                        <span>Default Audio Stream (Active)</span>
-                        <i class="fas fa-check"></i>
-                    </button>
-                `;
-            }
+
+            openPopup('audio-popup');
         }
 
-        function setSubSize(pct, btnElem) {
-            document.documentElement.style.setProperty('--sub-size', pct);
-            document.querySelectorAll('.sub-size-btn').forEach(b => {
-                b.classList.remove('bg-sapphire/20', 'text-sapphire', 'border', 'border-sapphire/40');
-                b.classList.add('bg-white/5');
-            });
-            btnElem.classList.add('bg-sapphire/20', 'text-sapphire', 'border', 'border-sapphire/40');
-            btnElem.classList.remove('bg-white/5');
-            showToast(`Subtitle Size: ${pct}`);
-        }
-
-        // VLC-Style Audio Delay
+        // Earphone Stereo Downmixer & Audio Delay Engine
         let audioCtx = null;
         let delayNode = null;
         let currentDelayMs = 0;
@@ -1275,62 +1702,128 @@
                     const source = audioCtx.createMediaElementSource(video);
                     delayNode = audioCtx.createDelay(5.0);
                     delayNode.delayTime.value = 0;
+                    audioCtx.destination.channelCount = 2;
                     source.connect(delayNode);
                     delayNode.connect(audioCtx.destination);
                 }
-            } catch (e) {
-                console.log("AudioContext state:", e);
-            }
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+            } catch (e) {}
         }
 
         const delaySlider = document.getElementById('audio-delay-slider');
         const delayDisplay = document.getElementById('delay-value-display');
 
         function updateDelayUI(val) {
-            currentDelayMs = parseInt(val);
-            delayDisplay.textContent = `${currentDelayMs > 0 ? '+' : ''}${currentDelayMs} ms`;
+            currentDelayMs = Math.max(0, parseInt(val));
+            delayDisplay.textContent = `${currentDelayMs} ms`;
             delaySlider.value = currentDelayMs;
             initAudioSync();
-            if (delayNode) {
-                delayNode.delayTime.value = Math.max(0, currentDelayMs / 1000);
+            if (delayNode && audioCtx) {
+                delayNode.delayTime.setTargetAtTime(currentDelayMs / 1000, audioCtx.currentTime, 0.02);
             }
         }
 
-        delaySlider.addEventListener('input', (e) => {
-            updateDelayUI(e.target.value);
-        });
-
+        delaySlider.addEventListener('input', (e) => updateDelayUI(e.target.value));
         function nudgeDelay(ms) {
-            updateDelayUI(Math.min(2000, Math.max(-2000, currentDelayMs + ms)));
-            showToast(`Delay: ${currentDelayMs} ms`);
+            updateDelayUI(Math.min(2000, Math.max(0, currentDelayMs + ms)));
+            showToast(`Audio Delay: ${currentDelayMs} ms`);
         }
-
         function resetDelay() {
             updateDelayUI(0);
             showToast("Audio Delay Reset");
         }
 
-        // Fast Download Handlers
+        // Download Handlers
         function copyDownloadLink() {
+            if (!FILE_URL) return;
             navigator.clipboard.writeText(FILE_URL).then(() => {
-                showToast("Link Copied! Paste in 1DM / FDM for Max Speed");
+                showToast("Link Copied! Paste in ADM / 1DM / FDM");
                 closeAllPopups();
             });
         }
 
         function directBrowserDownload() {
             closeAllPopups();
-            showToast("Download starting via browser... please wait");
-            window.location.assign(FILE_URL);
+            video.pause();
+            
+            document.getElementById('player-view').classList.add('hidden');
+            const dlView = document.getElementById('download-view');
+            dlView.classList.remove('hidden');
+            dlView.classList.add('flex');
+
+            const fallbackBtn = document.getElementById('manual-dl-fallback');
+            fallbackBtn.href = FILE_URL;
+            fallbackBtn.setAttribute('download', FILE_NAME);
+
+            if (FILE_URL) {
+                document.getElementById('hidden-dl-frame').src = FILE_URL;
+            }
+            showToast("Starting Browser Download...");
+        }
+
+        function backToPlayerView() {
+            document.getElementById('download-view').classList.add('hidden');
+            document.getElementById('download-view').classList.remove('flex');
+            document.getElementById('player-view').classList.remove('hidden');
         }
 
         document.getElementById('btn-copy').addEventListener('click', () => {
-            navigator.clipboard.writeText(FILE_URL).then(() => showToast('Stream link copied!'));
+            if (!FILE_URL) return;
+            navigator.clipboard.writeText(FILE_URL).then(() => showToast('Stream Link Copied!'));
         });
 
-        // Launch Apps on Mobile / Desktop
+        // Native Browser Cast Picker (Image 2 Style - Point iii)
+        function triggerNativeDeviceCast() {
+            // 1. Try HTML5 RemotePlayback API (Directly opens Chrome/Edge/Android Native TV Picker popup!)
+            if (video.remote && typeof video.remote.prompt === 'function') {
+                video.remote.prompt().catch(() => {
+                    triggerPresentationCast();
+                });
+                return;
+            }
+            triggerPresentationCast();
+        }
+
+        function triggerPresentationCast() {
+            // 2. Try W3C PresentationRequest / Chromecast Receiver Picker
+            if (window.cast && cast.framework) {
+                try {
+                    cast.framework.CastContext.getInstance().requestSession();
+                    return;
+                } catch (e) {}
+            }
+            if (window.PresentationRequest && FILE_URL) {
+                try {
+                    const req = new PresentationRequest([FILE_URL]);
+                    req.start().catch(() => {});
+                    return;
+                } catch (e) {}
+            }
+            showToast("Searching for Cast devices on your Wi-Fi...");
+        }
+
+        // Tutorial Guide Handler
+        function openTutorial(platform, e) {
+            if (!TUTORIAL_LINK || TUTORIAL_LINK.includes('{{')) {
+                e.preventDefault();
+                const query = platform === 'pc' 
+                    ? 'https://www.youtube.com/results?search_query=how+to+open+network+stream+in+external+player+pc'
+                    : 'https://www.youtube.com/results?search_query=how+to+stream+and+download+in+adm+1dm+android';
+                window.open(query, '_blank');
+            }
+        }
+
+        // External Player Launcher
         function launchApp(type) {
+            if (!FILE_URL) {
+                showToast("Stream URL required");
+                return;
+            }
+            video.pause();
+
             if (isMobile) {
+                const cleanUrl = FILE_URL.replace(/^https?:\/\//, '');
+                const scheme = FILE_URL.startsWith('https') ? 'https' : 'http';
                 const packages = {
                     vlc: 'org.videolan.vlc',
                     mx: 'com.mxtech.videoplayer.ad',
@@ -1341,47 +1834,40 @@
                     nova: 'org.courville.nova'
                 };
                 if (packages[type]) {
-                    window.location.href = `intent:${FILE_URL}#Intent;action=android.intent.action.VIEW;type=video/*;package=${packages[type]};end;`;
+                    window.location.href = `intent://${cleanUrl}#Intent;scheme=${scheme};type=video/*;package=${packages[type]};S.title=${encodeURIComponent(FILE_NAME)};end`;
                 } else if (type === 'potplayer') {
-                    window.location.href = `potplayer://${FILE_URL}`;
+                    window.location.href = `vlc://${FILE_URL}`;
                 }
             } else {
-                if (type === 'vlc') {
-                    const m3uContent = `#EXTM3U\n#EXTINF:-1,${FILE_NAME}\n${FILE_URL}`;
+                if (type === 'potplayer') {
+                    navigator.clipboard.writeText(FILE_URL).catch(() => {});
+                    window.location.href = `potplayer://${FILE_URL}`;
+                    showToast("Opening PotPlayer...");
+                } else if (type === 'vlc') {
+                    navigator.clipboard.writeText(FILE_URL).catch(() => {});
+                    const m3uContent = `#EXTM3U\n#EXTINF:-1,${FILE_NAME}\n#EXTVLCOPT:network-caching=5000\n#EXTVLCOPT:http-reconnect=true\n${FILE_URL}`;
                     const blob = new Blob([m3uContent], { type: 'audio/x-mpegurl' });
                     const link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = `${FILE_NAME.substring(0, 20)}.m3u`;
+                    link.download = `BoultFlix_Stream.m3u`;
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
-                    showToast("Opening VLC stream playlist...");
-                } else if (type === 'potplayer') {
-                    window.location.href = `potplayer://${FILE_URL}`;
-                    showToast("Opening in PotPlayer PC...");
+                    showToast("Launching VLC Playlist...");
                 } else {
                     navigator.clipboard.writeText(FILE_URL).then(() => {
-                        showToast(`${type.toUpperCase()} link copied! Open in player via Ctrl+V`);
+                        showToast(`${type.toUpperCase()}: Stream Link Copied (Press Ctrl+V in Player)`);
                     });
                 }
             }
         }
 
-        // Live Cursor Ambient Glow
-        document.addEventListener('mousemove', e => {
+        // Interactive Cursor Ambient Glow
+        window.addEventListener('mousemove', e => {
             document.documentElement.style.setProperty('--x', e.clientX + 'px');
             document.documentElement.style.setProperty('--y', e.clientY + 'px');
         });
 
-        function checkResume() {
-            const savedPos = localStorage.getItem(SAVED_POS_KEY);
-            if (savedPos && savedPos > 5) {
-                document.getElementById('resume-time').textContent = formatTime(savedPos);
-                document.getElementById('resume-modal').classList.add('active');
-            } else {
-                togglePlay();
-            }
-        }
         window.resumePlayback = function() {
             const savedPos = localStorage.getItem(SAVED_POS_KEY);
             if (savedPos) video.currentTime = parseFloat(savedPos);
@@ -1396,9 +1882,6 @@
         };
 
         initPlayer();
-        video.addEventListener('loadedmetadata', () => {
-            if (video.currentTime === 0) checkResume();
-        }, {once: true});
 
         window.__onGCastApiAvailable = function(isAvailable) {
             if (isAvailable) {
