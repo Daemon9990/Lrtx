@@ -124,7 +124,7 @@ async def media_streamer(request: web.Request, id: int, secure_hash: str):
     first_part_cut = from_bytes - offset
     last_part_cut = until_bytes % chunk_size + 1
 
-    req_length = until_bytes - from_bytes + 1
+    # req_length = until_bytes - from_bytes + 1
     part_count = math.ceil((until_bytes + 1) / chunk_size) - math.floor(offset / chunk_size)
     body = tg_connect.yield_file(
         file_id, index, offset, first_part_cut, last_part_cut, part_count, chunk_size
@@ -146,13 +146,12 @@ async def media_streamer(request: web.Request, id: int, secure_hash: str):
             mime_type = "application/octet-stream"
             file_name = f"{secrets.token_hex(2)}.unknown"
 
-    return web.Response(
+    return_resp = web.Response(
         status=206 if range_header else 200,
         body=body,
         headers={
             "Content-Type": f"{mime_type}",
             "Content-Range": f"bytes {from_bytes}-{until_bytes}/{file_size}",
-            "Content-Length": str(req_length),
             "Content-Disposition": f'inline; filename="{file_name}"',  # inline for streaming
             "Accept-Ranges": "bytes",
             # CORS headers for JSMKV
@@ -160,5 +159,10 @@ async def media_streamer(request: web.Request, id: int, secure_hash: str):
             "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS",
             "Access-Control-Allow-Headers": "Range, Content-Type",
             "Access-Control-Expose-Headers": "Content-Length, Content-Range, Accept-Ranges",
-        },
+        }
     )
+
+    if return_resp.status == 200:
+        return_resp.headers.add("Content-Length", str(file_size))
+
+    return return_resp
