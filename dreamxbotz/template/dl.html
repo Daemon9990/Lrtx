@@ -39,67 +39,71 @@
             --y: 50vh;
             --sub-scale: 1;
         }
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-        body {
-            background-color: #02040a;
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #02040a !important;
             color: #ffffff;
             font-family: 'Inter', sans-serif;
             overflow-x: hidden;
-            min-height: 100vh;
-            min-height: 100dvh;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
         }
 
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100dvh;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        /* Interactive Cursor Ambient Glow (Full Brightness) */
         body::before {
             content: '';
             position: fixed;
             inset: 0;
             width: 100vw;
             height: 100vh;
-            background: radial-gradient(650px circle at var(--x) var(--y), rgba(0, 210, 255, 0.12), transparent 50%);
+            background: radial-gradient(750px circle at var(--x) var(--y), rgba(0, 210, 255, 0.16), transparent 52%);
             pointer-events: none;
-            z-index: 0;
+            z-index: 1;
         }
 
+        /* Ambient Dynamic Color Mesh */
         .ambient-layer {
             position: fixed;
             inset: 0;
             width: 100vw;
             height: 100vh;
-            z-index: -2;
+            z-index: 0;
             pointer-events: none;
             overflow: hidden;
-            background: #02040a;
+            background: radial-gradient(circle at 50% 50%, #030816 0%, #02040a 100%);
         }
         .aura-blob {
             position: absolute;
             border-radius: 50%;
-            filter: blur(110px);
-            opacity: 0.35;
-            animation: auraFloat 18s infinite alternate ease-in-out;
+            filter: blur(100px);
+            opacity: 0.55;
+            animation: auraFloat 16s infinite alternate ease-in-out;
         }
-        .blob-cyan { width: 55vw; height: 55vw; background: radial-gradient(circle, #00d2ff 0%, transparent 70%); top: -15%; left: -10%; }
-        .blob-blue { width: 60vw; height: 60vw; background: radial-gradient(circle, #0051ff 0%, transparent 70%); bottom: -20%; right: -15%; animation-delay: -5s; }
-        .blob-violet { width: 45vw; height: 45vw; background: radial-gradient(circle, #7928ca 0%, transparent 70%); top: 35%; left: 30%; animation-delay: -10s; }
+        .blob-cyan { width: 55vw; height: 55vw; background: radial-gradient(circle, #00d2ff 0%, transparent 68%); top: -12%; left: -10%; }
+        .blob-blue { width: 62vw; height: 62vw; background: radial-gradient(circle, #0051ff 0%, transparent 70%); bottom: -18%; right: -12%; animation-delay: -5s; }
+        .blob-violet { width: 48vw; height: 48vw; background: radial-gradient(circle, #7928ca 0%, transparent 70%); top: 30%; left: 25%; animation-delay: -9s; }
 
         @keyframes auraFloat {
             0% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(4vw, 5vh) scale(1.08); }
+            50% { transform: translate(4vw, 5vh) scale(1.1); }
             100% { transform: translate(-4vw, -4vh) scale(0.95); }
         }
 
         .glass-nav {
-            background: rgba(6, 11, 22, 0.78);
-            backdrop-filter: blur(35px) saturate(200%);
-            -webkit-backdrop-filter: blur(35px) saturate(200%);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(6, 11, 24, 0.82);
+            backdrop-filter: blur(35px) saturate(210%);
+            -webkit-backdrop-filter: blur(35px) saturate(210%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             position: relative;
             z-index: 40;
             width: 100%;
@@ -115,85 +119,82 @@
             background: linear-gradient(90deg, #00d2ff 0%, #38bdf8 50%, #0051ff 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 12px rgba(0, 210, 255, 0.55));
+            filter: drop-shadow(0 0 12px rgba(0, 210, 255, 0.6));
         }
 
         .glass-panel {
-            background: rgba(10, 16, 30, 0.65);
+            background: rgba(10, 18, 36, 0.68);
             backdrop-filter: blur(35px) saturate(190%);
             -webkit-backdrop-filter: blur(35px) saturate(190%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 1.15rem;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 1.25rem;
             position: relative;
-            box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.75);
+            box-shadow: 0 20px 45px -5px rgba(0, 0, 0, 0.85);
             transition: all 0.25s ease;
         }
 
         .liquid-glass-card {
-            background: rgba(12, 18, 34, 0.62);
+            background: rgba(12, 20, 40, 0.72);
             backdrop-filter: blur(50px) saturate(210%);
             -webkit-backdrop-filter: blur(50px) saturate(210%);
-            border: 1px solid rgba(255, 255, 255, 0.14);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 1.75rem;
             position: relative;
-            box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.92), inset 0 1px 1px 0 rgba(255, 255, 255, 0.22);
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            overflow: hidden;
+            box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.95), inset 0 1px 1px 0 rgba(255, 255, 255, 0.25);
         }
 
         .ott-btn-primary {
-            background: linear-gradient(135deg, rgba(0, 210, 255, 0.2) 0%, rgba(0, 81, 255, 0.25) 100%);
-            border: 1px solid rgba(0, 210, 255, 0.5);
+            background: linear-gradient(135deg, rgba(0, 210, 255, 0.22) 0%, rgba(0, 81, 255, 0.3) 100%);
+            border: 1px solid rgba(0, 210, 255, 0.55);
             border-radius: 0.9rem;
-            box-shadow: 0 8px 25px -5px rgba(0, 210, 255, 0.25);
+            box-shadow: 0 8px 25px -5px rgba(0, 210, 255, 0.3);
             transition: all 0.22s ease;
         }
         .ott-btn-primary:active { transform: scale(0.97); }
         .ott-btn-primary:hover {
-            background: linear-gradient(135deg, rgba(0, 210, 255, 0.32) 0%, rgba(0, 81, 255, 0.4) 100%);
-            border-color: rgba(0, 210, 255, 0.85);
-            box-shadow: 0 10px 30px -4px rgba(0, 210, 255, 0.5);
+            background: linear-gradient(135deg, rgba(0, 210, 255, 0.36) 0%, rgba(0, 81, 255, 0.45) 100%);
+            border-color: rgba(0, 210, 255, 0.95);
+            box-shadow: 0 10px 30px -4px rgba(0, 210, 255, 0.55);
             transform: translateY(-2px);
         }
 
         .ott-btn-secondary {
-            background: rgba(14, 21, 38, 0.75);
+            background: rgba(14, 23, 44, 0.8);
             backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: 0.9rem;
             transition: all 0.22s ease;
         }
         .ott-btn-secondary:active { transform: scale(0.97); }
         .ott-btn-secondary:hover {
-            background: rgba(20, 30, 54, 0.95);
-            border-color: rgba(0, 210, 255, 0.5);
-            box-shadow: 0 10px 28px -5px rgba(0, 210, 255, 0.28);
+            background: rgba(20, 32, 60, 0.95);
+            border-color: rgba(0, 210, 255, 0.55);
+            box-shadow: 0 10px 28px -5px rgba(0, 210, 255, 0.35);
             transform: translateY(-2px);
         }
 
         .red-guide-card {
-            background: linear-gradient(135deg, rgba(35, 10, 16, 0.75) 0%, rgba(20, 8, 12, 0.85) 100%);
+            background: linear-gradient(135deg, rgba(38, 12, 18, 0.8) 0%, rgba(22, 9, 14, 0.9) 100%);
             backdrop-filter: blur(25px);
-            border: 1px solid rgba(239, 68, 68, 0.3);
+            border: 1px solid rgba(239, 68, 68, 0.35);
             border-radius: 0.9rem;
             transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .red-guide-card:active { transform: scale(0.97); }
         .red-guide-card:hover {
-            background: linear-gradient(135deg, rgba(55, 14, 22, 0.9) 0%, rgba(30, 10, 16, 0.95) 100%);
-            border-color: rgba(239, 68, 68, 0.75);
-            box-shadow: 0 10px 28px -5px rgba(239, 68, 68, 0.4);
+            background: linear-gradient(135deg, rgba(60, 15, 24, 0.95) 0%, rgba(32, 10, 18, 0.98) 100%);
+            border-color: rgba(239, 68, 68, 0.8);
+            box-shadow: 0 10px 28px -5px rgba(239, 68, 68, 0.45);
             transform: translateY(-2px);
         }
 
-        /* Movie Player Container */
         .player-container {
             aspect-ratio: 16 / 9;
             background: #000000;
             position: relative;
             border-radius: 1rem;
             overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.14);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -237,7 +238,7 @@
             z-index: 10;
         }
 
-        /* VLC Player Style Subtitle (Crisp White Bold Font + Clean Drop-shadow, No Box) */
+        /* VLC Player Subtitle (Clean White Bold Font + Drop Shadow) */
         #custom-sub-overlay {
             position: absolute;
             bottom: 11%;
@@ -270,11 +271,7 @@
             visibility: visible;
             opacity: 1;
         }
-        .hud.hidden-hud {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
+        .hud.hidden-hud { opacity: 0; visibility: hidden; pointer-events: none; }
 
         .double-tap-zone {
             position: absolute;
@@ -304,9 +301,7 @@
             transform: scale(0.85);
             pointer-events: none;
         }
-        .skip-animate {
-            animation: minimalSkipPop 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
+        .skip-animate { animation: minimalSkipPop 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes minimalSkipPop {
             0% { opacity: 0; transform: scale(0.8); }
             35% { opacity: 1; transform: scale(1.05); }
@@ -348,23 +343,9 @@
             height: 4px;
             cursor: pointer;
         }
-        @media (min-width: 768px) {
-            .vol-capsule input[type=range] { width: 62px; }
-        }
-        .vol-capsule input[type=range]::-webkit-slider-runnable-track {
-            background: rgba(255, 255, 255, 0.2);
-            height: 3px;
-            border-radius: 99px;
-        }
-        .vol-capsule input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 10px;
-            width: 10px;
-            border-radius: 50%;
-            background: #00d2ff;
-            margin-top: -3.5px;
-            box-shadow: 0 0 8px #00d2ff;
-        }
+        @media (min-width: 768px) { .vol-capsule input[type=range] { width: 62px; } }
+        .vol-capsule input[type=range]::-webkit-slider-runnable-track { background: rgba(255, 255, 255, 0.2); height: 3px; border-radius: 99px; }
+        .vol-capsule input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 10px; width: 10px; border-radius: 50%; background: #00d2ff; margin-top: -3.5px; box-shadow: 0 0 8px #00d2ff; }
 
         #video-loader {
             position: absolute;
@@ -417,10 +398,7 @@
             justify-content: center;
             padding: 1rem;
         }
-        .glass-popup-backdrop.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        .glass-popup-backdrop.active { opacity: 1; pointer-events: auto; }
         .glass-popup-card {
             background: rgba(12, 18, 36, 0.94);
             backdrop-filter: blur(50px) saturate(210%);
@@ -471,29 +449,25 @@
             text-decoration: none;
             color: inherit;
         }
-        @media (min-width: 640px) {
-            .intent-card { padding: 0.95rem 0.65rem; border-radius: 1rem; }
-        }
+        @media (min-width: 640px) { .intent-card { padding: 0.95rem 0.65rem; border-radius: 1rem; } }
         .intent-card:active { transform: scale(0.95); }
-        @media (pointer: fine) {
-            .intent-card:hover {
-                background: rgba(18, 28, 52, 0.9);
-                border-color: rgba(0, 210, 255, 0.45);
-                transform: translateY(-2px);
-                box-shadow: 0 10px 24px -4px rgba(0, 210, 255, 0.25);
-            }
+        .intent-card:hover {
+            background: rgba(18, 28, 52, 0.9);
+            border-color: rgba(0, 210, 255, 0.45);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 24px -4px rgba(0, 210, 255, 0.25);
         }
     </style>
 </head>
 <body class="antialiased">
 
+    <!-- Ambient Mesh Layer (Guaranteed Cyan-Blue Glow) -->
     <div class="ambient-layer">
         <div class="aura-blob blob-cyan"></div>
         <div class="aura-blob blob-blue"></div>
         <div class="aura-blob blob-violet"></div>
     </div>
 
-    <!-- Global Toast Notification -->
     <div id="toast" class="toast text-[11px] md:text-xs font-semibold">Notification</div>
 
     <!-- Floating Glass Navbar -->
@@ -509,7 +483,7 @@
         </a>
     </nav>
 
-    <!-- VIEW 1: MAIN OTT STREAMING INTERFACE (Vertical Middle Viewport Alignment) -->
+    <!-- VIEW 1: MAIN OTT STREAMING INTERFACE (Vertical Viewport Centering) -->
     <main id="player-view" class="container mx-auto px-2.5 sm:px-5 py-4 max-w-4xl my-auto flex-grow flex flex-col justify-center items-center relative z-10 w-full">
         
         <div class="w-full mb-2.5 px-1">
@@ -524,7 +498,7 @@
         <!-- Master Video Player Frame -->
         <div class="glass-panel p-0.5 sm:p-1 mb-4 w-full">
             <div class="player-container" id="player-container">
-                <video id="video-player" playsinline preload="metadata"></video>
+                <video id="video-player" playsinline preload="metadata" crossorigin="anonymous"></video>
 
                 <!-- Subtitle Text Overlay (Clean VLC Font) -->
                 <div id="custom-sub-overlay"></div>
@@ -730,7 +704,7 @@
         </div>
     </main>
 
-    <!-- VIEW 2: IN-PAGE BROWSER DOWNLOAD SCREEN (Fixed: Native Media Pipe) -->
+    <!-- VIEW 2: IN-PAGE BROWSER DOWNLOAD SCREEN -->
     <main id="download-view" class="container mx-auto px-3.5 py-8 md:py-12 max-w-xl my-auto flex-grow flex-col justify-center relative z-10 text-center hidden">
         <div class="liquid-glass-card p-6 sm:p-9">
             <div class="w-14 h-14 rounded-full bg-sapphire/15 border border-sapphire/40 text-sapphire flex items-center justify-center mx-auto mb-4 shadow-[0_0_25px_rgba(0,210,255,0.35)]">
@@ -1045,7 +1019,6 @@
         let currentQuality = 'Auto';
         function initQualityOptions() {
             let sourceRes = 1080;
-            // Real resolution inspection
             if (video.videoHeight && video.videoHeight > 0) {
                 if (video.videoHeight >= 1800) sourceRes = 2160;
                 else if (video.videoHeight >= 900) sourceRes = 1080;
@@ -1097,6 +1070,33 @@
         }
         initQualityOptions();
 
+        // WebAudio DDP5.1 Multi-Channel Downmix Engine
+        let audioCtx = null;
+        let delayNode = null;
+        let currentDelayMs = 0;
+
+        function initDDPDownmixEngine() {
+            try {
+                if (!audioCtx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    audioCtx = new AudioContext();
+                    const source = audioCtx.createMediaElementSource(video);
+                    delayNode = audioCtx.createDelay(5.0);
+                    delayNode.delayTime.value = 0;
+                    
+                    audioCtx.destination.channelCount = 2;
+                    audioCtx.destination.channelCountMode = 'explicit';
+                    audioCtx.destination.channelInterpretation = 'speakers';
+
+                    source.connect(delayNode);
+                    delayNode.connect(audioCtx.destination);
+                }
+                if (audioCtx.state === 'suspended' && !video.paused) {
+                    audioCtx.resume();
+                }
+            } catch (e) {}
+        }
+
         function initPlayer() {
             errorScreen.classList.add('hidden');
             if (!FILE_URL) {
@@ -1147,8 +1147,21 @@
         video.addEventListener('waiting', () => { videoLoader.classList.remove('hidden'); showCenterControls(false); });
         video.addEventListener('seeking', () => { videoLoader.classList.remove('hidden'); });
         video.addEventListener('seeked', () => { videoLoader.classList.add('hidden'); showCenterControls(true); });
-        video.addEventListener('canplay', () => { videoLoader.classList.add('hidden'); errorScreen.classList.add('hidden'); showCenterControls(true); });
-        video.addEventListener('playing', () => { errorRetryCount = 0; videoLoader.classList.add('hidden'); errorScreen.classList.add('hidden'); showCenterControls(true); });
+        video.addEventListener('canplay', () => { 
+            videoLoader.classList.add('hidden'); 
+            errorScreen.classList.add('hidden'); 
+            showCenterControls(true); 
+            initDDPDownmixEngine();
+        });
+        video.addEventListener('playing', () => { 
+            errorRetryCount = 0; 
+            videoLoader.classList.add('hidden'); 
+            errorScreen.classList.add('hidden'); 
+            showCenterControls(true); 
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        });
 
         function formatTime(seconds) {
             if (isNaN(seconds) || seconds < 0) return "00:00";
@@ -1186,13 +1199,19 @@
                 showToast("Stream URL not active in local preview");
                 return;
             }
-            if (video.paused) video.play().catch(() => {});
-            else video.pause();
+            if (video.paused) {
+                video.play().catch(() => {});
+            } else {
+                video.pause();
+            }
         }
 
         video.addEventListener('play', () => {
             playIcon.className = 'fas fa-pause';
             showHudAndCursor();
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
         });
 
         video.addEventListener('pause', () => {
@@ -1203,6 +1222,9 @@
             playerContainer.classList.remove('hide-cursor');
             customSubOverlay.style.bottom = '15%';
             clearTimeout(hudTimeout);
+            if (audioCtx && audioCtx.state === 'running') {
+                audioCtx.suspend();
+            }
         });
 
         btnPlay.addEventListener('click', (e) => { e.stopPropagation(); togglePlay(); });
@@ -1227,7 +1249,6 @@
             });
         }
 
-        // Seek Throttling (Prevents Freezing on Skip)
         let isSeekingPending = false;
         function seek(offset) {
             if (isNaN(video.duration) || isSeekingPending) return;
@@ -1330,13 +1351,13 @@
         volSlider.addEventListener('input', (e) => {
             video.volume = e.target.value;
             video.muted = (e.target.value == 0);
-            volIcon.className = video.muted ? 'fas fa-volume-mute text-red-500' : 'fas fa-volume-up';
+            volIcon.className = video.muted ? 'fas fa-volume-mute text-sapphire' : 'fas fa-volume-up';
         });
         btnMute.addEventListener('click', (e) => {
             e.stopPropagation();
             video.muted = !video.muted;
             volSlider.value = video.muted ? 0 : (video.volume || 1);
-            volIcon.className = video.muted ? 'fas fa-volume-mute text-red-500' : 'fas fa-volume-up';
+            volIcon.className = video.muted ? 'fas fa-volume-mute text-sapphire' : 'fas fa-volume-up';
         });
 
         // Keyboard Shortcuts
@@ -1370,14 +1391,14 @@
                 case 'ArrowDown':
                     e.preventDefault(); video.volume = Math.max(0, video.volume - 0.05);
                     volSlider.value = video.volume;
-                    if (video.volume === 0) volIcon.className = 'fas fa-volume-mute text-red-500';
+                    if (video.volume === 0) volIcon.className = 'fas fa-volume-mute text-sapphire';
                     showToast(`Volume: ${Math.round(video.volume * 100)}%`); break;
                 case 'KeyF':
                     e.preventDefault(); toggleFullscreen(); break;
             }
         });
 
-        // Persistent Orientation Toggle (Never Disappears in Landscape)
+        // Persistent Orientation Toggle
         let isLandscapeMode = false;
         async function youtubeStyleLandscapeToggle(e) {
             if (e) e.stopPropagation();
@@ -1545,7 +1566,7 @@
             const offBtn = document.createElement('button');
             const isOff = (activeSubIdx === -1);
             offBtn.className = isOff
-                ? 'w-full py-2.5 px-4 rounded-xl bg-sapphire/20 border border-sapphire/50 text-sapphire text-xs font-bold text-left flex justify-between items-center transition'
+                ? 'w-full py-2.5 px-4 rounded-xl bg-crimson/25 border border-crimson/60 text-red-400 text-xs font-bold text-left flex justify-between items-center transition'
                 : 'w-full py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-gray-200 text-xs font-semibold text-left flex justify-between items-center transition';
             offBtn.innerHTML = `<span>Off</span> ${isOff ? '<i class="fas fa-check text-xs"></i>' : ''}`;
             offBtn.onclick = () => {
@@ -1570,7 +1591,7 @@
 
                 const btn = document.createElement('button');
                 btn.className = isSelected
-                    ? 'w-full py-2.5 px-4 rounded-xl bg-sapphire/20 border border-sapphire/50 text-sapphire text-xs font-bold text-left flex justify-between items-center transition'
+                    ? 'w-full py-2.5 px-4 rounded-xl bg-crimson/25 border border-crimson/60 text-red-400 text-xs font-bold text-left flex justify-between items-center transition'
                     : 'w-full py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-gray-200 text-xs font-semibold text-left flex justify-between items-center transition';
                 btn.innerHTML = `<span>${trackLabel}</span> ${isSelected ? '<i class="fas fa-check text-xs"></i>' : ''}`;
                 btn.onclick = () => {
@@ -1621,7 +1642,7 @@
 
                 const btn = document.createElement('button');
                 btn.className = isSelected
-                    ? 'py-2.5 px-4 rounded-xl bg-sapphire/20 border border-sapphire/50 text-sapphire text-xs font-bold text-left flex justify-between items-center transition'
+                    ? 'py-2.5 px-4 rounded-xl bg-crimson/25 border border-crimson/60 text-red-400 text-xs font-bold text-left flex justify-between items-center transition'
                     : 'py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-gray-200 text-xs font-semibold text-left flex justify-between items-center transition';
                 btn.innerHTML = `<span>${label}</span> ${isSelected ? '<i class="fas fa-check text-xs"></i>' : ''}`;
                 
@@ -1643,16 +1664,18 @@
         }
 
         // Earphone Audio Delay Sync Slider (-2000ms to +2000ms)
-        let currentDelayMs = 0;
-        const delaySlider = document.getElementById('audio-delay-slider');
-        const delayDisplay = document.getElementById('delay-value-display');
-
         function updateDelayUI(val) {
             currentDelayMs = parseInt(val) || 0;
             delayDisplay.textContent = `${currentDelayMs > 0 ? '+' : ''}${currentDelayMs} ms`;
             delaySlider.value = currentDelayMs;
+            if (delayNode && audioCtx) {
+                const positiveDelay = Math.max(0, currentDelayMs / 1000);
+                delayNode.delayTime.setTargetAtTime(positiveDelay, audioCtx.currentTime, 0.02);
+            }
         }
 
+        const delaySlider = document.getElementById('audio-delay-slider');
+        const delayDisplay = document.getElementById('delay-value-display');
         delaySlider.addEventListener('input', (e) => updateDelayUI(e.target.value));
         function nudgeDelay(ms) {
             updateDelayUI(Math.min(2000, Math.max(-2000, currentDelayMs + ms)));
