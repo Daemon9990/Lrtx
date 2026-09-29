@@ -1,5 +1,7 @@
-kurigram
-tgcrypto
+git+https://github.com/botmaker00/kurigram.git@dev
+hypercrypto
+# kurigram
+# tgcrypto
 pymongo==4.13.2
 motor==3.7.1
 marshmallow<4.0.0
