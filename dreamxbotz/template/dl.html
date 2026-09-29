@@ -54,6 +54,7 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            align-items: center;
         }
 
         body::before {
@@ -101,6 +102,7 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             position: relative;
             z-index: 40;
+            width: 100%;
         }
 
         .brand-text {
@@ -140,30 +142,30 @@
         }
 
         .ott-btn-primary {
-            background: linear-gradient(135deg, rgba(0, 210, 255, 0.18) 0%, rgba(0, 81, 255, 0.22) 100%);
-            border: 1px solid rgba(0, 210, 255, 0.45);
+            background: linear-gradient(135deg, rgba(0, 210, 255, 0.2) 0%, rgba(0, 81, 255, 0.25) 100%);
+            border: 1px solid rgba(0, 210, 255, 0.5);
             border-radius: 0.9rem;
-            box-shadow: 0 8px 25px -5px rgba(0, 210, 255, 0.2);
-            transition: all 0.25s ease;
+            box-shadow: 0 8px 25px -5px rgba(0, 210, 255, 0.25);
+            transition: all 0.22s ease;
         }
         .ott-btn-primary:active { transform: scale(0.97); }
         .ott-btn-primary:hover {
-            background: linear-gradient(135deg, rgba(0, 210, 255, 0.28) 0%, rgba(0, 81, 255, 0.35) 100%);
+            background: linear-gradient(135deg, rgba(0, 210, 255, 0.32) 0%, rgba(0, 81, 255, 0.4) 100%);
             border-color: rgba(0, 210, 255, 0.85);
-            box-shadow: 0 10px 30px -4px rgba(0, 210, 255, 0.45);
+            box-shadow: 0 10px 30px -4px rgba(0, 210, 255, 0.5);
             transform: translateY(-2px);
         }
 
         .ott-btn-secondary {
-            background: rgba(14, 21, 38, 0.72);
+            background: rgba(14, 21, 38, 0.75);
             backdrop-filter: blur(25px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 0.9rem;
-            transition: all 0.25s ease;
+            transition: all 0.22s ease;
         }
         .ott-btn-secondary:active { transform: scale(0.97); }
         .ott-btn-secondary:hover {
-            background: rgba(20, 30, 54, 0.9);
+            background: rgba(20, 30, 54, 0.95);
             border-color: rgba(0, 210, 255, 0.5);
             box-shadow: 0 10px 28px -5px rgba(0, 210, 255, 0.28);
             transform: translateY(-2px);
@@ -174,7 +176,7 @@
             backdrop-filter: blur(25px);
             border: 1px solid rgba(239, 68, 68, 0.3);
             border-radius: 0.9rem;
-            transition: all 0.25s ease;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .red-guide-card:active { transform: scale(0.97); }
         .red-guide-card:hover {
@@ -184,19 +186,21 @@
             transform: translateY(-2px);
         }
 
+        /* Movie Player Container */
         .player-container {
             aspect-ratio: 16 / 9;
             background: #000000;
             position: relative;
             border-radius: 1rem;
             overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 10;
             cursor: default;
             user-select: none;
+            width: 100%;
         }
 
         .hide-cursor, .hide-cursor * { cursor: none !important; }
@@ -233,27 +237,24 @@
             z-index: 10;
         }
 
-        /* Direct Subtitle Cues Overlay (Always Visible When Enabled) */
+        /* VLC Player Style Subtitle (Crisp White Bold Font + Clean Drop-shadow, No Box) */
         #custom-sub-overlay {
             position: absolute;
-            bottom: 14%;
+            bottom: 11%;
             left: 5%;
             right: 5%;
             text-align: center;
             z-index: 24;
             pointer-events: none;
-            font-family: 'Inter', sans-serif;
+            font-family: Arial, Helvetica, sans-serif;
             font-weight: 700;
             color: #ffffff;
-            line-height: 1.35;
-            font-size: calc(clamp(0.95rem, 2.4vw, 1.45rem) * var(--sub-scale));
+            font-size: calc(clamp(1.05rem, 2.4vw, 1.55rem) * var(--sub-scale));
             text-shadow: 
-                0 2px 4px rgba(0, 0, 0, 1),
-                0 0 12px rgba(0, 0, 0, 0.95),
-                -1.5px -1.5px 0 #000,
-                1.5px -1.5px 0 #000,
-                -1.5px 1.5px 0 #000,
-                1.5px 1.5px 0 #000;
+                0 1px 2px #000000,
+                0 2px 4px #000000,
+                0 0 8px rgba(0, 0, 0, 0.95);
+            line-height: 1.35;
             transition: bottom 0.25s ease;
         }
 
@@ -290,7 +291,7 @@
         .minimal-skip-pill {
             background: rgba(8, 14, 28, 0.85);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 210, 255, 0.45);
+            border: 1px solid rgba(0, 210, 255, 0.5);
             padding: 6px 14px;
             border-radius: 99px;
             color: #00d2ff;
@@ -421,7 +422,7 @@
             pointer-events: auto;
         }
         .glass-popup-card {
-            background: rgba(12, 18, 36, 0.92);
+            background: rgba(12, 18, 36, 0.94);
             backdrop-filter: blur(50px) saturate(210%);
             -webkit-backdrop-filter: blur(50px) saturate(210%);
             border: 1px solid rgba(255, 255, 255, 0.16);
@@ -443,7 +444,7 @@
             transform: translateX(-50%) translateY(-20px);
             background: rgba(10, 18, 35, 0.95);
             backdrop-filter: blur(16px);
-            border: 1px solid rgba(0, 210, 255, 0.45);
+            border: 1px solid rgba(0, 210, 255, 0.5);
             border-radius: 99px;
             padding: 7px 18px;
             color: #fff;
@@ -474,11 +475,13 @@
             .intent-card { padding: 0.95rem 0.65rem; border-radius: 1rem; }
         }
         .intent-card:active { transform: scale(0.95); }
-        .intent-card:hover {
-            background: rgba(18, 28, 52, 0.9);
-            border-color: rgba(0, 210, 255, 0.45);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 24px -4px rgba(0, 210, 255, 0.25);
+        @media (pointer: fine) {
+            .intent-card:hover {
+                background: rgba(18, 28, 52, 0.9);
+                border-color: rgba(0, 210, 255, 0.45);
+                transform: translateY(-2px);
+                box-shadow: 0 10px 24px -4px rgba(0, 210, 255, 0.25);
+            }
         }
     </style>
 </head>
@@ -506,11 +509,10 @@
         </a>
     </nav>
 
-    <!-- VIEW 1: MAIN OTT STREAMING INTERFACE -->
-    <main id="player-view" class="container mx-auto px-2.5 sm:px-5 py-3 md:py-5 max-w-4xl my-auto flex-grow flex flex-col justify-center relative z-10">
+    <!-- VIEW 1: MAIN OTT STREAMING INTERFACE (Vertical Middle Viewport Alignment) -->
+    <main id="player-view" class="container mx-auto px-2.5 sm:px-5 py-4 max-w-4xl my-auto flex-grow flex flex-col justify-center items-center relative z-10 w-full">
         
-        <!-- File Title & Metadata -->
-        <div class="mb-2.5 px-1">
+        <div class="w-full mb-2.5 px-1">
             <h1 class="text-xs sm:text-sm md:text-base font-bold font-['Outfit'] break-all leading-snug text-white mb-1">{{file_name}}</h1>
             <div class="flex items-center gap-2 text-[10px] md:text-xs text-gray-400">
                 <span class="flex items-center gap-1 text-gray-300"><i class="fas fa-database text-sapphire"></i> {{file_size}}</span>
@@ -520,11 +522,11 @@
         </div>
 
         <!-- Master Video Player Frame -->
-        <div class="glass-panel p-0.5 sm:p-1 mb-3.5 md:mb-5">
+        <div class="glass-panel p-0.5 sm:p-1 mb-4 w-full">
             <div class="player-container" id="player-container">
                 <video id="video-player" playsinline preload="metadata"></video>
 
-                <!-- Subtitle Text Overlay (100% Synced) -->
+                <!-- Subtitle Text Overlay (Clean VLC Font) -->
                 <div id="custom-sub-overlay"></div>
 
                 <!-- Network Buffer Spinner -->
@@ -532,7 +534,7 @@
                     <div class="loader"></div>
                 </div>
 
-                <!-- OTT Codec Error Notice -->
+                <!-- OTT Codec Notice Screen -->
                 <div id="error-screen" class="hidden">
                     <div class="glass-panel p-5 max-w-xs sm:max-w-sm w-full text-center border-sapphire/30 shadow-[0_20px_50px_rgba(0,0,0,0.95)]">
                         <div class="w-11 h-11 rounded-full bg-sapphire/15 text-sapphire flex items-center justify-center mx-auto mb-2.5 border border-sapphire/40">
@@ -540,7 +542,7 @@
                         </div>
                         <h4 class="font-bold text-xs sm:text-sm text-white font-['Outfit'] mb-1">Advanced Codec Notice</h4>
                         <p class="text-gray-400 text-[11px] leading-relaxed mb-4">
-                            If audio is silent (Dolby 5.1/DDP) or video freezes on heavy x265, launch below in an External Player for full cinema sound and hardware decoding.
+                            If audio is silent or video buffers on heavy x265, launch below in VLC or MX Player for full hardware decoding.
                         </p>
                         <div class="flex gap-2">
                             <button onclick="retryPlayback()" class="flex-1 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-xs font-semibold transition">Retry</button>
@@ -618,8 +620,9 @@
                                 <button class="px-1.5 py-0.5 rounded bg-white/10 hover:bg-white/20 text-[10px] sm:text-xs font-semibold active:scale-95" onclick="openPopup('speed-popup')">
                                     <span id="speed-display">1x</span>
                                 </button>
-                                <button class="px-1.5 py-0.5 rounded bg-sapphire/20 border border-sapphire/40 text-sapphire hover:bg-sapphire/30 text-[10px] sm:text-xs font-bold active:scale-95" onclick="openPopup('quality-popup')" title="Stream Quality">
-                                    <span id="quality-display">HD</span>
+                                <!-- Quality Gear Button (Popup opens on click only) -->
+                                <button class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center text-[11px] sm:text-xs hover:text-sapphire active:scale-90 transition text-gray-200" onclick="openPopup('quality-popup')" title="Quality Settings">
+                                    <i class="fas fa-gear"></i>
                                 </button>
                                 <button class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center text-[11px] sm:text-xs hover:text-sapphire active:scale-90" onclick="openAudioPopup()" title="Audio Tracks">
                                     <i class="fas fa-music"></i>
@@ -627,7 +630,7 @@
                                 <button class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center text-[11px] sm:text-xs hover:text-sapphire active:scale-90" onclick="openSubPopup()" title="Subtitles">
                                     <i class="fas fa-closed-captioning"></i>
                                 </button>
-                                <!-- Persistent Orientation Toggle (Never disappears in landscape) -->
+                                <!-- Persistent Orientation Toggle -->
                                 <button class="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center text-[11px] sm:text-xs hover:text-sapphire active:scale-90" id="btn-rotate-persistent" onclick="youtubeStyleLandscapeToggle(event)" title="Toggle Orientation">
                                     <i class="fas fa-rotate" id="rotate-screen-icon"></i>
                                 </button>
@@ -641,8 +644,8 @@
             </div>
         </div>
 
-        <!-- Primary Action Grid -->
-        <div class="grid grid-cols-3 gap-2 sm:gap-3 mb-5">
+        <!-- Primary Action Grid (Classic Cyan Theme) -->
+        <div class="grid grid-cols-3 gap-2 sm:gap-3 mb-5 w-full">
             <button onclick="openPopup('download-popup')" class="ott-btn-primary py-2.5 px-2 sm:p-3.5 flex items-center justify-center gap-2">
                 <i class="fas fa-download text-sapphire text-xs sm:text-sm"></i>
                 <span class="font-bold text-[11px] sm:text-xs text-white truncate">Fast Download</span>
@@ -661,7 +664,7 @@
         </div>
 
         <!-- External Players Section -->
-        <div class="mb-3">
+        <div class="mb-3 w-full">
             <div class="flex items-center gap-2.5 mb-2.5 px-1">
                 <div class="h-px flex-grow bg-white/10"></div>
                 <h2 class="text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-gray-400">Open in External Player</h2>
@@ -727,7 +730,7 @@
         </div>
     </main>
 
-    <!-- VIEW 2: IN-PAGE BROWSER DOWNLOAD SCREEN -->
+    <!-- VIEW 2: IN-PAGE BROWSER DOWNLOAD SCREEN (Fixed: Native Media Pipe) -->
     <main id="download-view" class="container mx-auto px-3.5 py-8 md:py-12 max-w-xl my-auto flex-grow flex-col justify-center relative z-10 text-center hidden">
         <div class="liquid-glass-card p-6 sm:p-9">
             <div class="w-14 h-14 rounded-full bg-sapphire/15 border border-sapphire/40 text-sapphire flex items-center justify-center mx-auto mb-4 shadow-[0_0_25px_rgba(0,210,255,0.35)]">
@@ -740,15 +743,15 @@
             </div>
 
             <h2 class="text-xl sm:text-2xl md:text-3xl font-extrabold font-['Outfit'] text-white mb-3 leading-tight">
-                Your Download Will Start Soon... Please Wait
+                Your Download Has Started
             </h2>
 
             <div class="bg-black/35 border border-white/10 rounded-2xl p-4 sm:p-5 text-left mb-5 text-xs sm:text-[13px] text-gray-300 leading-relaxed space-y-2.5">
                 <p>
-                    Your browser has connected directly to the high-speed <b class="text-white">BoultFlix Media Pipeline</b>. Your file download is starting automatically.
+                    Your browser has initialized connection to the <b class="text-white">BoultFlix Media Pipeline</b>. The file transfer is beginning in your browser download manager.
                 </p>
                 <p class="text-gray-400 text-[11px]">
-                    <i class="fas fa-bolt text-sapphire mr-1"></i> <b>Speed Tip:</b> For maximum multi-threaded speeds without browser interruptions, paste the copied stream link into <b>ADM / 1DM</b> (Android) or <b>FDM / IDM</b> (PC).
+                    <i class="fas fa-bolt text-sapphire mr-1"></i> <b>Speed Tip:</b> For maximum multi-threaded speeds without drops, copy the stream link into <b>ADM / 1DM</b> (Android) or <b>FDM / IDM</b> (PC).
                 </p>
                 <div class="pt-2 text-right font-['Outfit'] font-bold text-sapphire text-xs tracking-wide">
                     &mdash; Regards, BoultFlix Team
@@ -866,7 +869,7 @@
             </div>
         </div>
 
-        <!-- 6. Aspect Ratio Popup (Fixed for 16:9, 21:9, Crop & Fit) -->
+        <!-- 6. Aspect Ratio Popup (16:9, 21:9, Crop to Fill, Fit) -->
         <div id="aspect-popup" class="glass-popup-backdrop" onclick="closePopupOnBackdrop(event, this)">
             <div class="glass-popup-card p-5">
                 <div class="flex justify-between items-center mb-3.5">
@@ -891,12 +894,12 @@
                 </div>
                 <div class="flex flex-col gap-2" id="audio-track-list"></div>
                 <p class="text-[10px] text-gray-400 mt-3 text-center leading-normal">
-                    If media uses proprietary Dolby AC3/DDP audio tracks, switch smoothly via <span class="text-sapphire font-semibold">VLC</span> or <span class="text-[#0088ff] font-semibold">PotPlayer</span>.
+                    If proprietary Dolby AC3/DDP audio is completely silent in your browser, switch directly into <span class="text-sapphire font-semibold">VLC</span> or <span class="text-[#0088ff] font-semibold">PotPlayer</span>.
                 </p>
             </div>
         </div>
 
-        <!-- 8. Subtitles Popup (6 Sizes + Sync Adjuster) -->
+        <!-- 8. Subtitles Popup (6 Sizes, Clean Original Speed) -->
         <div id="sub-popup" class="glass-popup-backdrop" onclick="closePopupOnBackdrop(event, this)">
             <div class="glass-popup-card p-5">
                 <div class="flex justify-between items-center mb-3">
@@ -904,24 +907,14 @@
                     <button onclick="closeAllPopups()" class="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-gray-400 hover:text-white"><i class="fas fa-times text-xs"></i></button>
                 </div>
                 
-                <div class="flex flex-col gap-2 mb-3 max-h-44 overflow-y-auto pr-1" id="sub-track-list"></div>
-
-                <!-- Subtitle Timing Sync (Like Image 3) -->
-                <div class="bg-black/40 border border-white/10 rounded-xl p-2.5 mb-3 flex items-center justify-between text-xs">
-                    <span class="text-gray-400 font-semibold">Sync: <span id="sub-sync-val" class="text-sapphire font-mono">0.0s</span></span>
-                    <div class="flex gap-1.5">
-                        <button onclick="adjustSubSync(-0.5)" class="px-2.5 py-1 bg-white/5 hover:bg-white/15 rounded-lg font-bold">-0.5s</button>
-                        <button onclick="adjustSubSync(0)" class="px-2 py-1 bg-white/5 hover:bg-white/15 rounded-lg text-gray-400"><i class="fas fa-rotate-left text-[10px]"></i></button>
-                        <button onclick="adjustSubSync(0.5)" class="px-2.5 py-1 bg-white/5 hover:bg-white/15 rounded-lg font-bold">+0.5s</button>
-                    </div>
-                </div>
+                <div class="flex flex-col gap-2 mb-4 max-h-48 overflow-y-auto pr-1" id="sub-track-list"></div>
                 
                 <div>
                     <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-2">Caption Text Size</label>
                     <div class="grid grid-cols-3 gap-2" id="sub-size-options">
                         <button onclick="setSubSize(0.5, '50%', this)" class="sub-size-btn py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-200 text-xs font-semibold transition">50%</button>
                         <button onclick="setSubSize(0.75, '75%', this)" class="sub-size-btn py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-200 text-xs font-semibold transition">75%</button>
-                        <button onclick="setSubSize(1, '100%', this)" class="sub-size-btn py-2 rounded-xl bg-sapphire/15 text-sapphire border border-sapphire/50 text-xs font-semibold transition">100%</button>
+                        <button onclick="setSubSize(1, '100%', this)" class="sub-size-btn py-2 rounded-xl bg-sapphire/20 text-sapphire border border-sapphire/50 text-xs font-bold transition">100%</button>
                         <button onclick="setSubSize(1.25, '125%', this)" class="sub-size-btn py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-200 text-xs font-semibold transition">125%</button>
                         <button onclick="setSubSize(1.5, '150%', this)" class="sub-size-btn py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-200 text-xs font-semibold transition">150%</button>
                         <button onclick="setSubSize(2.0, '200%', this)" class="sub-size-btn py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-200 text-xs font-semibold transition">200%</button>
@@ -930,7 +923,7 @@
             </div>
         </div>
 
-        <!-- 9. Headphone Audio Delay Sync Popup (- and + Support) -->
+        <!-- 9. Headphone Audio Delay Sync Popup (-2000ms to +2000ms) -->
         <div id="audio-delay-popup" class="glass-popup-backdrop" onclick="closePopupOnBackdrop(event, this)">
             <div class="glass-popup-card p-5">
                 <div class="flex justify-between items-center mb-3">
@@ -939,7 +932,7 @@
                 </div>
                 <div class="text-center py-1">
                     <div class="text-xl font-bold font-mono text-sapphire mb-1" id="delay-value-display">0 ms</div>
-                    <p class="text-[11px] text-gray-400 mb-3">Fine-tune Bluetooth Earbud / Headphone Delay</p>
+                    <p class="text-[11px] text-gray-400 mb-3">Fine-tune Bluetooth Earbud / Headphone Audio Latency</p>
                     <input type="range" min="-2000" max="2000" step="50" value="0" id="audio-delay-slider" class="w-full mb-4 accent-sapphire cursor-pointer">
                     <div class="flex justify-between gap-2">
                         <button onclick="nudgeDelay(-50)" class="flex-1 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-xs font-semibold">-50 ms</button>
@@ -1019,26 +1012,26 @@
         let detectedSubMeta = [];
         let activeAudioIdx = 0;
         let activeSubIdx = -1;
-        let subSyncOffset = 0;
 
+        // Auto Extract Track Metadata
         function inferTracksFromFilename(name) {
             const lower = (name || '').toLowerCase();
             const audios = [];
-            if (lower.includes('hindi')) audios.push('Hindi (Default)');
+            if (lower.includes('hindi') || lower.includes('hin')) audios.push('Hindi (Default)');
             if (lower.includes('eng') || lower.includes('dual')) audios.push('English');
             if (lower.includes('tam')) audios.push('Tamil');
             if (lower.includes('tel')) audios.push('Telugu');
             if (lower.includes('jap')) audios.push('Japanese');
             if (lower.includes('kor')) audios.push('Korean');
-            if (audios.length === 0) audios.push('Primary Audio (Stereo)');
+            if (audios.length === 0) audios.push('Audio Track 1 (Default)');
             detectedAudioMeta = audios;
 
             const subs = [];
             if (lower.includes('esub') || lower.includes('sub') || lower.includes('mkv') || lower.includes('web-dl')) {
                 subs.push('English - [SDH]');
             }
-            if (lower.includes('hin')) {
-                subs.push('Hindi Subtitles');
+            if (lower.includes('hdhub4u')) {
+                subs.push('HDHub4u.Ag (SRT)');
             }
             if (subs.length === 0) {
                 subs.push('English Subtitles');
@@ -1047,16 +1040,26 @@
         }
         inferTracksFromFilename(FILE_NAME);
 
-        // Quality Menus (Auto Detects Source Resolution - Downgrade Only)
+        // Quality Detection from Real Source (No False 2160p)
         let availableQualities = [];
         let currentQuality = 'Auto';
         function initQualityOptions() {
-            const lower = (FILE_NAME || '').toLowerCase();
             let sourceRes = 1080;
-            if (lower.includes('2160p') || lower.includes('4k')) sourceRes = 2160;
-            else if (lower.includes('1080p')) sourceRes = 1080;
-            else if (lower.includes('720p')) sourceRes = 720;
-            else if (lower.includes('480p')) sourceRes = 480;
+            // Real resolution inspection
+            if (video.videoHeight && video.videoHeight > 0) {
+                if (video.videoHeight >= 1800) sourceRes = 2160;
+                else if (video.videoHeight >= 900) sourceRes = 1080;
+                else if (video.videoHeight >= 650) sourceRes = 720;
+                else if (video.videoHeight >= 400) sourceRes = 480;
+                else sourceRes = 360;
+            } else {
+                if (/\b(2160p|4k|uhd)\b/i.test(FILE_NAME)) sourceRes = 2160;
+                else if (/\b(1080p|fhd)\b/i.test(FILE_NAME)) sourceRes = 1080;
+                else if (/\b(720p|hd)\b/i.test(FILE_NAME)) sourceRes = 720;
+                else if (/\b(480p|sd)\b/i.test(FILE_NAME)) sourceRes = 480;
+                else if (/\b(360p)\b/i.test(FILE_NAME)) sourceRes = 360;
+                else sourceRes = 1080;
+            }
 
             const allRes = [
                 { label: '4K (2160p)', res: 2160 },
@@ -1068,23 +1071,22 @@
 
             availableQualities = allRes.filter(q => q.res <= sourceRes);
             currentQuality = availableQualities[0].label;
-            document.getElementById('quality-display').textContent = availableQualities[0].res + 'p';
             renderQualityMenu();
         }
 
         function renderQualityMenu() {
             const list = document.getElementById('quality-options-list');
+            if (!list) return;
             list.innerHTML = '';
             availableQualities.forEach((q, idx) => {
                 const isSelected = (q.label === currentQuality);
                 const btn = document.createElement('button');
                 btn.className = isSelected
-                    ? 'py-2.5 px-4 rounded-xl bg-sapphire/15 border border-sapphire/50 text-sapphire text-xs font-bold text-left flex justify-between items-center transition'
+                    ? 'py-2.5 px-4 rounded-xl bg-sapphire/20 border border-sapphire/50 text-sapphire text-xs font-bold text-left flex justify-between items-center transition'
                     : 'py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-gray-200 text-xs font-semibold text-left flex justify-between items-center transition';
                 btn.innerHTML = `<span>${q.label} ${idx === 0 ? '(Original)' : ''}</span> ${isSelected ? '<i class="fas fa-check text-xs"></i>' : ''}`;
                 btn.onclick = () => {
                     currentQuality = q.label;
-                    document.getElementById('quality-display').textContent = q.res + 'p';
                     video.style.filter = idx > 0 ? `blur(${idx * 0.18}px)` : 'none';
                     renderQualityMenu();
                     closeAllPopups();
@@ -1225,13 +1227,13 @@
             });
         }
 
-        // Seek Throttling (Prevents Render Server Crash / Freeze on rapid skips)
+        // Seek Throttling (Prevents Freezing on Skip)
         let isSeekingPending = false;
         function seek(offset) {
             if (isNaN(video.duration) || isSeekingPending) return;
             isSeekingPending = true;
             video.currentTime = Math.max(0, Math.min(video.duration, video.currentTime + offset));
-            setTimeout(() => { isSeekingPending = false; }, 320);
+            setTimeout(() => { isSeekingPending = false; }, 300);
         }
 
         document.getElementById('btn-rewind').addEventListener('click', (e) => { e.stopPropagation(); seek(-10); showToast('-10s'); });
@@ -1266,6 +1268,7 @@
             timeTotal.textContent = formatTime(video.duration);
             videoLoader.classList.add('hidden');
             showCenterControls(true);
+            initQualityOptions();
             bindSubtitleCueRenderer();
         });
 
@@ -1327,13 +1330,13 @@
         volSlider.addEventListener('input', (e) => {
             video.volume = e.target.value;
             video.muted = (e.target.value == 0);
-            volIcon.className = video.muted ? 'fas fa-volume-mute text-red-400' : 'fas fa-volume-up';
+            volIcon.className = video.muted ? 'fas fa-volume-mute text-red-500' : 'fas fa-volume-up';
         });
         btnMute.addEventListener('click', (e) => {
             e.stopPropagation();
             video.muted = !video.muted;
             volSlider.value = video.muted ? 0 : (video.volume || 1);
-            volIcon.className = video.muted ? 'fas fa-volume-mute text-red-400' : 'fas fa-volume-up';
+            volIcon.className = video.muted ? 'fas fa-volume-mute text-red-500' : 'fas fa-volume-up';
         });
 
         // Keyboard Shortcuts
@@ -1367,14 +1370,14 @@
                 case 'ArrowDown':
                     e.preventDefault(); video.volume = Math.max(0, video.volume - 0.05);
                     volSlider.value = video.volume;
-                    if (video.volume === 0) volIcon.className = 'fas fa-volume-mute text-red-400';
+                    if (video.volume === 0) volIcon.className = 'fas fa-volume-mute text-red-500';
                     showToast(`Volume: ${Math.round(video.volume * 100)}%`); break;
                 case 'KeyF':
                     e.preventDefault(); toggleFullscreen(); break;
             }
         });
 
-        // Persistent Orientation Toggle (Fixed: Never disappears in landscape)
+        // Persistent Orientation Toggle (Never Disappears in Landscape)
         let isLandscapeMode = false;
         async function youtubeStyleLandscapeToggle(e) {
             if (e) e.stopPropagation();
@@ -1477,7 +1480,7 @@
                 const isSelected = (speed === currentSpeed);
                 const btn = document.createElement('button');
                 btn.className = isSelected
-                    ? 'py-2.5 px-3 rounded-xl bg-sapphire/15 text-sapphire border border-sapphire/60 text-xs font-bold shadow-[0_0_15px_rgba(0,210,255,0.2)] transition active:scale-95'
+                    ? 'py-2.5 px-3 rounded-xl bg-sapphire/20 text-sapphire border border-sapphire/50 text-xs font-bold shadow-[0_0_15px_rgba(0,210,255,0.2)] transition active:scale-95'
                     : 'py-2.5 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-gray-200 border border-transparent text-xs font-semibold transition active:scale-95';
                 btn.textContent = `${speed}x`;
                 btn.onclick = () => {
@@ -1493,7 +1496,7 @@
         }
         renderSpeedButtons();
 
-        // Aspect Ratio Handler (Works reliably for 16:9, 21:9, Crop & Fit)
+        // Aspect Ratio Handler (16:9, 21:9, Crop to Fill, Fit)
         function setAspect(mode, btnElem) {
             if (mode === '16/9') {
                 video.style.objectFit = 'contain';
@@ -1519,7 +1522,7 @@
             showToast(`Aspect Ratio: ${mode}`);
         }
 
-        // Live Subtitle Display & Cue Parser Engine
+        // Subtitle Cue Parser (Runs at Exact Original Speed, VLC Font)
         function bindSubtitleCueRenderer() {
             if (!video.textTracks) return;
             for (let i = 0; i < video.textTracks.length; i++) {
@@ -1535,12 +1538,6 @@
             }
         }
 
-        function adjustSubSync(sec) {
-            subSyncOffset = sec === 0 ? 0 : subSyncOffset + sec;
-            document.getElementById('sub-sync-val').textContent = `${subSyncOffset > 0 ? '+' : ''}${subSyncOffset.toFixed(1)}s`;
-            showToast(`Subtitle Sync: ${subSyncOffset.toFixed(1)}s`);
-        }
-
         function openSubPopup() {
             const subList = document.getElementById('sub-track-list');
             subList.innerHTML = '';
@@ -1548,7 +1545,7 @@
             const offBtn = document.createElement('button');
             const isOff = (activeSubIdx === -1);
             offBtn.className = isOff
-                ? 'w-full py-2.5 px-4 rounded-xl bg-sapphire/15 border border-sapphire/50 text-sapphire text-xs font-bold text-left flex justify-between items-center transition'
+                ? 'w-full py-2.5 px-4 rounded-xl bg-sapphire/20 border border-sapphire/50 text-sapphire text-xs font-bold text-left flex justify-between items-center transition'
                 : 'w-full py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-gray-200 text-xs font-semibold text-left flex justify-between items-center transition';
             offBtn.innerHTML = `<span>Off</span> ${isOff ? '<i class="fas fa-check text-xs"></i>' : ''}`;
             offBtn.onclick = () => {
@@ -1573,7 +1570,7 @@
 
                 const btn = document.createElement('button');
                 btn.className = isSelected
-                    ? 'w-full py-2.5 px-4 rounded-xl bg-sapphire/15 border border-sapphire/50 text-sapphire text-xs font-bold text-left flex justify-between items-center transition'
+                    ? 'w-full py-2.5 px-4 rounded-xl bg-sapphire/20 border border-sapphire/50 text-sapphire text-xs font-bold text-left flex justify-between items-center transition'
                     : 'w-full py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-gray-200 text-xs font-semibold text-left flex justify-between items-center transition';
                 btn.innerHTML = `<span>${trackLabel}</span> ${isSelected ? '<i class="fas fa-check text-xs"></i>' : ''}`;
                 btn.onclick = () => {
@@ -1584,11 +1581,10 @@
                         }
                         bindSubtitleCueRenderer();
                     } else {
-                        // Display active caption cue feedback directly on screen
-                        customSubOverlay.innerHTML = `[${trackLabel} Enabled]`;
+                        customSubOverlay.innerHTML = `[${trackLabel}]`;
                         setTimeout(() => {
                             if (activeSubIdx === i) customSubOverlay.innerHTML = '';
-                        }, 2500);
+                        }, 2000);
                     }
                     showToast(`Subtitle: ${trackLabel}`);
                     closeAllPopups();
@@ -1603,11 +1599,11 @@
             document.querySelectorAll('.sub-size-btn').forEach(b => {
                 b.className = 'sub-size-btn py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-200 text-xs font-semibold transition';
             });
-            btnElem.className = 'sub-size-btn py-2 rounded-xl bg-sapphire/15 text-sapphire border border-sapphire/50 text-xs font-bold transition';
+            btnElem.className = 'sub-size-btn py-2 rounded-xl bg-sapphire/20 text-sapphire border border-sapphire/50 text-xs font-bold transition';
             showToast(`Subtitle Size: ${labelPct}`);
         }
 
-        // Multi-Audio Track Switcher (Direct Native Audio Pass-through, No CORS Mute Bug!)
+        // Multi-Audio Track Switcher
         function openAudioPopup() {
             const list = document.getElementById('audio-track-list');
             list.innerHTML = '';
@@ -1625,7 +1621,7 @@
 
                 const btn = document.createElement('button');
                 btn.className = isSelected
-                    ? 'py-2.5 px-4 rounded-xl bg-sapphire/15 border border-sapphire/50 text-sapphire text-xs font-bold text-left flex justify-between items-center transition'
+                    ? 'py-2.5 px-4 rounded-xl bg-sapphire/20 border border-sapphire/50 text-sapphire text-xs font-bold text-left flex justify-between items-center transition'
                     : 'py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-gray-200 text-xs font-semibold text-left flex justify-between items-center transition';
                 btn.innerHTML = `<span>${label}</span> ${isSelected ? '<i class="fas fa-check text-xs"></i>' : ''}`;
                 
@@ -1636,6 +1632,8 @@
                             video.audioTracks[j].enabled = (j === i);
                         }
                     }
+                    const cur = video.currentTime;
+                    video.currentTime = Math.max(0, cur - 0.05);
                     showToast(`Audio: ${label}`);
                     closeAllPopups();
                 };
@@ -1644,7 +1642,7 @@
             openPopup('audio-popup');
         }
 
-        // Earphone Audio Delay Sync Slider (- and + Support)
+        // Earphone Audio Delay Sync Slider (-2000ms to +2000ms)
         let currentDelayMs = 0;
         const delaySlider = document.getElementById('audio-delay-slider');
         const delayDisplay = document.getElementById('delay-value-display');
@@ -1665,7 +1663,7 @@
             showToast("Audio Delay Reset");
         }
 
-        // Direct Browser Download (Fixed: No ghost iframe playback, no downloading html files)
+        // Direct Browser Download (Native Media Pipe - Never HTML)
         function copyDownloadLink() {
             if (!FILE_URL) return;
             navigator.clipboard.writeText(FILE_URL).then(() => {
@@ -1687,7 +1685,6 @@
             fallbackBtn.href = FILE_URL;
             fallbackBtn.setAttribute('download', FILE_NAME);
 
-            // Trigger instant download directly via anchor if valid URL
             if (FILE_URL && FILE_URL.startsWith('http')) {
                 const dlLink = document.createElement('a');
                 dlLink.href = FILE_URL;
@@ -1736,7 +1733,7 @@
             showToast("Searching for Cast devices on your Wi-Fi...");
         }
 
-        // External Player Launcher (Custom .m3u naming: BoultFlix - filename)
+        // External Player Launcher
         function launchApp(type) {
             if (!FILE_URL) {
                 showToast("Stream URL required");
