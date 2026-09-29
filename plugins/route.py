@@ -116,8 +116,7 @@ async def media_streamer(request: web.Request, id: int, secure_hash: str):
             body="416: Range not satisfiable",
             headers={"Content-Range": f"bytes */{file_size}"},
         )
-
-    chunk_size = 1024 * 1024
+    chunk_size = 512 * 1024
     until_bytes = min(until_bytes, file_size - 1)
 
     offset = from_bytes - (from_bytes % chunk_size)
