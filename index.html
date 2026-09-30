@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="https://i.ibb.co/mFdT56V5/20260922-071000.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Stream Options - BoultFlix</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: '#020408',
+                        'obsidian-dark': '#000000',
+                        sapphire: '#00d2ff',
+                        violet: '#7928ca',
+                        cobalt: '#0051ff',
+                        emerald: '#10b981',
+                        teal: '#14b8a6'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --x: 50vw;
+            --y: 50vh;
+        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #02040a !important;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100dvh;
+            position: relative;
+        }
+
+        /* Ambient Dynamic Cursor Radial Glow (PC Only) */
+        @media (min-width: 768px) {
+            body::before {
+                content: '';
+                position: fixed;
+                inset: 0;
+                width: 100vw;
+                height: 100vh;
+                background: radial-gradient(700px circle at var(--x) var(--y), rgba(0, 210, 255, 0.15), transparent 52%);
+                pointer-events: none;
+                z-index: 1;
+            }
+        }
+
+        /* Ambient Color Mesh Layer */
+        .ambient-layer {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+            background: radial-gradient(circle at 50% 50%, #030816 0%, #02040a 100%);
+        }
+        .aura-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.55;
+            animation: auraFloat 16s infinite alternate ease-in-out;
+        }
+        .blob-cyan { width: 55vw; height: 55vw; background: radial-gradient(circle, #00d2ff 0%, transparent 68%); top: -12%; left: -10%; }
+        .blob-blue { width: 62vw; height: 62vw; background: radial-gradient(circle, #0051ff 0%, transparent 70%); bottom: -18%; right: -12%; animation-delay: -5s; }
+        .blob-violet { width: 48vw; height: 48vw; background: radial-gradient(circle, #7928ca 0%, transparent 70%); top: 30%; left: 25%; animation-delay: -9s; }
+
+        /* Phone Optimization (Static Dark Cyan-Blue BG, No Blobs) */
+        @media (max-width: 767px) {
+            .aura-blob { display: none !important; }
+            .ambient-layer { 
+                background: radial-gradient(circle at 50% 30%, #0a1b38 0%, #02040a 100%) !important; 
+            }
+            body::before { display: none !important; }
+        }
+
+        /* Fixed Navbar with 0 Gap */
+        .glass-nav {
+            background: rgba(6, 11, 24, 0.82);
+            backdrop-filter: blur(35px) saturate(210%);
+            -webkit-backdrop-filter: blur(35px) saturate(210%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 50;
+        }
+
+        .brand-text {
+            background: linear-gradient(to right, #ffffff, #f3f4f6, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: all 0.3s ease;
+        }
+        .brand-group:hover .brand-text {
+            background: linear-gradient(90deg, #00d2ff 0%, #38bdf8 50%, #0051ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 12px rgba(0, 210, 255, 0.6));
+        }
+
+        .glass-panel {
+            background: rgba(10, 18, 36, 0.68);
+            backdrop-filter: blur(35px) saturate(190%);
+            -webkit-backdrop-filter: blur(35px) saturate(190%);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 1.25rem;
+            position: relative;
+            box-shadow: 0 20px 45px -5px rgba(0, 0, 0, 0.85);
+            transition: all 0.25s ease;
+        }
+
+        .liquid-glass-card {
+            background: rgba(12, 20, 40, 0.72);
+            backdrop-filter: blur(50px) saturate(210%);
+            -webkit-backdrop-filter: blur(50px) saturate(210%);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 1.75rem;
+            position: relative;
+            box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.95), inset 0 1px 1px 0 rgba(255, 255, 255, 0.25);
+        }
+
+        /* Notice Panel Architecture */
+        .player-container {
+            aspect-ratio: 16 / 9;
+            background: #000000;
+            position: relative;
+            border-radius: 1rem;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            cursor: default;
+            user-select: none;
+            width: 100%;
+        }
+
+        /* Buttons Grid (Download & Cast) */
+        .btn-greenish {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(20, 184, 166, 0.3) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.5);
+            border-radius: 0.9rem;
+            box-shadow: 0 8px 25px -5px rgba(16, 185, 129, 0.3);
+            transition: all 0.22s ease;
+        }
+        .btn-greenish:active { transform: scale(0.98); }
+        .btn-greenish:hover {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.3) 0%, rgba(20, 184, 166, 0.4) 100%);
+            border-color: rgba(16, 185, 129, 0.9);
+            box-shadow: 0 10px 30px -4px rgba(16, 185, 129, 0.45);
+            transform: translateY(-2px);
+        }
+
+        .ott-btn-secondary {
+            background: rgba(14, 23, 44, 0.8);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 0.9rem;
+            transition: all 0.22s ease;
+        }
+        .ott-btn-secondary:active { transform: scale(0.97); }
+        .ott-btn-secondary:hover {
+            background: rgba(20, 32, 60, 0.95);
+            border-color: rgba(0, 210, 255, 0.55);
+            box-shadow: 0 10px 28px -5px rgba(0, 210, 255, 0.35);
+            transform: translateY(-2px);
+        }
+
+        .red-guide-card {
+            background: linear-gradient(135deg, rgba(38, 12, 18, 0.8) 0%, rgba(22, 9, 14, 0.9) 100%);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            border-radius: 0.9rem;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .red-guide-card:active { transform: scale(0.97); }
+        .red-guide-card:hover {
+            background: linear-gradient(135deg, rgba(60, 15, 24, 0.95) 0%, rgba(32, 10, 18, 0.98) 100%);
+            border-color: rgba(239, 68, 68, 0.8);
+            box-shadow: 0 10px 28px -5px rgba(239, 68, 68, 0.45);
+            transform: translateY(-2px);
+        }
+
+        .intent-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0.65rem 0.4rem;
+            border-radius: 0.85rem;
+            background: rgba(12, 18, 34, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.22s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+        @media (min-width: 640px) { .intent-card { padding: 0.95rem 0.65rem; border-radius: 1rem; } }
+        .intent-card:active { transform: scale(0.95); }
+        .intent-card:hover {
+            background: rgba(18, 28, 52, 0.9);
+            border-color: rgba(0, 210, 255, 0.45);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 24px -4px rgba(0, 210, 255, 0.25);
+        }
+
+        /* Glass Popups */
+        .glass-popup-backdrop {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100dvh;
+            background: rgba(2, 5, 12, 0.75);
+            backdrop-filter: blur(24px) saturate(190%);
+            -webkit-backdrop-filter: blur(24px) saturate(190%);
+            z-index: 2147483647;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .glass-popup-backdrop.active { opacity: 1; pointer-events: auto; }
+        .glass-popup-card {
+            background: rgba(12, 18, 36, 0.94);
+            backdrop-filter: blur(50px) saturate(210%);
+            -webkit-backdrop-filter: blur(50px) saturate(210%);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 1.5rem;
+            width: 100%;
+            max-width: 390px;
+            max-height: 90dvh;
+            overflow-y: auto;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95), 0 0 35px rgba(0, 210, 255, 0.18), inset 0 1px 1px rgba(255, 255, 255, 0.22);
+            transform: scale(0.92);
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .glass-popup-backdrop.active .glass-popup-card { transform: scale(1); }
+
+        .toast {
+            position: fixed;
+            top: 85px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            background: rgba(10, 18, 35, 0.95);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 210, 255, 0.5);
+            border-radius: 99px;
+            padding: 7px 18px;
+            color: #fff;
+            z-index: 2147483647;
+            opacity: 0;
+            transition: all 0.28s;
+            box-shadow: 0 4px 20px rgba(0, 210, 255, 0.3);
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Ambient Dynamic Glow Layer -->
+    <div class="ambient-layer">
+        <div class="aura-blob blob-cyan"></div>
+        <div class="aura-blob blob-blue"></div>
+        <div class="aura-blob blob-violet"></div>
+    </div>
+
+    <div id="toast" class="toast text-[11px] md:text-xs font-semibold">Notification</div>
+
+    <!-- Fixed Glass Navbar (0 Gap) -->
+    <nav class="glass-nav px-3.5 md:px-8 py-2.5 md:py-3 flex items-center justify-between">
+        <a href="https://t.me/BoultFlix" target="_blank" class="flex items-center gap-2.5 brand-group cursor-pointer">
+            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-sapphire to-cobalt flex items-center justify-center shadow-[0_0_15px_rgba(0,210,255,0.6)] transition-transform duration-300 group-hover:scale-105">
+                <i class="fas fa-play text-black text-xs ml-0.5"></i>
+            </div>
+            <span class="font-['Outfit'] font-black text-base md:text-xl tracking-wider brand-text">BOULTFLIX</span>
+        </a>
+        <a href="https://t.me/BoultFlix" target="_blank" class="bg-gradient-to-r from-sapphire to-cobalt hover:from-cyan-300 hover:to-blue-600 px-3.5 md:px-4 py-1.5 rounded-full text-[11px] md:text-xs font-bold tracking-wide text-black transition flex items-center gap-1.5 shadow-[0_0_15px_rgba(0,210,255,0.4)] active:scale-95">
+            <i class="fab fa-telegram-plane"></i> Join
+        </a>
+    </nav>
+
+    <!-- VIEW 1: MAIN OTT STREAMING INTERFACE (Added pt-20 to avoid overlap with fixed nav) -->
+    <main id="player-view" class="container mx-auto px-2.5 sm:px-5 pt-20 pb-4 max-w-4xl my-auto flex-grow flex flex-col justify-center items-center relative z-10 w-full">
+        
+        <div class="w-full mb-2.5 px-1">
+            <h1 class="text-xs sm:text-sm md:text-base font-bold font-['Outfit'] break-all leading-snug text-white mb-1" id="file-name-display">Loading File...</h1>
+            <div class="flex items-center gap-2 text-[10px] md:text-xs text-gray-400">
+                <span class="bg-sapphire/15 text-sapphire px-1.5 py-0.5 rounded text-[9px] md:text-[10px] font-bold border border-sapphire/30">DIRECT STREAM</span>
+            </div>
+        </div>
+
+        <!-- Master Video Player Frame (Replaced with Professional Notice in exact 16:9 box) -->
+        <div class="glass-panel p-0.5 sm:p-1 mb-4 w-full">
+            <div class="player-container p-6 text-center">
+                
+                <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mb-3 sm:mb-4 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+                    <i class="fas fa-server text-xl sm:text-2xl"></i>
+                </div>
+                
+                <h2 class="text-base sm:text-xl md:text-2xl font-bold font-['Outfit'] text-white mb-2">Web Streaming Disabled</h2>
+                
+                <p class="text-[10px] sm:text-xs md:text-sm text-gray-400 max-w-md leading-relaxed px-2">
+                    To ensure <b class="text-white">buffer-free, zero-limit playback</b> with proper Multi-Audio (DDP5.1), direct browser streaming has been turned off. 
+                    <br><br>
+                    <span class="text-sapphire font-semibold">Please select an External Player or Download option below.</span>
+                </p>
+
+            </div>
+        </div>
+
+        <!-- Primary Action Grid (Download & Cast in ONE LINE) -->
+        <div class="grid grid-cols-2 gap-2 sm:gap-3 mb-5 w-full">
+            
+            <button onclick="openPopup('download-popup')" class="btn-greenish py-3 sm:py-3.5 rounded-xl flex items-center justify-center gap-2">
+                <i class="fas fa-cloud-download-alt text-emerald-400 text-sm sm:text-base"></i>
+                <span class="font-bold text-[11px] sm:text-sm text-white tracking-wide">Download</span>
+            </button>
+
+            <button class="ott-btn-secondary py-3 sm:py-3.5 rounded-xl flex items-center justify-center gap-2 relative overflow-hidden" onclick="showToast('Searching for Cast devices...')">
+                <i class="fab fa-chromecast text-sapphire text-sm sm:text-base"></i>
+                <span class="font-bold text-[11px] sm:text-sm text-white tracking-wide">Cast to TV</span>
+            </button>
+            
+        </div>
+
+        <!-- External Players Section -->
+        <div class="mb-3 w-full">
+            <div class="flex items-center gap-2.5 mb-2.5 px-1">
+                <div class="h-px flex-grow bg-white/10"></div>
+                <h2 class="text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-gray-400">Open in External Player</h2>
+                <div class="h-px flex-grow bg-white/10"></div>
+            </div>
+            
+            <div class="grid grid-cols-4 gap-2 sm:gap-2.5 mb-3">
+                <button onclick="launchApp('vlc')" class="intent-card">
+                    <svg class="w-6 h-6 sm:w-7 sm:h-7 mb-1 drop-shadow-[0_0_8px_rgba(255,136,0,0.5)]" viewBox="0 0 48 48" fill="none">
+                        <path d="M24 4L14 36H34L24 4Z" fill="#FF8800"/>
+                        <path d="M19 20H29L30.5 25H17.5L19 20Z" fill="#FFFFFF"/>
+                        <path d="M16 29H32L33.5 34H14.5L16 29Z" fill="#FFFFFF"/>
+                        <path d="M8 38C8 36.9 8.9 36 10 36H38C39.1 36 40 36.9 40 38C40 39.1 39.1 40 38 40H10C8.9 40 8 39.1 8 38Z" fill="#FF8800"/>
+                    </svg>
+                    <span class="font-bold text-[10px] sm:text-xs text-gray-200">VLC</span>
+                </button>
+                <button onclick="launchApp('mx')" class="intent-card">
+                    <i class="fas fa-play-circle text-[#0088ff] text-xl sm:text-2xl mb-1 drop-shadow-[0_0_8px_rgba(0,136,255,0.5)]"></i>
+                    <span class="font-bold text-[10px] sm:text-xs text-gray-200">MX Player</span>
+                </button>
+                <button onclick="launchApp('mxpro')" class="intent-card">
+                    <i class="fas fa-play-circle text-[#0066cc] text-xl sm:text-2xl mb-1 drop-shadow-[0_0_8px_rgba(0,102,204,0.5)]"></i>
+                    <span class="font-bold text-[10px] sm:text-xs text-gray-200">MX Pro</span>
+                </button>
+                <button onclick="launchApp('potplayer')" class="intent-card">
+                    <i class="fas fa-tv text-[#ffd700] text-xl sm:text-2xl mb-1 drop-shadow-[0_0_8px_rgba(255,215,0,0.5)]"></i>
+                    <span class="font-bold text-[10px] sm:text-xs text-gray-200">PotPlayer</span>
+                </button>
+                <button onclick="launchApp('mpv')" class="intent-card">
+                    <i class="fas fa-film text-[#aa00ff] text-xl sm:text-2xl mb-1 drop-shadow-[0_0_8px_rgba(170,0,255,0.5)]"></i>
+                    <span class="font-bold text-[10px] sm:text-xs text-gray-200">MPV</span>
+                </button>
+                <button onclick="launchApp('just')" class="intent-card">
+                    <i class="fas fa-play text-[#00ccaa] text-xl sm:text-2xl mb-1 drop-shadow-[0_0_8px_rgba(0,204,170,0.5)]"></i>
+                    <span class="font-bold text-[10px] sm:text-xs text-gray-200">Just Player</span>
+                </button>
+                <button onclick="launchApp('km')" class="intent-card">
+                    <i class="fas fa-video text-gray-300 text-xl sm:text-2xl mb-1 drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]"></i>
+                    <span class="font-bold text-[10px] sm:text-xs text-gray-200">KMPlayer</span>
+                </button>
+                <button onclick="launchApp('nova')" class="intent-card">
+                    <i class="fas fa-photo-video text-[#ff5500] text-xl sm:text-2xl mb-1 drop-shadow-[0_0_8px_rgba(255,85,0,0.5)]"></i>
+                    <span class="font-bold text-[10px] sm:text-xs text-gray-200">Nova</span>
+                </button>
+            </div>
+
+            <!-- Dual YouTube Guides -->
+            <div class="grid grid-cols-2 gap-2 sm:gap-3 mt-2.5">
+                <a href="https://www.youtube.com/results?search_query=how+to+stream+url+in+vlc+mx+player+adm+android" target="_blank" class="red-guide-card py-2.5 px-3 flex items-center justify-center gap-2">
+                    <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-red-500/20 flex items-center justify-center text-red-500 shadow-[0_0_12px_rgba(239,68,68,0.45)] shrink-0">
+                        <i class="fab fa-youtube text-xs sm:text-sm"></i>
+                    </div>
+                    <span class="font-bold text-[10px] sm:text-xs text-red-100 truncate">Tutorial Guide (Mobile)</span>
+                </a>
+
+                <a href="https://www.youtube.com/results?search_query=how+to+open+network+stream+url+in+vlc+potplayer+pc" target="_blank" class="red-guide-card py-2.5 px-3 flex items-center justify-center gap-2">
+                    <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-red-500/20 flex items-center justify-center text-red-500 shadow-[0_0_12px_rgba(239,68,68,0.45)] shrink-0">
+                        <i class="fab fa-youtube text-xs sm:text-sm"></i>
+                    </div>
+                    <span class="font-bold text-[10px] sm:text-xs text-red-100 truncate">Tutorial Guide (PC)</span>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- VIEW 2: IN-PAGE BROWSER DOWNLOAD SCREEN -->
+    <main id="download-view" class="container mx-auto px-3.5 pt-24 pb-8 md:py-12 max-w-xl my-auto flex-grow flex-col justify-center relative z-10 text-center hidden">
+        <div class="liquid-glass-card p-6 sm:p-9">
+            <div class="w-14 h-14 rounded-full bg-sapphire/15 border border-sapphire/40 text-sapphire flex items-center justify-center mx-auto mb-4 shadow-[0_0_25px_rgba(0,210,255,0.35)]">
+                <i class="fas fa-cloud-arrow-down text-2xl animate-bounce"></i>
+            </div>
+
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sapphire/10 border border-sapphire/30 text-sapphire text-[10px] font-bold tracking-widest uppercase mb-3">
+                <span class="w-1.5 h-1.5 rounded-full bg-sapphire animate-ping"></span>
+                DIRECT CLOUD PIPELINE INITIALIZED
+            </div>
+
+            <h2 class="text-xl sm:text-2xl md:text-3xl font-extrabold font-['Outfit'] text-white mb-3 leading-tight">
+                Your Download Has Started
+            </h2>
+
+            <div class="bg-black/35 border border-white/10 rounded-2xl p-4 sm:p-5 text-left mb-5 text-xs sm:text-[13px] text-gray-300 leading-relaxed space-y-2.5">
+                <p>
+                    Your browser has initialized connection to the <b class="text-white">BoultFlix Media Pipeline</b>. The file transfer is beginning in your browser download manager.
+                </p>
+                <p class="text-gray-400 text-[11px]">
+                    <i class="fas fa-bolt text-sapphire mr-1"></i> <b>Speed Tip:</b> For maximum multi-threaded speeds without drops, copy the stream link into <b>ADM / 1DM</b> (Android) or <b>FDM / IDM</b> (PC).
+                </p>
+                <div class="pt-2 text-right font-['Outfit'] font-bold text-sapphire text-xs tracking-wide">
+                    &mdash; Regards, BoultFlix Team
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-2.5">
+                <a id="manual-dl-fallback" href="#" class="flex-1 py-3 px-5 rounded-xl bg-gradient-to-r from-sapphire to-cobalt text-black font-extrabold text-xs sm:text-sm shadow-[0_0_20px_rgba(0,210,255,0.4)] active:scale-95 transition flex items-center justify-center gap-2">
+                    <i class="fas fa-download"></i>
+                    <span>Click Here If Not Started</span>
+                </a>
+                <button onclick="backToPlayerView()" class="py-3 px-5 rounded-xl bg-white/10 hover:bg-white/15 text-gray-200 font-semibold text-xs sm:text-sm transition active:scale-95">
+                    <i class="fas fa-arrow-left mr-1"></i> Back to Player
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- ROOT TOP-LAYER MODALS -->
+    <div id="global-modal-layer">
+
+        <!-- 1. Welcome Advisory Liquid Glass Popup -->
+        <div id="welcome-popup" class="glass-popup-backdrop active" onclick="closePopupOnBackdrop(event, this)">
+            <div class="glass-popup-card p-5 sm:p-6 border-sapphire/30 shadow-[0_25px_60px_rgba(0,0,0,0.95)]">
+                <div class="flex justify-between items-center mb-3">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-2.5 h-2.5 rounded-full bg-sapphire animate-ping shadow-[0_0_12px_#00d2ff]"></span>
+                        <h3 class="font-extrabold text-sm sm:text-base font-['Outfit'] text-white tracking-wide">Playback Advisory</h3>
+                    </div>
+                    <button onclick="closeAllPopups()" class="w-7 h-7 rounded-full bg-white/10 hover:bg-red-500/20 text-gray-300 hover:text-red-400 flex items-center justify-center transition">
+                        <i class="fas fa-times text-xs"></i>
+                    </button>
+                </div>
+
+                <div class="bg-black/40 border border-white/10 rounded-2xl p-4 text-xs text-gray-300 space-y-3 leading-relaxed mb-4">
+                    <p>
+                        <i class="fas fa-server text-sapphire mr-1"></i> <b>Zero Server Load:</b> Browser streaming is permanently disabled to give you uninterrupted download speeds directly from the server.
+                    </p>
+                    <p>
+                        <i class="fas fa-bolt text-sapphire mr-1"></i> <b>How to Play:</b> Simply click on <b>VLC, MX Player, or PotPlayer</b> on the next screen to instantly open the stream in full quality with subtitles and multi-audio support.
+                    </p>
+                    <p>
+                        <i class="fab fa-youtube text-red-400 mr-1"></i> <b>Tutorial Guide:</b> If you face any difficulty opening streams in external players, tap the <b>Tutorial Guide</b> buttons at the bottom for instant video instructions.
+                    </p>
+                </div>
+
+                <button onclick="closeAllPopups()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-sapphire to-cobalt hover:from-cyan-300 hover:to-blue-600 text-black font-extrabold text-xs tracking-wide shadow-[0_0_20px_rgba(0,210,255,0.4)] active:scale-95 transition flex items-center justify-center gap-2">
+                    <span>Continue to Website</span>
+                    <i class="fas fa-arrow-right text-xs"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 3. Download Options Popup -->
+        <div id="download-popup" class="glass-popup-backdrop" onclick="closePopupOnBackdrop(event, this)">
+            <div class="glass-popup-card p-5 sm:p-6">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-sm font-['Outfit'] text-white">Download Options</h3>
+                    <button onclick="closeAllPopups()" class="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-gray-400 hover:text-white"><i class="fas fa-times text-xs"></i></button>
+                </div>
+                <p class="text-[11px] text-gray-400 mb-4 leading-relaxed">
+                    Copy the link into <b>ADM / 1DM</b> (Mobile) or <b>FDM / IDM</b> (PC) for multi-threaded speed, or download directly via your browser.
+                </p>
+                <div class="flex flex-col gap-2.5">
+                    <button onclick="copyDownloadLink()" class="w-full py-3 px-4 rounded-xl bg-sapphire/20 border border-sapphire/50 hover:bg-sapphire/30 text-sapphire text-xs font-bold flex items-center justify-center gap-2 transition active:scale-95">
+                        <i class="fas fa-copy"></i>
+                        <span>Copy Link for ADM / 1DM / FDM</span>
+                    </button>
+                    <!-- Fixed: Direct download logic -->
+                    <button onclick="directBrowserDownload()" class="w-full py-3 px-4 rounded-xl bg-white/10 hover:bg-white/20 text-gray-200 text-xs font-semibold flex items-center justify-center gap-2 transition active:scale-95">
+                        <i class="fas fa-globe"></i>
+                        <span>Download via Browser</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="glass-nav py-3.5 mt-auto relative" style="position: relative; border-top: 1px solid rgba(255, 255, 255, 0.08); border-bottom: none;">
+        <div class="container mx-auto px-4 flex flex-col items-center">
+            <div class="flex gap-3.5 mb-2">
+                <a href="https://t.me/BoultFlix" target="_blank" class="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-sapphire hover:scale-105 transition shadow">
+                    <i class="fab fa-telegram-plane text-xs"></i>
+                </a>
+                <a href="https://youtube.com/" target="_blank" class="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-red-500 hover:scale-105 transition shadow">
+                    <i class="fab fa-youtube text-xs"></i>
+                </a>
+                <a href="https://instagram.com/" target="_blank" class="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-pink-500 hover:scale-105 transition shadow">
+                    <i class="fab fa-instagram text-xs"></i>
+                </a>
+            </div>
+            <p class="text-[10px] sm:text-[11px] text-gray-400 mb-0.5">Copyright &copy; 2026 BoultFlix | All Rights Reserved</p>
+            <p class="text-[9px] text-gray-500">Powered By Boultflix &mdash; This page is made by boultflix</p>
+        </div>
+    </footer>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        let FILE_URL = urlParams.get('url');
+        let FILE_NAME = urlParams.get('name') || "BoultFlix Media Stream";
+        
+        // Dummy link setup
+        if (!FILE_URL) FILE_URL = "https://example.com/demo-movie.mkv";
+        
+        document.getElementById('file-name-display').textContent = FILE_NAME;
+        const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1);
+
+        let toastTimeout;
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        function openPopup(id) {
+            closeAllPopups();
+            document.getElementById(id).classList.add('active');
+        }
+        function closeAllPopups() {
+            document.querySelectorAll('.glass-popup-backdrop').forEach(p => p.classList.remove('active'));
+        }
+        function closePopupOnBackdrop(e, backdropElem) {
+            if (e.target === backdropElem) closeAllPopups();
+        }
+
+        window.addEventListener('mousemove', e => {
+            document.documentElement.style.setProperty('--x', e.clientX + 'px');
+            document.documentElement.style.setProperty('--y', e.clientY + 'px');
+        });
+
+        // External Player Launcher
+        function launchApp(type) {
+            if (!FILE_URL) {
+                showToast("Stream URL required");
+                return;
+            }
+
+            if (isMobile) {
+                const cleanUrl = FILE_URL.replace(/^https?:\/\//, '');
+                const scheme = FILE_URL.startsWith('https') ? 'https' : 'http';
+                const packages = {
+                    vlc: 'org.videolan.vlc',
+                    mx: 'com.mxtech.videoplayer.ad',
+                    mxpro: 'com.mxtech.videoplayer.pro',
+                    mpv: 'is.xyz.mpv',
+                    just: 'com.brouken.player',
+                    km: 'com.kmplayer',
+                    nova: 'org.courville.nova'
+                };
+                if (packages[type]) {
+                    window.location.href = `intent://${cleanUrl}#Intent;scheme=${scheme};type=video/*;package=${packages[type]};S.title=${encodeURIComponent(FILE_NAME)};end`;
+                } else if (type === 'potplayer') {
+                    window.location.href = `vlc://${FILE_URL}`;
+                }
+            } else {
+                if (type === 'potplayer') {
+                    navigator.clipboard.writeText(FILE_URL).catch(() => {});
+                    window.location.href = `potplayer://${FILE_URL}`;
+                    showToast("Opening PotPlayer...");
+                } else if (type === 'vlc') {
+                    navigator.clipboard.writeText(FILE_URL).catch(() => {});
+                    const m3uContent = `#EXTM3U\n#EXTINF:-1,${FILE_NAME}\n#EXTVLCOPT:network-caching=5000\n#EXTVLCOPT:http-reconnect=true\n${FILE_URL}`;
+                    const blob = new Blob([m3uContent], { type: 'audio/x-mpegurl' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = `BoultFlix - ${FILE_NAME}.m3u`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    showToast("Launching VLC Playlist...");
+                } else {
+                    navigator.clipboard.writeText(FILE_URL).then(() => {
+                        showToast(`${type.toUpperCase()}: Stream Link Copied (Press Ctrl+V in Player)`);
+                    });
+                }
+            }
+        }
+
+        function copyDownloadLink() {
+            if (!FILE_URL) return;
+            navigator.clipboard.writeText(FILE_URL).then(() => {
+                showToast("Link Copied! Paste in ADM / 1DM / FDM");
+                closeAllPopups();
+            });
+        }
+
+        // Fixed: Browser Download Native Location Change (No Blank Tab)
+        function directBrowserDownload() {
+            closeAllPopups();
+            
+            document.getElementById('player-view').classList.add('hidden');
+            const dlView = document.getElementById('download-view');
+            dlView.classList.remove('hidden');
+            dlView.classList.add('flex');
+
+            const fallbackBtn = document.getElementById('manual-dl-fallback');
+            fallbackBtn.href = FILE_URL;
+
+            // Direct location push for native browser file download handling
+            if (FILE_URL) {
+                window.location.href = FILE_URL;
+            }
+            showToast("Starting Browser Download...");
+        }
+
+        function backToPlayerView() {
+            document.getElementById('download-view').classList.add('hidden');
+            document.getElementById('download-view').classList.remove('flex');
+            document.getElementById('player-view').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
