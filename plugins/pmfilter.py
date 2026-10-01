@@ -1116,7 +1116,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
         else:
             await query.answer("Yᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴘᴇʀᴍɪssɪᴏɴ ᴛᴏ sᴇᴇ ᴛʜɪꜱ ❌", show_alert=True)
         
-        elif DreamxData.startswith("gofilecancel#"):
+    elif DreamxData.startswith("gofilecancel#"):
         upload_id = DreamxData.split("#", 1)[1]
         upload = GOFILE_UPLOADS.get(upload_id)
 
