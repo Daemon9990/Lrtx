@@ -1289,18 +1289,18 @@ async def cb_handler(client: Client, query: CallbackQuery):
                 progress_task.cancel()
 
             if upload["cancel"]:
-        await status_msg.edit_text(
-            "🛑 <b>GoFile Upload Cancelled</b>\n\n"
-            f"📁 <b>File:</b> <code>{file_name}</code>"
-        )
-        return
+                await status_msg.edit_text(
+                    "🛑 <b>GoFile Upload Cancelled</b>\n\n"
+                    f"📁 <b>File:</b> <code>{file_name}</code>"
+                )
+                return
 
-    if not gofile_url:
-        await status_msg.edit_text(
-            "❌ <b>GoFile Upload Failed</b>\n\n"
-            f"📁 <b>File:</b> <code>{file_name}</code>"
-        )
-        return
+            if not gofile_url:
+                await status_msg.edit_text(
+                    "❌ <b>GoFile Upload Failed</b>\n\n"
+                    f"📁 <b>File:</b> <code>{file_name}</code>"
+                )
+                return
             await status_msg.edit_text(
                 "🎉 <b>File Successfully Beamed!</b>\n\n"
                 f"📁 <b>File:</b> <code>{file_name}</code>\n\n"
