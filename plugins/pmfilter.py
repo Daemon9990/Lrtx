@@ -1195,16 +1195,41 @@ async def cb_handler(client: Client, query: CallbackQuery):
                 "status_msg": status_msg
             }
 
+        except Exception as e:
+            logger.exception(
+                "Failed to start GoFile upload: %s",
+                e
+            )
+
+            await query.message.reply_text(
+                "❌ <b>Failed to start GoFile upload.</b>"
+            )
+            return
+
+        async def run_gofile_upload():
+            progress_task = None
+
             async def progress_updater():
                 last_text = ""
 
                 while upload_id in GOFILE_UPLOADS:
-                    upload = GOFILE_UPLOADS[upload_id]
+                    upload = GOFILE_UPLOADS.get(upload_id)
+
+                    if not upload:
+                        return
 
                     if upload["cancel"]:
                         return
 
                     await asyncio.sleep(2)
+
+                    upload = GOFILE_UPLOADS.get(upload_id)
+
+                    if not upload:
+                        return
+
+                    if upload["cancel"]:
+                        return
 
                     current = upload["current"]
                     total = upload["total"]
@@ -1217,7 +1242,10 @@ async def cb_handler(client: Client, query: CallbackQuery):
                         100
                     )
 
-                    filled = int(percent / 10)
+                    filled = min(
+                        int(percent / 10),
+                        10
+                    )
 
                     bar = (
                         "■" * filled
@@ -1245,10 +1273,10 @@ async def cb_handler(client: Client, query: CallbackQuery):
                             60
                         )
 
-                        eta = (
-                            f"{minutes}m, "
-                            f"{seconds}s"
-                        )
+                        if minutes > 0:
+                            eta = f"{minutes}m, {seconds}s"
+                        else:
+                            eta = f"{seconds}s"
                     else:
                         eta = "Calculating..."
 
@@ -1257,34 +1285,35 @@ async def cb_handler(client: Client, query: CallbackQuery):
                         f"📦 <code>[{bar}]</code> "
                         f"{percent:.1f}%\n\n"
                         f"💠 <b>Size:</b> "
-                        f"{get_size(current)} / "
-                        f"{get_size(total)}\n"
+                        f"{get_size(current)} / {get_size(total)}\n"
                         f"🚀 <b>Speed:</b> "
                         f"{get_size(speed)}/s\n"
                         f"⌛ <b>ETA:</b> {eta}\n\n"
                         "To cancel use the button below."
                     )
 
-                    if text != last_text:
-                        try:
-                            await status_msg.edit_text(
-                                text,
-                                reply_markup=InlineKeyboardMarkup([
-                                    [
-                                        InlineKeyboardButton(
-                                            "Cancel ❌",
-                                            callback_data=(
-                                                f"gofilecancel#{upload_id}"
-                                            )
+                    if text == last_text:
+                        continue
+
+                    try:
+                        await status_msg.edit_text(
+                            text,
+                            reply_markup=InlineKeyboardMarkup([
+                                [
+                                    InlineKeyboardButton(
+                                        "Cancel ❌",
+                                        callback_data=(
+                                            f"gofilecancel#{upload_id}"
                                         )
-                                    ]
-                                ])
-                            )
+                                    )
+                                ]
+                            ])
+                        )
 
-                            last_text = text
+                        last_text = text
 
-                        except Exception:
-                            pass
+                    except Exception:
+                        pass
 
             def progress_callback(current, total):
                 upload = GOFILE_UPLOADS.get(upload_id)
@@ -1315,74 +1344,119 @@ async def cb_handler(client: Client, query: CallbackQuery):
                 )
 
             except asyncio.CancelledError:
-                await status_msg.edit_text(
-                    "🛑 <b>GoFile Upload Cancelled</b>\n\n"
-                    f"📁 <b>File:</b> "
-                    f"<code>{file_name}</code>"
+                try:
+                    await status_msg.edit_text(
+                        "🛑 <b>GoFile Upload Cancelled</b>\n\n"
+                        f"📁 <b>File:</b> "
+                        f"<code>{file_name}</code>"
+                    )
+                except Exception:
+                    pass
+
+                return
+
+            except Exception as e:
+                logger.exception(
+                    "GoFile upload error: %s",
+                    e
                 )
+
+                upload = GOFILE_UPLOADS.get(upload_id)
+
+                if upload and upload["cancel"]:
+                    try:
+                        await status_msg.edit_text(
+                            "🛑 <b>GoFile Upload Cancelled</b>\n\n"
+                            f"📁 <b>File:</b> "
+                            f"<code>{file_name}</code>"
+                        )
+                    except Exception:
+                        pass
+
+                    return
+
+                try:
+                    await status_msg.edit_text(
+                        "❌ <b>GoFile Upload Failed</b>\n\n"
+                        f"📁 <b>File:</b> "
+                        f"<code>{file_name}</code>\n\n"
+                        "Please try again later."
+                    )
+                except Exception:
+                    pass
+
                 return
 
             finally:
-                progress_task.cancel()
+                if progress_task:
+                    progress_task.cancel()
 
-            # Check cancellation safely
+                    try:
+                        await progress_task
+                    except asyncio.CancelledError:
+                        pass
+                    except Exception:
+                        pass
+
             upload_state = GOFILE_UPLOADS.get(upload_id)
 
             if upload_state and upload_state["cancel"]:
-                await status_msg.edit_text(
-                    "🛑 <b>GoFile Upload Cancelled</b>\n\n"
-                    f"📁 <b>File:</b> "
-                    f"<code>{file_name}</code>"
-                )
+                try:
+                    await status_msg.edit_text(
+                        "🛑 <b>GoFile Upload Cancelled</b>\n\n"
+                        f"📁 <b>File:</b> "
+                        f"<code>{file_name}</code>"
+                    )
+                except Exception:
+                    pass
+
                 return
 
             if not gofile_url:
-                await status_msg.edit_text(
-                    "❌ <b>GoFile Upload Failed</b>\n\n"
-                    f"📁 <b>File:</b> "
-                    f"<code>{file_name}</code>"
-                )
+                try:
+                    await status_msg.edit_text(
+                        "❌ <b>GoFile Upload Failed</b>\n\n"
+                        f"📁 <b>File:</b> "
+                        f"<code>{file_name}</code>"
+                    )
+                except Exception:
+                    pass
+
                 return
-
-            await status_msg.edit_text(
-                "🎉 <b>File Successfully Beamed!</b>\n\n"
-                f"📁 <b>File:</b> "
-                f"<code>{file_name}</code>\n\n"
-                f"🔗 <b>Link:</b> {gofile_url}\n\n"
-                f"🔥 <b>Completed GoFile Uploads:</b> "
-                f"{USAGE.get('completed_uploads', 0)}",
-                reply_markup=InlineKeyboardMarkup([
-                    [
-                        InlineKeyboardButton(
-                            "🔗 Open Cloud Link",
-                            url=gofile_url
-                        )
-                    ]
-                ])
-            )
-
-        except Exception as e:
-            logger.exception(
-                "GoFile upload error: %s",
-                e
-            )
 
             try:
                 await status_msg.edit_text(
-                    "❌ <b>GoFile Upload Failed</b>\n\n"
-                    "Please try again later."
+                    "🎉 <b>File Successfully Beamed!</b>\n\n"
+                    f"📁 <b>File:</b> "
+                    f"<code>{file_name}</code>\n\n"
+                    f"🔗 <b>Link:</b> {gofile_url}\n\n"
+                    f"🔥 <b>Completed GoFile Uploads:</b> "
+                    f"{USAGE.get('completed_uploads', 0)}",
+                    reply_markup=InlineKeyboardMarkup([
+                        [
+                            InlineKeyboardButton(
+                                "🔗 Open Cloud Link",
+                                url=gofile_url
+                            )
+                        ]
+                    ])
                 )
 
             except Exception:
-                await query.message.reply_text(
-                    "❌ GoFile upload failed."
+                pass
+
+            finally:
+                GOFILE_UPLOADS.pop(
+                    upload_id,
+                    None
                 )
 
-        finally:
-            GOFILE_UPLOADS.pop(
-                upload_id,
-                None
-            )
+        # Run GoFile upload independently.
+        asyncio.create_task(
+            run_gofile_upload()
+        )
+
+        return
             
     elif DreamxData.startswith("generate_stream_link"):
         _, file_id = DreamxData.split(":")
