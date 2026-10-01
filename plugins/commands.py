@@ -493,27 +493,64 @@ async def start(client, message):
         pass
 
 async def stream_buttons(user_id: int, file_id: str):
-    if STREAM_MODE and not PREMIUM_STREAM_MODE:
-        return [
-            [InlineKeyboardButton('🚀 ꜰᴀꜱᴛ ᴅᴏᴡɴʟᴏᴀᴅ / ᴡᴀᴛᴄʜ ᴏɴʟɪɴᴇ 🖥️', callback_data=f'generate_stream_link:{file_id}')],
-            [InlineKeyboardButton('ℹ️ ᴠɪᴇᴡ ᴀᴜᴅɪᴏ & ꜱᴜʙꜱ ɪɴꜰᴏ ℹ️', callback_data=f'extract_data:{file_id}')],
-            [InlineKeyboardButton('📌 ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇꜱ ᴄʜᴀɴɴᴇʟ 📌', url=UPDATE_CHNL_LNK)]
-        ]
-    elif STREAM_MODE and PREMIUM_STREAM_MODE:
-        if not await db.has_premium_access(user_id):
-            return [
-                [InlineKeyboardButton('🚀 ꜰᴀꜱᴛ ᴅᴏᴡɴʟᴏᴀᴅ / ᴡᴀᴛᴄʜ ᴏɴʟɪɴᴇ 🖥️', callback_data='prestream')],
-                [InlineKeyboardButton('ℹ️ ᴠɪᴇᴡ ᴀᴜᴅɪᴏ & ꜱᴜʙꜱ ɪɴꜰᴏ ℹ️', callback_data='prestream')],
-                [InlineKeyboardButton('📌 ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇꜱ ᴄʜᴀɴɴᴇʟ 📌', url=UPDATE_CHNL_LNK)]
-            ]
+    buttons = []
+
+    if STREAM_MODE:
+        if PREMIUM_STREAM_MODE:
+            if await db.has_premium_access(user_id):
+                buttons.append([
+                    InlineKeyboardButton(
+                        '🚀 FAST DOWNLOAD / WATCH ONLINE 🖥️',
+                        callback_data=f'generate_stream_link:{file_id}'
+                    )
+                ])
+            else:
+                buttons.append([
+                    InlineKeyboardButton(
+                        '🚀 FAST DOWNLOAD / WATCH ONLINE 🖥️',
+                        callback_data='prestream'
+                    )
+                ])
         else:
-            return [
-                [InlineKeyboardButton('🚀 ꜰᴀꜱᴛ ᴅᴏᴡɴʟᴏᴀᴅ / ᴡᴀᴛᴄʜ ᴏɴʟɪɴᴇ 🖥️', callback_data=f'generate_stream_link:{file_id}')],
-                [InlineKeyboardButton('ℹ️ ᴠɪᴇᴡ ᴀᴜᴅɪᴏ & ꜱᴜʙꜱ ɪɴꜰᴏ ℹ️', callback_data=f'extract_data:{file_id}')],
-                [InlineKeyboardButton('📌 ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇꜱ ᴄʜᴀɴɴᴇʟ 📌', url=UPDATE_CHNL_LNK)]
-            ]
-    else:
-        return [[InlineKeyboardButton('📌 ᴊᴏɪɴ ᴜᴘᴅᴀᴛᴇꜱ ᴄʜᴀɴɴᴇʟ 📌', url=UPDATE_CHNL_LNK)]]
+            buttons.append([
+                InlineKeyboardButton(
+                    '🚀 FAST DOWNLOAD / WATCH ONLINE 🖥️',
+                    callback_data=f'generate_stream_link:{file_id}'
+                )
+            ])
+
+    if ENABLE_GOFILE_LINK:
+        buttons.append([
+            InlineKeyboardButton(
+                '📤 GoFile Upload',
+                callback_data=f'gofileup#{file_id}'
+            )
+        ])
+
+    if STREAM_MODE:
+        if PREMIUM_STREAM_MODE and not await db.has_premium_access(user_id):
+            buttons.append([
+                InlineKeyboardButton(
+                    'ℹ️ VIEW AUDIO & SUBS INFO ℹ️',
+                    callback_data='prestream'
+                )
+            ])
+        else:
+            buttons.append([
+                InlineKeyboardButton(
+                    'ℹ️ VIEW AUDIO & SUBS INFO ℹ️',
+                    callback_data=f'extract_data:{file_id}'
+                )
+            ])
+
+    buttons.append([
+        InlineKeyboardButton(
+            '📌 JOIN UPDATES CHANNEL 📌',
+            url=UPDATE_CHNL_LNK
+        )
+    ])
+
+    return buttons
     
 @Client.on_message(filters.command('logs') & filters.user(ADMINS))
 async def log_file(bot, message):
