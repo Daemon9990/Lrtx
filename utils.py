@@ -58,6 +58,18 @@ class temp(object):
     REQ_LINKS = {}
 
 
+
+    # Usage statistics for GoFile uploads
+    USAGE = {
+    "bytes_uploaded": 0,
+    "bytes_downloaded": 0,
+    "completed_uploads": 0,
+    "failed_uploads": 0,
+    "tg_stream_uploads": 0,
+    "url_stream_uploads": 0,
+    }
+
+
 async def is_req_subscribed(bot, user_id, rqfsub_channels):
     btn = []
 
