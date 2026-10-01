@@ -1116,12 +1116,15 @@ async def cb_handler(client: Client, query: CallbackQuery):
         else:
             await query.answer("Yᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴘᴇʀᴍɪssɪᴏɴ ᴛᴏ sᴇᴇ ᴛʜɪꜱ ❌", show_alert=True)
         
-    elif DreamxData.startswith("gofilecancel#"):
+        elif DreamxData.startswith("gofilecancel#"):
         upload_id = DreamxData.split("#", 1)[1]
         upload = GOFILE_UPLOADS.get(upload_id)
 
         if not upload:
-            await query.answer("⚠️ Upload not found.", show_alert=True)
+            await query.answer(
+                "⚠️ Upload not found.",
+                show_alert=True
+            )
             return
 
         if upload["user_id"] != query.from_user.id:
@@ -1132,6 +1135,15 @@ async def cb_handler(client: Client, query: CallbackQuery):
             return
 
         upload["cancel"] = True
+
+        try:
+            await upload["status_msg"].edit_text(
+                "🛑 <b>Cancelling GoFile upload...</b>\n\n"
+                "Please wait..."
+            )
+        except Exception:
+            pass
+
         await query.answer("🛑 Cancelling upload...")
         return
 
@@ -1200,10 +1212,17 @@ async def cb_handler(client: Client, query: CallbackQuery):
                     if total <= 0:
                         continue
 
-                    percent = min((current / total) * 100, 100)
+                    percent = min(
+                        (current / total) * 100,
+                        100
+                    )
 
                     filled = int(percent / 10)
-                    bar = "■" * filled + "□" * (10 - filled)
+
+                    bar = (
+                        "■" * filled
+                        + "□" * (10 - filled)
+                    )
 
                     elapsed = max(
                         time.monotonic() - upload["start"],
@@ -1211,14 +1230,25 @@ async def cb_handler(client: Client, query: CallbackQuery):
                     )
 
                     speed = current / elapsed
-                    remaining = max(total - current, 0)
+                    remaining = max(
+                        total - current,
+                        0
+                    )
 
                     if speed > 0:
-                        eta_seconds = int(remaining / speed)
-                        minutes, seconds = divmod(
-                            eta_seconds, 60
+                        eta_seconds = int(
+                            remaining / speed
                         )
-                        eta = f"{minutes}m, {seconds}s"
+
+                        minutes, seconds = divmod(
+                            eta_seconds,
+                            60
+                        )
+
+                        eta = (
+                            f"{minutes}m, "
+                            f"{seconds}s"
+                        )
                     else:
                         eta = "Calculating..."
 
@@ -1227,7 +1257,8 @@ async def cb_handler(client: Client, query: CallbackQuery):
                         f"📦 <code>[{bar}]</code> "
                         f"{percent:.1f}%\n\n"
                         f"💠 <b>Size:</b> "
-                        f"{get_size(current)} / {get_size(total)}\n"
+                        f"{get_size(current)} / "
+                        f"{get_size(total)}\n"
                         f"🚀 <b>Speed:</b> "
                         f"{get_size(speed)}/s\n"
                         f"⌛ <b>ETA:</b> {eta}\n\n"
@@ -1249,7 +1280,9 @@ async def cb_handler(client: Client, query: CallbackQuery):
                                     ]
                                 ])
                             )
+
                             last_text = text
+
                         except Exception:
                             pass
 
@@ -1262,7 +1295,10 @@ async def cb_handler(client: Client, query: CallbackQuery):
 
             def cancel_check():
                 upload = GOFILE_UPLOADS.get(upload_id)
-                return bool(upload and upload["cancel"])
+
+                return bool(
+                    upload and upload["cancel"]
+                )
 
             progress_task = asyncio.create_task(
                 progress_updater()
@@ -1281,29 +1317,37 @@ async def cb_handler(client: Client, query: CallbackQuery):
             except asyncio.CancelledError:
                 await status_msg.edit_text(
                     "🛑 <b>GoFile Upload Cancelled</b>\n\n"
-                    f"📁 <b>File:</b> {file_name}"
+                    f"📁 <b>File:</b> "
+                    f"<code>{file_name}</code>"
                 )
                 return
 
             finally:
                 progress_task.cancel()
 
-            if upload["cancel"]:
+            # Check cancellation safely
+            upload_state = GOFILE_UPLOADS.get(upload_id)
+
+            if upload_state and upload_state["cancel"]:
                 await status_msg.edit_text(
                     "🛑 <b>GoFile Upload Cancelled</b>\n\n"
-                    f"📁 <b>File:</b> <code>{file_name}</code>"
+                    f"📁 <b>File:</b> "
+                    f"<code>{file_name}</code>"
                 )
                 return
 
             if not gofile_url:
                 await status_msg.edit_text(
                     "❌ <b>GoFile Upload Failed</b>\n\n"
-                    f"📁 <b>File:</b> <code>{file_name}</code>"
+                    f"📁 <b>File:</b> "
+                    f"<code>{file_name}</code>"
                 )
                 return
+
             await status_msg.edit_text(
                 "🎉 <b>File Successfully Beamed!</b>\n\n"
-                f"📁 <b>File:</b> <code>{file_name}</code>\n\n"
+                f"📁 <b>File:</b> "
+                f"<code>{file_name}</code>\n\n"
                 f"🔗 <b>Link:</b> {gofile_url}\n\n"
                 f"🔥 <b>Completed GoFile Uploads:</b> "
                 f"{USAGE.get('completed_uploads', 0)}",
@@ -1328,13 +1372,17 @@ async def cb_handler(client: Client, query: CallbackQuery):
                     "❌ <b>GoFile Upload Failed</b>\n\n"
                     "Please try again later."
                 )
+
             except Exception:
                 await query.message.reply_text(
                     "❌ GoFile upload failed."
                 )
 
         finally:
-            GOFILE_UPLOADS.pop(upload_id, None)
+            GOFILE_UPLOADS.pop(
+                upload_id,
+                None
+            )
             
     elif DreamxData.startswith("generate_stream_link"):
         _, file_id = DreamxData.split(":")
