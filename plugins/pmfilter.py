@@ -20,6 +20,7 @@ from Script import script
 from pyrogram.errors.exceptions.bad_request_400 import MediaEmpty, PhotoInvalidDimensions, WebpageMediaEmpty
 from database.refer import referdb
 from database.users_chats_db import db
+from gofile import upload_to_gofile_streaming
 import asyncio
 import re
 import math
