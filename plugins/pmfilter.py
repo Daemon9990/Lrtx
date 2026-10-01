@@ -1116,6 +1116,25 @@ async def cb_handler(client: Client, query: CallbackQuery):
         else:
             await query.answer("Yᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴘᴇʀᴍɪssɪᴏɴ ᴛᴏ sᴇᴇ ᴛʜɪꜱ ❌", show_alert=True)
         
+    elif DreamxData.startswith("gofilecancel#"):
+        upload_id = DreamxData.split("#", 1)[1]
+        upload = GOFILE_UPLOADS.get(upload_id)
+
+        if not upload:
+            await query.answer("⚠️ Upload not found.", show_alert=True)
+            return
+
+        if upload["user_id"] != query.from_user.id:
+            await query.answer(
+                "⚠️ This is not your upload.",
+                show_alert=True
+            )
+            return
+
+        upload["cancel"] = True
+        await query.answer("🛑 Cancelling upload...")
+        return
+
     elif DreamxData.startswith("gofileup#"):
         _, file_id = DreamxData.split("#", 1)
 
@@ -1126,8 +1145,10 @@ async def cb_handler(client: Client, query: CallbackQuery):
             )
             return
 
+        upload_id = uuid.uuid4().hex[:8]
+
         try:
-            await query.answer("📤 Uploading to GoFile...")
+            await query.answer("📤 Starting GoFile upload...")
 
             log_msg = await client.send_cached_media(
                 chat_id=BIN_CHANNEL,
@@ -1136,25 +1157,154 @@ async def cb_handler(client: Client, query: CallbackQuery):
 
             file_name = get_name(log_msg)
 
-            gofile_url = await upload_to_gofile_streaming(
-                client,
-                log_msg,
-                file_name
-            )
-
-            if not gofile_url:
-                await query.message.reply_text(
-                    "❌ GoFile upload failed."
-                )
-                return
-
-            await query.message.reply_text(
-                f"✅ <b>GoFile Upload Complete</b>\n\n"
-                f"📁 <b>File:</b> {file_name}",
+            status_msg = await query.message.reply_text(
+                "☁️ <b>Uploading payload to GoFile Cloud...</b>\n\n"
+                "📦 <code>[□□□□□□□□□□]</code> 0.0%\n\n"
+                "💠 <b>Size:</b> 0 B / Unknown\n"
+                "🚀 <b>Speed:</b> 0 B/s\n"
+                "⌛ <b>ETA:</b> Calculating...\n\n"
+                "To cancel use the button below.",
                 reply_markup=InlineKeyboardMarkup([
                     [
                         InlineKeyboardButton(
-                            "📤 OPEN GOFILE",
+                            "Cancel ❌",
+                            callback_data=f"gofilecancel#{upload_id}"
+                        )
+                    ]
+                ])
+            )
+
+            GOFILE_UPLOADS[upload_id] = {
+                "user_id": query.from_user.id,
+                "cancel": False,
+                "current": 0,
+                "total": 0,
+                "start": time.monotonic(),
+                "status_msg": status_msg
+            }
+
+            async def progress_updater():
+                last_text = ""
+
+                while upload_id in GOFILE_UPLOADS:
+                    upload = GOFILE_UPLOADS[upload_id]
+
+                    if upload["cancel"]:
+                        return
+
+                    await asyncio.sleep(2)
+
+                    current = upload["current"]
+                    total = upload["total"]
+
+                    if total <= 0:
+                        continue
+
+                    percent = min((current / total) * 100, 100)
+
+                    filled = int(percent / 10)
+                    bar = "■" * filled + "□" * (10 - filled)
+
+                    elapsed = max(
+                        time.monotonic() - upload["start"],
+                        0.1
+                    )
+
+                    speed = current / elapsed
+                    remaining = max(total - current, 0)
+
+                    if speed > 0:
+                        eta_seconds = int(remaining / speed)
+                        minutes, seconds = divmod(
+                            eta_seconds, 60
+                        )
+                        eta = f"{minutes}m, {seconds}s"
+                    else:
+                        eta = "Calculating..."
+
+                    text = (
+                        "☁️ <b>Uploading payload to GoFile Cloud...</b>\n\n"
+                        f"📦 <code>[{bar}]</code> "
+                        f"{percent:.1f}%\n\n"
+                        f"💠 <b>Size:</b> "
+                        f"{get_size(current)} / {get_size(total)}\n"
+                        f"🚀 <b>Speed:</b> "
+                        f"{get_size(speed)}/s\n"
+                        f"⌛ <b>ETA:</b> {eta}\n\n"
+                        "To cancel use the button below."
+                    )
+
+                    if text != last_text:
+                        try:
+                            await status_msg.edit_text(
+                                text,
+                                reply_markup=InlineKeyboardMarkup([
+                                    [
+                                        InlineKeyboardButton(
+                                            "Cancel ❌",
+                                            callback_data=(
+                                                f"gofilecancel#{upload_id}"
+                                            )
+                                        )
+                                    ]
+                                ])
+                            )
+                            last_text = text
+                        except Exception:
+                            pass
+
+            def progress_callback(current, total):
+                upload = GOFILE_UPLOADS.get(upload_id)
+
+                if upload:
+                    upload["current"] = current
+                    upload["total"] = total
+
+            def cancel_check():
+                upload = GOFILE_UPLOADS.get(upload_id)
+                return bool(upload and upload["cancel"])
+
+            progress_task = asyncio.create_task(
+                progress_updater()
+            )
+
+            try:
+                gofile_url = await upload_to_gofile_streaming(
+                    client,
+                    log_msg,
+                    file_name,
+                    download_progress_cb=progress_callback,
+                    upload_progress_cb=progress_callback,
+                    cancel_check=cancel_check
+                )
+
+            except asyncio.CancelledError:
+                await status_msg.edit_text(
+                    "🛑 <b>GoFile Upload Cancelled</b>\n\n"
+                    f"📁 <b>File:</b> {file_name}"
+                )
+                return
+
+            finally:
+                progress_task.cancel()
+
+            if not gofile_url:
+                await status_msg.edit_text(
+                    "❌ <b>GoFile Upload Failed</b>\n\n"
+                    f"📁 <b>File:</b> {file_name}"
+                )
+                return
+
+            await status_msg.edit_text(
+                "🎉 <b>File Successfully Beamed!</b>\n\n"
+                f"📁 <b>File:</b> <code>{file_name}</code>\n\n"
+                f"🔗 <b>Link:</b> {gofile_url}\n\n"
+                f"🔥 <b>Completed GoFile Uploads:</b> "
+                f"{USAGE.get('completed_uploads', 0)}",
+                reply_markup=InlineKeyboardMarkup([
+                    [
+                        InlineKeyboardButton(
+                            "🔗 Open Cloud Link",
                             url=gofile_url
                         )
                     ]
@@ -1162,11 +1312,24 @@ async def cb_handler(client: Client, query: CallbackQuery):
             )
 
         except Exception as e:
-            logger.exception("GoFile upload error: %s", e)
-            await query.message.reply_text(
-                "❌ GoFile upload failed. Please try again later."
+            logger.exception(
+                "GoFile upload error: %s",
+                e
             )
-    
+
+            try:
+                await status_msg.edit_text(
+                    "❌ <b>GoFile Upload Failed</b>\n\n"
+                    "Please try again later."
+                )
+            except Exception:
+                await query.message.reply_text(
+                    "❌ GoFile upload failed."
+                )
+
+        finally:
+            GOFILE_UPLOADS.pop(upload_id, None)
+            
     elif DreamxData.startswith("generate_stream_link"):
         _, file_id = DreamxData.split(":")
         try:
