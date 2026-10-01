@@ -60,7 +60,7 @@ class temp(object):
 
 
     # Usage statistics for GoFile uploads
-    USAGE = {
+USAGE = {
     "bytes_uploaded": 0,
     "bytes_downloaded": 0,
     "completed_uploads": 0,
