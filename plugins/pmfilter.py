@@ -25,6 +25,8 @@ import asyncio
 import re
 import math
 import random
+import time
+import uuid
 import pytz
 from datetime import datetime, timedelta
 lock = asyncio.Lock()
@@ -41,6 +43,7 @@ BUTTONS0 = {}
 BUTTONS1 = {}
 BUTTONS2 = {}
 SPELL_CHECK = {}
+GOFILE_UPLOADS = {}
 
 
 @Client.on_message(filters.group & filters.text & filters.incoming & ~filters.regex(r"^/") )
