@@ -1112,7 +1112,58 @@ async def cb_handler(client: Client, query: CallbackQuery):
             await query.answer(msg_text, show_alert=True)
         else:
             await query.answer("Yᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴘᴇʀᴍɪssɪᴏɴ ᴛᴏ sᴇᴇ ᴛʜɪꜱ ❌", show_alert=True)
+        
+    elif DreamxData.startswith("gofileup#"):
+        _, file_id = DreamxData.split("#", 1)
 
+        if not ENABLE_GOFILE_LINK:
+            await query.answer(
+                "⚠️ GoFile upload is disabled.",
+                show_alert=True
+            )
+            return
+
+        try:
+            await query.answer("📤 Uploading to GoFile...")
+
+            log_msg = await client.send_cached_media(
+                chat_id=BIN_CHANNEL,
+                file_id=file_id
+            )
+
+            file_name = get_name(log_msg)
+
+            gofile_url = await upload_to_gofile_streaming(
+                client,
+                log_msg,
+                file_name
+            )
+
+            if not gofile_url:
+                await query.message.reply_text(
+                    "❌ GoFile upload failed."
+                )
+                return
+
+            await query.message.reply_text(
+                f"✅ <b>GoFile Upload Complete</b>\n\n"
+                f"📁 <b>File:</b> {file_name}",
+                reply_markup=InlineKeyboardMarkup([
+                    [
+                        InlineKeyboardButton(
+                            "📤 OPEN GOFILE",
+                            url=gofile_url
+                        )
+                    ]
+                ])
+            )
+
+        except Exception as e:
+            logger.exception("GoFile upload error: %s", e)
+            await query.message.reply_text(
+                "❌ GoFile upload failed. Please try again later."
+            )
+    
     elif DreamxData.startswith("generate_stream_link"):
         _, file_id = DreamxData.split(":")
         try:
