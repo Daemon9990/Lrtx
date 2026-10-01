@@ -3,13 +3,14 @@ import logging
 import asyncio
 import aiohttp
 import inspect
+from urllib.parse import quote_plus
 from datetime import datetime
 from bs4 import BeautifulSoup
 from collections import defaultdict
 from plugins.Dreamxfutures.Imdbposter import get_movie_detailsx, fetch_image, get_movie_details
 from database.users_chats_db import db
 from pyrogram import Client, filters, enums
-from info import CHANNELS, MOVIE_UPDATE_CHANNEL, LINK_PREVIEW, BAD_WORDS, TMDB_POSTER
+from info import CHANNELS, MOVIE_UPDATE_CHANNEL, LINK_PREVIEW, BAD_WORDS, TMDB_POSTER, ADMINS
 from Script import script
 from database.ia_filterdb import save_file
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
@@ -20,7 +21,7 @@ from typing import Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_HDHUB_DOMAIN = "https://new6.hdhub4u.cl"
+DEFAULT_HDHUB_DOMAIN = "https://new1.hdhub4u.free"
 
 _BASE_IGNORE_WORDS = {
     "rarbg", "dub", "sub", "sample", "mkv", "mp4", "avi", "aac", "ac3", "eac3", "ddp", "ddp5", "atmos", "dts",
@@ -89,7 +90,12 @@ OTT_PLATFORMS = {
     "hoichoi": "Hoichoi", "sunnxt": "Sun NXT", "viki": "Viki",
     "cr": "Crunchyroll", "crunchyroll": "Crunchyroll",
     "hulu": "Hulu", "peacock": "Peacock",
-    "lionsgate": "Lionsgate Play", "lionsgateplay": "Lionsgate Play"
+    "lionsgate": "Lionsgate Play", "lionsgateplay": "Lionsgate Play",
+    "altbalaji": "ALTT", "alt": "ALTT", "altt": "ALTT",
+    "shemaroo": "ShemarooMe", "shemaroome": "ShemarooMe",
+    "chaupal": "Chaupal", "stage": "Stage",
+    "planetmarathi": "Planet Marathi", "manorama": "ManoramaMAX", "manoramamax": "ManoramaMAX",
+    "tubi": "Tubi"
 }
 
 STANDARD_FORMATS = {
@@ -292,6 +298,40 @@ def format_movie_qualities(quality_list: list) -> str:
 def extract_ott_platform(text: str) -> str:
     text = text.lower()
     platforms = {plat for key, plat in OTT_PLATFORMS.items() if re.search(rf"\b{re.escape(key)}\b", text)}
+    return " | ".join(sorted(platforms)) if platforms else "N/A"
+
+async def fetch_online_ott(imdb_details: dict, tmdb_details: dict, filename: str, caption: str) -> str:
+    platforms = set()
+
+    # 1. IMDb check
+    if imdb_details and isinstance(imdb_details, dict):
+        raw_ott = f"{imdb_details.get('distributors', '')} {imdb_details.get('ott', '')}".lower()
+        for key, plat in OTT_PLATFORMS.items():
+            if re.search(rf"\b{re.escape(key)}\b", raw_ott):
+                platforms.add(plat)
+
+    # 2. TMDb check
+    if not platforms and tmdb_details and isinstance(tmdb_details, dict):
+        networks = f"{tmdb_details.get('networks', '')} {tmdb_details.get('watch_providers', '')}".lower()
+        for key, plat in OTT_PLATFORMS.items():
+            if re.search(rf"\b{re.escape(key)}\b", networks):
+                platforms.add(plat)
+
+    # 3. File Name / Caption fallback
+    if not platforms:
+        unified_text = f"{filename} {caption}".lower()
+        for key, plat in OTT_PLATFORMS.items():
+            if re.search(rf"\b{re.escape(key)}\b", unified_text):
+                platforms.add(plat)
+
+    if "Disney+ Hotstar" in platforms and "Disney+" in platforms:
+        platforms.discard("Disney+")
+    if "JioHotstar" in platforms:
+        platforms.discard("Disney+ Hotstar")
+        platforms.discard("Disney+")
+    if "HBO Max" in platforms and "Max" in platforms:
+        platforms.discard("Max")
+
     return " | ".join(sorted(platforms)) if platforms else "N/A"
 
 def get_clean_title(name: str) -> str:
@@ -769,7 +809,7 @@ def extract_media_info(filename: str, caption: str):
             name = name[:year_match.start()].strip()
 
         patterns = [
-            r"\bS\d{1,2}[\s._-]*(?:Bonus|Special)[\s._-]*E(?:p(?:isode)?)?0*\d{1,3}\b",
+            r"\bS\d{1,2}[\s._-]*(?:Bonus|Special)[\s._-]*(?:E(?:p(?:isode)?)?0*\d{1,3}\b",
             r"\b(?:Bonus|Special)[\s._-]*Ep(?:isode)?\.?\s*\d{1,3}\b",
             r"\bS\d{1,2}E\d{1,3}\b", r"\bS\d{1,2}\b", r"\bE\d{1,3}\b", r"\b\d{1,2}x\d{1,3}\b",
             r"\bSeason\s*\d{1,2}\b", r"\bEp(?:isode)?\.?\s*\d{1,3}\b", r"\bEpisode\s*\d{1,3}\b",
@@ -808,6 +848,30 @@ def extract_media_info(filename: str, caption: str):
         "ott_platform": ott_platform,
         "language": language
     }
+
+@Client.on_message(filters.command("setdomain") & filters.user(ADMINS))
+async def set_domain_handler(bot, message):
+    if len(message.command) < 2:
+        current_url = await get_hdhub_base_url()
+        return await message.reply_text(
+            f"🌐 **Current HDHub4u URL:** <code>{current_url}</code>\n\n"
+            f"💡 **Usage:** <code>/setdomain https://new1.hdhub4u.free</code>"
+        )
+    raw_url = message.command[1].strip().split("?")[0].rstrip("/")
+    if not raw_url.startswith("http"):
+        raw_url = f"https://{raw_url}"
+    try:
+        if hasattr(db, 'db'):
+            await db.db.settings.update_one(
+                {"_id": "hdhub_base_url"},
+                {"$set": {"url": raw_url}},
+                upsert=True
+            )
+            await message.reply_text(f"✅ **HDHub4u base URL successfully updated to:**\n<code>{raw_url}</code>")
+        else:
+            await message.reply_text("❌ Database not initialized.")
+    except Exception as e:
+        await message.reply_text(f"❌ Failed to update domain: {e}")
 
 @Client.on_message(filters.chat(CHANNELS) & MEDIA_FILTER)
 async def media_handler(bot, message):
@@ -913,22 +977,22 @@ async def _process_with_lock(bot, filename, caption, media_info, base_name, proc
         tmdb_query = imdb_id if (imdb_id and imdb_id.startswith("tt")) else official_search_title
         tmdb_details = await fetch_tmdb_safely(tmdb_query, base_name, is_series)
 
-        # -----------------------------------------------------------------
-        # POSTER LOGIC (BOTH MOVIE & SERIES ALWAYS LANDSCAPE BANNER):
-        # 1. Blogger Banner Feed
-        # 2. TMDB Backdrop Banner (Landscape 16:9)
-        # 3. IMDB Backdrop
-        # -----------------------------------------------------------------
+        ott_platform = await fetch_online_ott(imdb_details, tmdb_details, filename, caption)
+        file_data["ott_platform"] = ott_platform
+
         poster_url = ""
-        is_backdrop = True
+        is_backdrop = False
 
         blogger_poster = await get_blogger_poster_url(base_name, media_info.get("year"))
         if blogger_poster:
             poster_url = blogger_poster
+            is_backdrop = True
         elif TMDB_POSTER and tmdb_details.get("backdrop_url"):
             poster_url = tmdb_details.get("backdrop_url")
+            is_backdrop = True
         elif imdb_details.get("backdrop_url"):
             poster_url = imdb_details.get("backdrop_url")
+            is_backdrop = True
         elif tmdb_details.get("poster_url"):
             poster_url = tmdb_details.get("poster_url")
             is_backdrop = False
@@ -957,6 +1021,9 @@ async def _process_with_lock(bot, filename, caption, media_info, base_name, proc
             elif tmdb_details.get("id"):
                 imdb_url = f"https://www.themoviedb.org/movie/{tmdb_details.get('id')}"
 
+        # -------------------------------------------------------------
+        # RUNTIME: IMDb -> TMDb -> File Runtime (Fallback)
+        # -------------------------------------------------------------
         imdb_r = imdb_details.get("runtime")
         tmdb_r = tmdb_details.get("episode_run_time") if is_series and tmdb_details.get("episode_run_time") else tmdb_details.get("runtime")
         if isinstance(imdb_r, (list, tuple)) and imdb_r:
@@ -965,9 +1032,23 @@ async def _process_with_lock(bot, filename, caption, media_info, base_name, proc
             tmdb_r = tmdb_r[0]
 
         if is_series:
-            runtime = str(tmdb_r).strip() if (tmdb_r and str(tmdb_r).strip().upper() not in ("N/A", "NONE", "0", "")) else (final_file_runtime if final_file_runtime != "N/A" else (str(imdb_r).strip() if imdb_r else "N/A"))
+            if tmdb_r and str(tmdb_r).strip().upper() not in ("N/A", "NONE", "0", ""):
+                runtime = str(tmdb_r).strip()
+            elif imdb_r and str(imdb_r).strip().upper() not in ("N/A", "NONE", "0", ""):
+                runtime = str(imdb_r).strip()
+            elif final_file_runtime != "N/A":
+                runtime = final_file_runtime
+            else:
+                runtime = "N/A"
         else:
-            runtime = str(imdb_r).strip() if (imdb_r and str(imdb_r).strip().upper() not in ("N/A", "NONE", "0", "")) else (str(tmdb_r).strip() if tmdb_r else (final_file_runtime if final_file_runtime != "N/A" else "N/A"))
+            if imdb_r and str(imdb_r).strip().upper() not in ("N/A", "NONE", "0", ""):
+                runtime = str(imdb_r).strip()
+            elif tmdb_r and str(tmdb_r).strip().upper() not in ("N/A", "NONE", "0", ""):
+                runtime = str(tmdb_r).strip()
+            elif final_file_runtime != "N/A":
+                runtime = final_file_runtime
+            else:
+                runtime = "N/A"
 
         certificates = tmdb_details.get("certificates") if tmdb_details.get("certificates") and tmdb_details.get("certificates") != "N/A" else imdb_details.get("certificates", "N/A")
 
@@ -998,7 +1079,7 @@ async def _process_with_lock(bot, filename, caption, media_info, base_name, proc
                 "imdb_url": imdb_url,
                 "year": movie_year,
                 "tag": media_info["tag"],
-                "ott_platform": media_info["ott_platform"],
+                "ott_platform": ott_platform,
                 "is_backdrop": is_backdrop
             }
             await db.movie_updates.update_one({"_id": base_name}, {"$set": update_data, "$push": {"files": file_data}})
@@ -1018,7 +1099,7 @@ async def _process_with_lock(bot, filename, caption, media_info, base_name, proc
             "imdb_url": imdb_url,
             "year": movie_year,
             "tag": media_info["tag"],
-            "ott_platform": media_info["ott_platform"],
+            "ott_platform": ott_platform,
             "message_id": None,
             "is_photo": False,
             "is_backdrop": is_backdrop
@@ -1067,7 +1148,7 @@ async def send_movie_update(bot, base_name):
                 all_tags = {f.get("tag") for f in movie_doc.get("files", []) if f.get("tag")}
                 primary_tag = "#SERIES" if "#SERIES" in all_tags else "#MOVIE"
 
-                # Series -> Green (SUCCESS), Movie -> Red (DANGER)
+                # Button Style: Movie -> Blue (PRIMARY), Series -> Green (SUCCESS)
                 btn_style = enums.ButtonStyle.SUCCESS if primary_tag == "#SERIES" else enums.ButtonStyle.PRIMARY
 
                 match = re.search(r'(.+?)\s+Season\s+(\d+)', base_name, re.IGNORECASE)
@@ -1084,17 +1165,20 @@ async def send_movie_update(bot, base_name):
                     )
                 ]])
 
-                # Movie and Series both get 2560x1440 Landscape resolution
-                size = (2560, 1440)
-
                 poster_url = movie_doc.get("poster_url")
+                is_backdrop = movie_doc.get("is_backdrop", False)
                 is_photo = False
                 msg = None
 
                 if poster_url and not LINK_PREVIEW:
                     try:
-                        resized_poster = await fetch_image(poster_url, size)
-                        photo_to_send = resized_poster or poster_url
+                        if is_backdrop:
+                            size = (2560, 1440)
+                            resized_poster = await fetch_image(poster_url, size)
+                            photo_to_send = resized_poster or poster_url
+                        else:
+                            photo_to_send = poster_url
+
                         msg = await bot.send_photo(
                             chat_id=MOVIE_UPDATE_CHANNEL,
                             photo=photo_to_send,
@@ -1144,6 +1228,8 @@ async def update_movie_message(bot, base_name):
         text = generate_movie_message(movie_doc, base_name)
         all_tags = {f.get("tag") for f in movie_doc.get("files", []) if f.get("tag")}
         primary_tag = "#SERIES" if "#SERIES" in all_tags else "#MOVIE"
+
+        # Button Style: Movie -> Blue (PRIMARY), Series -> Green (SUCCESS)
         btn_style = enums.ButtonStyle.SUCCESS if primary_tag == "#SERIES" else enums.ButtonStyle.PRIMARY
 
         match = re.search(r'(.+?)\s+Season\s+(\d+)', base_name, re.IGNORECASE)
@@ -1201,6 +1287,7 @@ def generate_movie_message(movie_doc, base_name):
     all_ott_platforms = set()
     all_tags = set()
     episodes_by_season = defaultdict(set)
+    valid_file_runtimes = []
 
     for file in movie_doc.get("files", []):
         if file.get("quality") and file.get("quality") != "N/A":
@@ -1227,6 +1314,10 @@ def generate_movie_message(movie_doc, base_name):
             season = file.get("season")
             episode = str(file.get("episode"))
             episodes_by_season[season].add(episode)
+
+        r_val = file.get("runtime")
+        if r_val and str(r_val).isdigit() and int(r_val) > 0:
+            valid_file_runtimes.append(int(r_val))
 
     primary_tag = "#SERIES" if "#SERIES" in all_tags else "#MOVIE"
     is_series = (primary_tag == "#SERIES")
@@ -1275,7 +1366,20 @@ def generate_movie_message(movie_doc, base_name):
     else:
         clean_rating = raw_rating if raw_rating not in ("x/10", "x", "N/A", "0") else "6.5"
 
+    # -------------------------------------------------------------
+    # RUNTIME FALLBACK ENGINE:
+    # 1. Stored DB Runtime (if present from IMDb/TMDb)
+    # 2. If Series & Missing: Calculate Exact Average of All Episodes
+    # 3. If Movie & Missing: Take Exact Movie File Runtime
+    # -------------------------------------------------------------
     raw_runtime = movie_doc.get("runtime", "N/A")
+    if not raw_runtime or str(raw_runtime).strip().upper() in ("N/A", "NONE", "0", "-"):
+        if is_series and valid_file_runtimes:
+            avg_rt = round(sum(valid_file_runtimes) / len(valid_file_runtimes))
+            raw_runtime = f"{avg_rt}"
+        elif not is_series and valid_file_runtimes:
+            raw_runtime = f"{valid_file_runtimes[0]}"
+
     runtime = format_runtime(raw_runtime, is_series=is_series)
 
     stored_title = movie_doc.get("title", base_name)
