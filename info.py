@@ -167,6 +167,7 @@ STREAM_MODE = is_enabled(environ.get('STREAM_MODE', "False"), True) # Set Stream
 PREMIUM_STREAM_MODE = is_enabled(environ.get('PREMIUM_STREAM_MODE', "False"), False) # Set Stream mode True or False only for premium users
 GOFILE_TOKEN = environ.get("GOFILE_TOKEN", "")
 ENABLE_GOFILE_LINK = is_enabled(environ.get("ENABLE_GOFILE_LINK", "False"), False)
+STREAM_THROTTLE_MS = int(environ.get("STREAM_THROTTLE_MS", "0"))
 MAINTENANCE = is_enabled(environ.get('MAINTENANCE', "False"), False)
 
 
