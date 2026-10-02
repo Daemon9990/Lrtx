@@ -1,5 +1,6 @@
 import os
 import aiohttp
+from aiohttp import payload
 import httpx
 import asyncio
 import logging
@@ -196,17 +197,27 @@ async def upload_to_gofile_streaming(
                             except Exception:
                                 pass
 
-                form = aiohttp.FormData()
-                if GOFILE_TOKEN:
-                    form.add_field("token", GOFILE_TOKEN)
-                form.add_field(
-                    "file",
+                file_payload = payload.AsyncIterablePayload(
                     tg_stream_gen(),
-                    filename=file_name,
-                    content_type=mimetypes.guess_type(file_name)[0] or "application/octet-stream"
+                    content_type=mimetypes.guess_type(file_name)[0]
+                    or "application/octet-stream"
                 )
 
-                async with session.post(upload_url, data=form) as resp:
+                form = aiohttp.FormData()
+
+                if GOFILE_TOKEN:
+                    form.add_field("token", GOFILE_TOKEN)
+
+                form.add_field(
+                    "file",
+                    file_payload,
+                    filename=file_name
+                )
+
+                async with session.post(
+                    upload_url,
+                    data=form
+                ) as resp:
                     resp.raise_for_status()
                     data = await resp.json(content_type=None)
 
@@ -238,6 +249,139 @@ async def upload_to_gofile_streaming(
     except Exception:
         pass
     return None
+
+
+async def download_and_upload_to_gofile(
+    client,
+    message,
+    file_name: str,
+    download_progress_cb=None,
+    upload_progress_cb=None,
+    cancel_check=None,
+) -> tuple[str | None, str | None, int | None]:
+    """Download Telegram media completely to VPS, then upload the local file to GoFile."""
+
+    import tempfile
+    import shutil
+
+    temp_dir = tempfile.mkdtemp(prefix="pvtlrtx_")
+    file_path = None
+
+    try:
+        # -------------------------------
+        # PHASE 1: TELEGRAM -> VPS
+        # -------------------------------
+        async def telegram_download_progress(current, total):
+            if cancel_check and cancel_check():
+                raise asyncio.CancelledError("Download cancelled by user")
+
+            if download_progress_cb:
+                await _maybe_call_progress(
+                    download_progress_cb,
+                    current,
+                    total
+                )
+
+        file_path = await client.download_media(
+            message,
+            file_name=os.path.join(temp_dir, file_name),
+            progress=telegram_download_progress
+        )
+
+        if cancel_check and cancel_check():
+            raise asyncio.CancelledError("Download cancelled by user")
+
+        if not file_path or not os.path.exists(file_path):
+            raise RuntimeError("Telegram download did not produce a file")
+
+        file_size = os.path.getsize(file_path)
+
+        # -------------------------------
+        # PHASE 2: VPS -> GOFILE
+        # -------------------------------
+        timeout = aiohttp.ClientTimeout(
+            total=None,
+            connect=30,
+            sock_read=300
+        )
+
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+            upload_url = await _get_gofile_upload_url_async(session)
+
+            bytes_sent = 0
+
+            async def local_file_stream():
+                nonlocal bytes_sent
+
+                with open(file_path, "rb") as f:
+                    while True:
+                        if cancel_check and cancel_check():
+                            raise asyncio.CancelledError(
+                                "Upload cancelled by user"
+                            )
+
+                        chunk = f.read(1024 * 1024)
+
+                        if not chunk:
+                            break
+
+                        bytes_sent += len(chunk)
+
+                        if upload_progress_cb:
+                            await _maybe_call_progress(
+                                upload_progress_cb,
+                                bytes_sent,
+                                file_size or 1
+                            )
+
+                        yield chunk
+
+            form = aiohttp.FormData()
+
+            if GOFILE_TOKEN:
+                form.add_field("token", GOFILE_TOKEN)
+
+            form.add_field(
+                "file",
+                local_file_stream(),
+                filename=os.path.basename(file_path),
+                content_type=(
+                    mimetypes.guess_type(file_name)[0]
+                    or "application/octet-stream"
+                )
+            )
+
+            async with session.post(
+                upload_url,
+                data=form
+            ) as resp:
+                resp.raise_for_status()
+                data = await resp.json(content_type=None)
+
+        if isinstance(data, dict) and data.get("status") == "ok":
+            try:
+                USAGE["bytes_downloaded"] += file_size
+                USAGE["bytes_uploaded"] += file_size
+                USAGE["completed_uploads"] += 1
+                USAGE["tg_download_gofile_uploads"] += 1
+            except Exception:
+                pass
+
+            return (
+                data["data"].get("downloadPage"),
+                os.path.basename(file_path),
+                file_size
+            )
+
+        logging.error(f"GoFile returned error: {data}")
+        return None, os.path.basename(file_path), file_size
+
+    finally:
+        # Always remove the temporary VPS file.
+        try:
+            shutil.rmtree(temp_dir, ignore_errors=True)
+        except Exception:
+            pass
 
 async def upload_url_to_gofile_streaming(
     url: str,

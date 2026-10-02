@@ -20,7 +20,7 @@ from Script import script
 from pyrogram.errors.exceptions.bad_request_400 import MediaEmpty, PhotoInvalidDimensions, WebpageMediaEmpty
 from database.refer import referdb
 from database.users_chats_db import db
-from gofile import upload_to_gofile_streaming
+from gofile import download_and_upload_to_gofile
 import asyncio
 import re
 import math
@@ -45,6 +45,7 @@ BUTTONS2 = {}
 SPELL_CHECK = {}
 GOFILE_UPLOADS = {}
 GOFILE_USER_UPLOADS = {}
+
 
 @Client.on_message(filters.group & filters.text & filters.incoming & ~filters.regex(r"^/") )
 async def give_filter(client, message):
@@ -1136,6 +1137,16 @@ async def cb_handler(client: Client, query: CallbackQuery):
 
         upload["cancel"] = True
 
+        # Release this user's upload slot immediately so a new
+        # upload can be started while the old task is shutting down.
+        if GOFILE_USER_UPLOADS.get(upload["user_id"]) == upload_id:
+            GOFILE_USER_UPLOADS.pop(upload["user_id"], None)
+
+        # Cancel the actual asyncio worker task.
+        task = upload.get("task")
+        if task and not task.done():
+            task.cancel()
+
         try:
             await upload["status_msg"].edit_text(
                 "🛑 <b>Cancelling GoFile upload...</b>\n\n"
@@ -1158,6 +1169,22 @@ async def cb_handler(client: Client, query: CallbackQuery):
             return
 
         upload_id = uuid.uuid4().hex[:8]
+        user_id = query.from_user.id
+
+        existing_upload_id = GOFILE_USER_UPLOADS.get(user_id)
+
+        if existing_upload_id:
+            existing_upload = GOFILE_UPLOADS.get(existing_upload_id)
+
+            if existing_upload:
+                await query.answer(
+                    "⏳ Your previous GoFile upload is still running.\n"
+                    "Please wait until it completes, then select the next file.",
+                    show_alert=True
+                )
+                return
+
+            GOFILE_USER_UPLOADS.pop(user_id, None)
 
         try:
             await query.answer("📤 Starting GoFile upload...")
@@ -1170,12 +1197,14 @@ async def cb_handler(client: Client, query: CallbackQuery):
             file_name = get_name(log_msg)
 
             status_msg = await query.message.reply_text(
-                "☁️ <b>Uploading payload to GoFile Cloud...</b>\n\n"
+                "📥 <b>Downloading file from Telegram...</b>\n\n"
+                f"📁 <b>File:</b> <code>{file_name}</code>\n\n"
                 "📦 <code>[□□□□□□□□□□]</code> 0.0%\n\n"
-                "💠 <b>Size:</b> 0 B / Unknown\n"
+                "💾 <b>Progress:</b> 0 B / Unknown\n"
                 "🚀 <b>Speed:</b> 0 B/s\n"
                 "⌛ <b>ETA:</b> Calculating...\n\n"
-                "To cancel use the button below.",
+                "💠 <b>PVTLRTX Download Engine</b>\n\n"
+                "Tap below to cancel.",
                 reply_markup=InlineKeyboardMarkup([
                     [
                         InlineKeyboardButton(
@@ -1186,12 +1215,16 @@ async def cb_handler(client: Client, query: CallbackQuery):
                 ])
             )
 
+            GOFILE_USER_UPLOADS[user_id] = upload_id
+
             GOFILE_UPLOADS[upload_id] = {
                 "user_id": query.from_user.id,
                 "cancel": False,
+                "phase": "download",
                 "current": 0,
                 "total": 0,
                 "start": time.monotonic(),
+                "phase_start": time.monotonic(),
                 "status_msg": status_msg
             }
 
@@ -1233,6 +1266,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
 
                     current = upload["current"]
                     total = upload["total"]
+                    phase = upload.get("phase", "download")
 
                     if total <= 0:
                         continue
@@ -1253,7 +1287,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
                     )
 
                     elapsed = max(
-                        time.monotonic() - upload["start"],
+                        time.monotonic() - upload["phase_start"],
                         0.1
                     )
 
@@ -1280,16 +1314,26 @@ async def cb_handler(client: Client, query: CallbackQuery):
                     else:
                         eta = "Calculating..."
 
+                    if phase == "download":
+                        title = "📥 <b>Downloading file from Telegram...</b>"
+                        footer = "💠 <b>PVTLRTX Download Engine</b>"
+                    else:
+                        title = "☁️ <b>Uploading file to GoFile...</b>"
+                        footer = "🔥 <b>Powered by PVTLRTX</b>"
+
                     text = (
-                        "☁️ <b>Uploading payload to GoFile Cloud...</b>\n\n"
+                        f"{title}\n\n"
+                        f"📁 <b>File:</b> "
+                        f"<code>{file_name}</code>\n\n"
                         f"📦 <code>[{bar}]</code> "
                         f"{percent:.1f}%\n\n"
-                        f"💠 <b>Size:</b> "
+                        f"💾 <b>Progress:</b> "
                         f"{get_size(current)} / {get_size(total)}\n"
                         f"🚀 <b>Speed:</b> "
                         f"{get_size(speed)}/s\n"
                         f"⌛ <b>ETA:</b> {eta}\n\n"
-                        "To cancel use the button below."
+                        f"{footer}\n\n"
+                        "Tap below to cancel."
                     )
 
                     if text == last_text:
@@ -1301,7 +1345,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
                             reply_markup=InlineKeyboardMarkup([
                                 [
                                     InlineKeyboardButton(
-                                        "Cancel ❌",
+                                        "🛑 Cancel",
                                         callback_data=(
                                             f"gofilecancel#{upload_id}"
                                         )
@@ -1315,31 +1359,38 @@ async def cb_handler(client: Client, query: CallbackQuery):
                     except Exception:
                         pass
 
-            def progress_callback(current, total):
-                upload = GOFILE_UPLOADS.get(upload_id)
+            # Keep a direct reference to this job's state.
+            # This allows the worker to finish cancellation safely even
+            # after the user's upload slot has been released.
+            upload_state = GOFILE_UPLOADS[upload_id]
 
-                if upload:
-                    upload["current"] = current
-                    upload["total"] = total
+            def download_progress_callback(current, total):
+                upload_state["phase"] = "download"
+                upload_state["current"] = current
+                upload_state["total"] = total
+
+            def upload_progress_callback(current, total):
+                if upload_state.get("phase") != "upload":
+                    upload_state["phase_start"] = time.monotonic()
+
+                upload_state["phase"] = "upload"
+                upload_state["current"] = current
+                upload_state["total"] = total
 
             def cancel_check():
-                upload = GOFILE_UPLOADS.get(upload_id)
-
-                return bool(
-                    upload and upload["cancel"]
-                )
+                return bool(upload_state["cancel"])
 
             progress_task = asyncio.create_task(
                 progress_updater()
             )
 
             try:
-                gofile_url = await upload_to_gofile_streaming(
+                gofile_url, downloaded_file_name, downloaded_file_size = await download_and_upload_to_gofile(
                     client,
                     log_msg,
                     file_name,
-                    download_progress_cb=progress_callback,
-                    upload_progress_cb=progress_callback,
+                    download_progress_cb=download_progress_callback,
+                    upload_progress_cb=upload_progress_callback,
                     cancel_check=cancel_check
                 )
 
@@ -1352,6 +1403,12 @@ async def cb_handler(client: Client, query: CallbackQuery):
                     )
                 except Exception:
                     pass
+
+                # Remove the cancelled job immediately.
+                GOFILE_UPLOADS.pop(upload_id, None)
+
+                if GOFILE_USER_UPLOADS.get(user_id) == upload_id:
+                    GOFILE_USER_UPLOADS.pop(user_id, None)
 
                 return
 
@@ -1451,10 +1508,18 @@ async def cb_handler(client: Client, query: CallbackQuery):
                     None
                 )
 
-        # Run GoFile upload independently.
-        asyncio.create_task(
+                if GOFILE_USER_UPLOADS.get(user_id) == upload_id:
+                    GOFILE_USER_UPLOADS.pop(
+                        user_id,
+                        None
+                    )
+
+        # Run GoFile upload independently and keep a reference
+        # so the task can be cancelled immediately by the user.
+        upload_task = asyncio.create_task(
             run_gofile_upload()
         )
+        GOFILE_UPLOADS[upload_id]["task"] = upload_task
 
         return
             
