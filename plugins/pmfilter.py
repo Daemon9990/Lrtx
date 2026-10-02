@@ -44,7 +44,7 @@ BUTTONS1 = {}
 BUTTONS2 = {}
 SPELL_CHECK = {}
 GOFILE_UPLOADS = {}
-
+GOFILE_USER_UPLOADS = {}
 
 @Client.on_message(filters.group & filters.text & filters.incoming & ~filters.regex(r"^/") )
 async def give_filter(client, message):
