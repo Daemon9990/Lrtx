@@ -163,7 +163,7 @@ PROTECT_CONTENT = is_enabled((environ.get('PROTECT_CONTENT', "False")), False) #
 PM_SEARCH = is_enabled(environ.get('PM_SEARCH', "True"), True)  # PM Search On (True) / Off (False)
 EMOJI_MODE = is_enabled(environ.get('EMOJI_MODE', "False"), True)  # Emoji status On (True) / Off (False)
 BUTTON_MODE = is_enabled((environ.get('BUTTON_MODE', "False")), False) # pm & Group button or link mode (True) / Off (False)
-STREAM_MODE = is_enabled(environ.get('STREAM_MODE', "False"), True) # Set Stream mode True or False
+STREAM_MODE = is_enabled(environ.get('STREAM_MODE', "True"), True) # Set Stream mode True or False
 PREMIUM_STREAM_MODE = is_enabled(environ.get('PREMIUM_STREAM_MODE', "False"), False) # Set Stream mode True or False only for premium users
 GOFILE_TOKEN = environ.get("GOFILE_TOKEN", "R9BYDCodx1xvJkkvB8qGadPd25ZFafS6")
 ENABLE_GOFILE_LINK = is_enabled(environ.get("ENABLE_GOFILE_LINK", "True"), False)
@@ -213,7 +213,7 @@ BAD_WORDS = {
 
 ON_HEROKU = 'DYNO' in environ
 APP_NAME = environ.get('APP_NAME', None) if ON_HEROKU else None
-BIND_ADDRESS = getenv('WEB_SERVER_BIND_ADDRESS', '0.0.0.0')
+BIND_ADDRESS = getenv('WEB_SERVER_BIND_ADDRESS', 'http://20.68.170.137:8081')
 FQDN = (
     environ.get('FQDN', BIND_ADDRESS)
     if not ON_HEROKU or environ.get('FQDN')
