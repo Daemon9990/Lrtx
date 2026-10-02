@@ -15,6 +15,7 @@ class dreamcinezoneXBot(Client):
             api_hash=API_HASH,
             bot_token=BOT_TOKEN,
             workers=60,
+            max_concurrent_transmissions=20,
             plugins=dict(root= "plugins"),
             sleep_threshold=5,
         )
