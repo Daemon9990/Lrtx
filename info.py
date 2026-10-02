@@ -213,7 +213,7 @@ BAD_WORDS = {
 
 ON_HEROKU = 'DYNO' in environ
 APP_NAME = environ.get('APP_NAME', None) if ON_HEROKU else None
-BIND_ADDRESS = getenv('WEB_SERVER_BIND_ADDRESS', 'http://20.68.170.137:8081')
+BIND_ADDRESS = getenv('WEB_SERVER_BIND_ADDRESS', 'http://20.68.170.137')
 FQDN = (
     environ.get('FQDN', BIND_ADDRESS)
     if not ON_HEROKU or environ.get('FQDN')
