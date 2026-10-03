@@ -261,7 +261,7 @@ Nᴀᴍᴇ : {}
 
 Mᴇꜱꜱᴀɢᴇ : <b>{}</b>"""
     
-    CAPTION = """<b>{file_caption}</b>
+    CAPTION = """<b><a href="https://t.me/PVTUPDATES">{file_caption}</a></b>
 
 <b>📦 Size:</b> {file_size}
 
