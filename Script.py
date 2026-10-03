@@ -261,7 +261,11 @@ Nᴀᴍᴇ : {}
 
 Mᴇꜱꜱᴀɢᴇ : <b>{}</b>"""
     
-    CAPTION = """<b><a href="https://t.me/PVTUPDATES">{file_name}</a></b>\n\n<b>⚜️ Powered By : <a href="https://t.me/PVTUPDATES">[PVT LRTX]</a></b>"""
+    CAPTION = """<b><a href="https://t.me/PVTUPDATES">{file_caption}</a></b>
+
+<b>📦 Size:</b> {file_size}
+
+<b>⚜️ Powered By : <a href="https://t.me/PVTUPDATES">[PVT LRTX]</a></b>"""
 
     
     MOVIE_UPDATE_NOTIFY_TXT = """
